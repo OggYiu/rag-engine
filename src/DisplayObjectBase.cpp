@@ -1,6 +1,7 @@
 #include "DisplayObjectBase.h"
 
 #include <iostream>
+#include "Helper.h"
 
 DisplayObjectBase::DisplayObjectBase():
 	parent_(nullptr),
@@ -168,4 +169,9 @@ bool DisplayObjectBase::isVisible() const
 void DisplayObjectBase::setVisible(const bool visible)
 {
 	visible_ = visible;
+}
+
+bool DisplayObjectBase::hitTest( const int x, const int y ) const
+{
+	return hitTestPointVSRect(x, y, position_[0] - (size_[0] * scale_[0]) * anchor_[0], position_[1] - (size_[1] * scale_[1]) * anchor_[1], size_[0] * scale_[0], size_[1] * scale_[1]);
 }

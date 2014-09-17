@@ -54,6 +54,8 @@ public:
 	bool isVisible() const;
 	void setVisible( const bool visible );
 	
+	bool hitTest( const int x, const int y ) const;
+	
 protected:
 	DisplayObjectContainer* parent_;
 	Eigen::Vector2f position_;

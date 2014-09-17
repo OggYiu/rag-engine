@@ -30,12 +30,12 @@ bool Page_TestUI::resolved()
 //		GUI_Window* window = new GUI_Window( 0.0f, 0.0f, 300.0f, 300.0f );
 //		this->addChild( window );
 
-		// GUI_Button* button1 = GUI_Button::createSimpleButton(0, 0, 64, 48, "love me");
+		// GUI_Button* button1 = GUI_Button::createSimpleButton("click me", 0, 0, 64, 48 );
 		// window->addChild( button1 );
 	}
 	
 	{
-		GUI_Button* button = GUI_Button::createSimpleButton( "", 100, 100, 32, 32, 0, 0, 255, 255 );
+		GUI_Button* button = GUI_Button::createSimpleButton( "click me", 100, 100, 64, 32, 255, 255, 255, 100 );
 		this->addChild( button );
 	}
 	

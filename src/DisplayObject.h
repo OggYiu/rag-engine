@@ -21,7 +21,7 @@ public:
 public:
 	virtual void update(const double dt);
 	virtual void render();
-	void setTexture( Texture* texture ) { texture_ = texture; }
+	void setTexture( Texture* texture );
 	void setColor( const Uint8 red, const Uint8 green, const Uint8 blue );
 	void setBlendMode( const SDL_BlendMode blending );
 	SDL_BlendMode getBlendMode() const { return blending_; }
@@ -30,8 +30,6 @@ public:
 	Uint8 getAlpha() const { return alpha_; }
 
 	void setRenderRect( const int x, const int y, const int w, const int h );
-	
-	bool hitTest( const int x, const int y ) const;
 
 public:
 	Tweener& tweener() { return tweener_; }

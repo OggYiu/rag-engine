@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <sstream>
 #include <algorithm>
+#include "Helper.h"
 
 // #include "Texture.h"
 
@@ -61,7 +62,7 @@ void DisplayObjectContainer::render()
 	}
 }
 
-void DisplayObjectContainer::addChild(DisplayObjectBase* entity)
+void DisplayObjectContainer::addChild( DisplayObjectBase* const entity )
 {
 //	std::cout << "add child" << std::endl;
 	// check if it existed already
@@ -105,6 +106,20 @@ void DisplayObjectContainer::releaseChild(DisplayObjectBase* entity)
 		delete entity;
 		entity = nullptr;		
  	}
+}
+
+void DisplayObjectContainer::releaseAllChildren()
+{
+	DisplayObjectVec::iterator iter = _entityVec.begin();
+	DisplayObjectVec::iterator endIter = _entityVec.end();
+
+	while ( iter != endIter ) {
+		this->removeChild( *iter );
+		SAFE_RELEASE( *iter );
+		++iter;
+	}
+
+	_entityVec.clear();
 }
 
 void DisplayObjectContainer::setX( const int x )

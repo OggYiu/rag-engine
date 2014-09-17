@@ -121,8 +121,7 @@ bool Kernel::exec(int argc __attribute__((unused)), char* argv[], const Settings
 //	std::cout << "base dpir: " << baseDir_ << std::endl;
 	
 	settings_ = settings;
-	setBackgroundColor(settings_.bgRed, settings_.bgGreen, settings_.bgBlue);		
-
+	setBackgroundColor(settings_.bgRed, settings_.bgGreen, settings_.bgBlue);	
 	if (!initSDL())
 	{
 		return false;
@@ -286,7 +285,7 @@ void Kernel::update(const double dt)
 
 void Kernel::render()
 {
-	SDL_SetRenderDrawColor(kernel.getRenderer(), 0xFF, _bgRed, _bgGreen, _bgBlue);
+	SDL_SetRenderDrawColor( kernel.getRenderer(), _bgRed, _bgGreen, _bgBlue, 255 );
 	SDL_RenderClear(kernel.getRenderer());
 	
 	// if (currentPage_ != nullptr && currentPage_->isVisible() != false)

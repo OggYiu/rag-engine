@@ -9,6 +9,7 @@
 #include "MouseEvent.h"
 #include "Helper.h"
 #include "Stage.h"
+#include "GUI_Image.h"
 #include "GUI_Label.h"
 
 static const float TWEEN_HIT_SCALE = 1.3f;
@@ -22,11 +23,14 @@ static const float TWEEN_HOVER_SCALE = 1.1f;
 GUI_Button::GUI_Button( const int x, const int y, Texture* texture )
 	: clicked_(false)
 	, hovered_(false)
+	, label_( nullptr )
 	, state_(ButtonState::UP)
 {
-	texture_ = texture;
-	setPosition( x, y );
-	setSize( texture_->getWidth(), texture_->getHeight() );
+	GUI_Image* image = new GUI_Image( x, y , texture );
+	this->addChild( image );
+	// texture_ = texture;
+	// setPosition( x, y );
+	// setSize( texture_->getWidth(), texture_->getHeight() );
 }
 
 GUI_Button::~GUI_Button()
@@ -44,7 +48,7 @@ void GUI_Button::setText( const std::string& text __attribute__((unused)) )
 
 bool GUI_Button::resolved()
 {
-	GUI_Base::resolved();
+	GUI_BaseContainer::resolved();
 	
 	createEventListener();
 
@@ -85,7 +89,7 @@ bool GUI_Button::eventHandler( const Event& event )
 	{
 		// std::cout << "mouse move " << mouseEvent->getMouseX() << ", " << mouseEvent->getMouseY() << std::endl;
 
-		if (hitTest(mouseX, mouseY))
+		if ( hitTest( mouseX, mouseY ) )
 		{
 			if (state_ != ButtonState::DOWN)
 			{
@@ -199,7 +203,7 @@ bool GUI_Button::eventHandler( const Event& event )
 
 void GUI_Button::update(const double dt)
 {
-	GUI_Base::update(dt);
+	GUI_BaseContainer::update(dt);
 
 	if (!tweenSeq_.is_finished())
 	{

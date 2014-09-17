@@ -2,14 +2,14 @@
 #define __GUI_BUTTON_H__
 
 #include <memory>
-
 #include "claw/tween/single_tweener.hpp"
 #include "claw/tween/tweener_group.hpp"
 #include "claw/tween/tweener_sequence.hpp"
 #include "claw/tween/easing/easing_linear.hpp"
 #include "boost/bind.hpp"
+#include "SDL.h"
 
-#include "GUI_Base.h"
+#include "GUI_BaseContainer.h"
 #include "Event.h"
 
 class Texture;
@@ -24,7 +24,7 @@ enum ButtonState
 	COUNT,
 };
 
-class GUI_Button : public GUI_Base
+class GUI_Button : public GUI_BaseContainer
 {
 public:
 	static GUI_Button* createSimpleButton( const char* title, const int x, const int y, const int w, const int h, const Uint8 red = 255, const Uint8 green = 255, const Uint8 blue = 255, const Uint8 alpha = 255 );

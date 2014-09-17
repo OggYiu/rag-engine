@@ -21,10 +21,11 @@ public:
 	virtual void render();
 	virtual void update(const double dt);
 	
-	void addChild(DisplayObjectBase* entity);
-	void removeChild(DisplayObjectBase* entity);
-	void releaseChild(DisplayObjectBase* entity);
-	int getIndex(const DisplayObjectBase* entity) const;
+	void addChild( DisplayObjectBase* const entity );
+	void removeChild( DisplayObjectBase* entity );
+	void releaseChild( DisplayObjectBase* entity );
+	void releaseAllChildren();
+	int getIndex( const DisplayObjectBase* entity ) const;
 	DisplayObjectVec& getChildren();
 
 	virtual void setX( const int x );

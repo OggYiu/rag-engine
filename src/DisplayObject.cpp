@@ -90,7 +90,14 @@ void DisplayObject::render()
 
 	texture_->render( clipRect_, renderRect_, rotation_, center_, flip_ );
 }
-
+	
+void DisplayObject::setTexture( Texture* texture )
+{
+	releaseTexture();
+	texture_ = texture;
+	setSize( texture_->getWidth(), texture->getHeight() );
+}
+	
 void DisplayObject::setRenderRect( const int x, const int y, const int w, const int h )
 {
 	if ( renderRect_ == nullptr ) {
@@ -101,11 +108,6 @@ void DisplayObject::setRenderRect( const int x, const int y, const int w, const 
 	renderRect_->y = y;
 	renderRect_->w = w;
 	renderRect_->h = h;
-}
-
-bool DisplayObject::hitTest( const int x, const int y ) const
-{
-	return hitTestPointVSRect(x, y, position_[0] - (size_[0] * scale_[0]) * anchor_[0], position_[1] - (size_[1] * scale_[1]) * anchor_[1], size_[0] * scale_[0], size_[1] * scale_[1]);
 }
 
 void DisplayObject::updateRenderPos_()
