@@ -7,7 +7,7 @@
 #include "claw/tween/easing/easing_linear.hpp"
 #include "boost/bind.hpp"
 
-class DisplayObject;
+class DisplayObjectBase;
 class Tweener
 {
 	typedef claw::tween::single_tweener::finish_callback finish_callback;
@@ -16,7 +16,7 @@ class Tweener
 //		typedef single_tweener::update_function update_functionboost::function<void (double)> update_function;
 
 public:
-	Tweener( DisplayObject* owner );
+	Tweener( DisplayObjectBase* owner );
 	~Tweener();
 
 public:
@@ -27,7 +27,8 @@ public:
 	void update(const float dt);
 
 protected:
-	DisplayObject* owner_;
+	DisplayObjectBase
+* owner_;
 	claw::tween::tweener_sequence* tweenSeq_;
 	claw::tween::tweener_group* tweenGroup_;
 	claw::tween::single_tweener* tweenSingle_;	

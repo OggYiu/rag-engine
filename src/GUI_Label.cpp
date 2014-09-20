@@ -14,7 +14,7 @@ GUI_Label::GUI_Label()
 {
 }
 
-GUI_Label::GUI_Label( const float x, const float y, const std::string& text, const std::string& fontName, const int fontSize, const Uint8 red, const Uint8 green, const Uint8 blue )
+GUI_Label::GUI_Label( const float x, const float y, const std::string& text, const std::string& fontName, const int fontSize, const Uint8 red, const Uint8 green, const Uint8 blue, const Uint8 alpha )
 	: text_( text )
 	, fontName_( fontName )
 	, fontSize_( fontSize )
@@ -23,9 +23,13 @@ GUI_Label::GUI_Label( const float x, const float y, const std::string& text, con
 	red_ = red;
 	green_ = green;
 	blue_ = blue;
+	alpha_ = alpha;
 
-	recreateTexture();
-	setPosition(x, y);
+	if ( text_.length() > 0 ) {
+		recreateTexture();
+	}
+	
+	setPos(x, y);
 }
 
 GUI_Label::~GUI_Label()
@@ -45,7 +49,7 @@ void GUI_Label::recreateTexture()
 {
 	releaseTexture();
 
-	SDL_Texture* sdlTexture = textureMgr.createTTFTexture( text_, fontName_, fontSize_, red_, green_, blue_ );
+	SDL_Texture* sdlTexture = textureMgr.createTTFTexture( text_, fontName_, fontSize_, red_, green_, blue_, alpha_ );
 	texture_ = new Texture( sdlTexture );
 	setSize( texture_->getWidth(), texture_->getHeight() );
 }

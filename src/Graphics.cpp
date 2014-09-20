@@ -4,12 +4,14 @@
 
 #include "Helper.h"
 #include "Kernel.h"
+#include "Texture.h"
 
 Graphics::Graphics()
 	: lineThickness_(1)
-	, color_(0xFFFFFFFF)
+	, drawColor_(0xFFFFFFFF)
+	, textureDirty_( false )
 {
-//	std::cout << "i am graphics and my id is " << this->getId() << std::endl;
+	cursor_[0] = cursor_[1] = 0;
 }
 
 Graphics::~Graphics()
@@ -17,24 +19,24 @@ Graphics::~Graphics()
 	clear();
 }
 
-void Graphics::setColor(const Uint32 color)
+void Graphics::setDrawColor(const Uint32 color)
 {
-	color_ = color;
+	drawColor_ = color;
 }
 
-void Graphics::setColor(const Uint8 r, const Uint8 g, const Uint8 b, const Uint8 a)
+void Graphics::setDrawColor(const Uint8 r, const Uint8 g, const Uint8 b, const Uint8 a)
 {
-	color_ = RGBA2Int(r, g, b, a);
+	drawColor_ = RGBA2Int(r, g, b, a);
 }
 
-void Graphics::setAlpha(const Uint8 a)
+void Graphics::setDrawAlpha( const Uint8 a )
 {
 	Uint8 r;
 	Uint8 g;
 	Uint8 b;
 	Uint8 alpha;
-	int2RGBA(color_, r, g, b, alpha);
-	color_ = RGBA2Int(r, g, b, a);
+	int2RGBA( drawColor_, r, g, b, alpha );
+	drawColor_ = RGBA2Int( r, g, b, a );
 }
 
 void Graphics::setLineThickness(const int thickness)
@@ -58,20 +60,23 @@ void Graphics::clear()
 	}
 
 	primitives_.clear();
+	textureDirty_ = true;
 }
 
 // Draws a line using the current line style from the current drawing position to (x, y); the current drawing position is then set to (x, y).
 // 	Graphics
 void Graphics::lineTo( const int x, const int y )
 {
-	primitives_.push_back( new Line( round( cursor_[0] ), round( cursor_[1] ), x, y, color_ ) );
+	primitives_.push_back( new Line( round( cursor_[0] ), round( cursor_[1] ), x, y, drawColor_ ) );
 	cursor_[0] = x; cursor_[1] = y;
+	textureDirty_ = true;
 }
 
 void Graphics::aalineTo( const int x, const int y )
 {
-	primitives_.push_back( new AALine( cursor_[0], cursor_[1], x, y, color_ ) );
+	primitives_.push_back( new AALine( cursor_[0], cursor_[1], x, y, drawColor_ ) );
 	cursor_[0] = x; cursor_[1] = y;
+	textureDirty_ = true;
 }
 
 // Moves the current drawing position to (x, y).
@@ -83,50 +88,66 @@ void Graphics::moveTo( const int x, const int y )
 
 void Graphics::drawPixel(const int x, const int y)
 {
-	primitives_.push_back(new Pixel(x, y, color_));
+	primitives_.push_back(new Pixel(x, y, drawColor_));
+	textureDirty_ = true;
 }
 
 void Graphics::drawSolidRect(const int x, const int y, const int width, const int height)
 {
-	primitives_.push_back(new SolidRect(x, y, width, height, color_));
+	primitives_.push_back(new SolidRect(x, y, width, height, drawColor_));
+	textureDirty_ = true;
 }
 
 void Graphics::drawFrameRect(const int x, const int y, const int width, const int height)
 {
-	primitives_.push_back(new FrameRect(x, y, width, height, color_));
+	primitives_.push_back(new FrameRect(x, y, width, height, drawColor_));
+	textureDirty_ = true;
 }
 
 void Graphics::drawRoundSolidRect( const int x, const int y, const int width, const int height, const float radius )
 {
-	primitives_.push_back( new RoundSolidRect( x, y, width, height, radius, color_ ) );
+	primitives_.push_back( new RoundSolidRect( x, y, width, height, radius, drawColor_ ) );
+	textureDirty_ = true;
 }
 
 void Graphics::drawRoundFrameRect( const int x, const int y, const int width, const int height, const float radius )
 {
-	primitives_.push_back( new RoundFrameRect( x, y, width, height, radius, color_ ) );
+	primitives_.push_back( new RoundFrameRect( x, y, width, height, radius, drawColor_ ) );
+	textureDirty_ = true;
 }
 
 void Graphics::render()
 {
-//	SDL_RenderCopyEx(kernel.getRenderer(), texture_, clipRect_, renderRect_, rotation_, center_, flip_);
+	if ( textureDirty_ ) {
+		releaseTexture();
+		textureDirty_ = false;
+		
+		SDL_Texture* sdlTexture = nullptr;
+		sdlTexture = createTextureFromPrimitives( primitives_ );
+		Texture* texture = new Texture( sdlTexture );
+		setTexture( texture );
+		updateBoundingBox();
+		// std::cout << "texture size: " << texture->getWidth() << ", " << texture->getHeight() << std::endl;
 
-//	std::cout << "graphics::redner" << std::endl;
-	PrimitiveIter iter = primitives_.begin();
-	PrimitiveIter endIter = primitives_.end();
-
-	if ( parent_ != nullptr ) {
-//		std::cout << "parent: " << parent_ << std::endl;
-//		std::cout << "parent pos: " << parent_->getX() << ", " << parent_->getY() << std::endl;
-		while ( iter != endIter )
-		{
-			(*iter)->render( parent_->getX(), parent_->getY() );
-			++iter;
-		}
-	} else {
-		while ( iter != endIter )
-		{
-			(*iter)->render();
-			++iter;
-		}
+		// std::cout << "texture created" << std::endl;
+			// texture_->render( clipRect_, &boundingBox_, rotation_, center_, flip_ );
+		// std::cout << "bounding box: " << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl;
+		// PrimitiveIter iter = primitives_.begin();
+		// PrimitiveIter endIter = primitives_.end();
+		// if ( parent_ != nullptr ) {
+		// 	while ( iter != endIter )
+		// 	{
+		// 		(*iter)->render( parent_->getX(), parent_->getY() );
+		// 		++iter;
+		// 	}
+		// } else {
+		// 	while ( iter != endIter )
+		// 	{
+		// 		(*iter)->render();
+		// 		++iter;
+		// 	}
+		// }
 	}
+
+	DisplayObject::render();
 }

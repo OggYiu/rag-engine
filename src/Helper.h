@@ -14,6 +14,7 @@
 #include "Primitive.h"
 #include "SDL_ttf.h"
 #include "SDL.h"
+#include "SDL2_gfxPrimitives.h"
 
 #define SAFE_RELEASE(ptr)						\
 	{											\
@@ -26,7 +27,7 @@
 
 static inline SDL_Texture* createTextureFromPrimitives( const std::vector<Primitive*>& primitives )
 {
-	SDL_Texture* texture = nullptr;
+	SDL_Texture* sdlTexture = nullptr;
 	SDL_Renderer* renderer = kernel.getRenderer();
 	int maxX = std::numeric_limits<int>::min();
 	int minX = std::numeric_limits<int>::max();
@@ -39,51 +40,45 @@ static inline SDL_Texture* createTextureFromPrimitives( const std::vector<Primit
 	BBox box;
 	while ( iter != endIter ) {
 		(*iter)->getBoundingBox( box );
-		if ( box.x1() < minX ) { minX = box.x1(); }
-		if ( box.x2() > maxX ) { maxX = box.x2(); }
-		if ( box.y1() < minY ) { minY = box.y1(); }
-		if ( box.y2() > maxY ) { maxY = box.y2(); }
+		// std::cout << "primitive: " << box.x1() << ", " << box.y1() << ", " << box.x2() << ", " << box.y2() << std::endl;
+		minX = std::min( minX, box.x1() );
+		maxX = std::max( maxX, box.x2() );
+		minY = std::min( minY, box.y1() );
+		maxY = std::max( maxY, box.y2() );
 		++iter;
 	}
 
-	std::cout << "result: " << minX << ", " << minY << ", " << maxX << ", " << maxY << std::endl;
+	// std::cout << "result: " << minX << ", " << minY << ", " << maxX << ", " << maxY << std::endl;
 
 	if ( maxX <= minX || maxY <= minY ) {
 		return nullptr;
 	}
 
-	texture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, maxX, maxY );
+	// int width = maxX - minX;
+	// int height = maxY - minY;	
+	// sdlTexture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height );
+	sdlTexture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, maxX, maxY );
 
-	if ( texture == nullptr ) {
-		assert( false && "failed to create texture" );
+	// std::cout << "create texture size: " << width << ", " << height << std::endl;
+	if ( sdlTexture == nullptr ) {
+		assert( false && "failed to create sdl texture" );
 		return nullptr;
 	}
+	SDL_SetTextureBlendMode( sdlTexture, SDL_BLENDMODE_BLEND );
 	
-	SDL_SetRenderTarget( renderer, texture );
-	SDL_RenderClear( renderer );
+	SDL_SetRenderTarget( renderer, sdlTexture );
+	// SDL_RenderClear( renderer );
 	
 	iter = primitives.begin();
 	endIter = primitives.end();
-
 	while ( iter != endIter ) {
 		(*iter)->render();
 		++iter;
 	}
 
 	SDL_SetRenderTarget( renderer, nullptr );
-// 	if( mTexture == NULL )
-// 	{
-// 		printf( "Unable to create blank texture! SDL Error: %s\n", SDL_GetError() );
-// 	}
-// 	else
-// 	{
-// 		mWidth = width;
-// 		mHeight = height;
-// 	}
-
-// 	return mTexture != NULL;
-// }
-	return texture;
+	// std::cout << "end createTextureFromPrimitives" << std::endl;
+	return sdlTexture;
 }
 
 static inline void insertBaseDir(std::string& str)

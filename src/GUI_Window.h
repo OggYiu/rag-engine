@@ -3,6 +3,7 @@
 
 #include "GUI_BaseContainer.h"
 #include "Event.h"
+#include "Eigen/Dense"
 
 class Graphics;
 class GUI_Window : public GUI_BaseContainer
@@ -26,9 +27,8 @@ private:
 	DisplayObjectContainer* overlayContainer_;	
 
 	Graphics* frame_;
-	int lastMouseX_;
-	int lastMouseY_;
+	Eigen::Vector2i lastMousePos_;
 	bool isDragging_;
 };
-#endif
 
+#endif

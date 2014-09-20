@@ -7,10 +7,10 @@
 // #include "Page_UITest.h"
 //#include "Page_LuaTest.h"
 //#include "Page_GfxTest.h"
-#include "Page_Gameplay.h"
+//#include "Page_Gameplay.h"
 //#include "Page_TestFont.h"
 #include "Page_TestUI.h"
-#include "Page_TestLinearAlgebra.h"
+//#include "Page_TestLinearAlgebra.h"
 
 int main( int argc, char* argv[] )
 {

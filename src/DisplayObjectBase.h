@@ -1,10 +1,16 @@
 #ifndef __DISPLAYOBJECTBASE_H__
 #define __DISPLAYOBJECTBASE_H__
 
+#include "SDL.h"
 #include "Eigen/Dense"
 #include "EventDispatcher.h"
+#include "Tweener.h"
 
 class DisplayObjectContainer;
+
+#ifdef DEBUG
+class Graphics;
+#endif
 
 class DisplayObjectBase : public EventDispatcher
 {	
@@ -17,14 +23,18 @@ public:
 	virtual void render() = 0;
 
 public:
-	// getter and setter
-	void setPosition( const float x, const float y );
+	virtual void update(const double dt);
+	void refreshPos();
+	void setPos( const float x, const float y );
 	
 	virtual void setX( const float x );
-	float getX() const;
-	
 	virtual void setY( const float y );
-	float getY() const;
+	
+	float getX() const { return localPos_[0]; }
+	float getY() const { return localPos_[1]; }
+
+	float getStageX() const { return stagePos_[0]; }
+	float getStageY() const { return stagePos_[1]; }
 
 	void setSize( const int width, const int height );
 	void setWidth( const int width );
@@ -55,16 +65,33 @@ public:
 	void setVisible( const bool visible );
 	
 	bool hitTest( const int x, const int y ) const;
-	
+
+	int getBBoxX() const { return boundingBox_.x; }
+	int getBBoxY() const { return boundingBox_.y; }
+	int getBBoxWidth() const { return boundingBox_.w; }
+	int getBBoxHeight() const { return boundingBox_.h; }
+	SDL_Rect& getBBox() { return boundingBox_; }
+
+	Tweener& tweener() { return tweener_; }
+
+	virtual void updateBoundingBox();
+
 protected:
 	DisplayObjectContainer* parent_;
-	Eigen::Vector2f position_;
+	Eigen::Vector2f localPos_;
+	Eigen::Vector2f stagePos_;
 	Eigen::Vector2f anchor_;
 	Eigen::Vector2f scale_;
 	Eigen::Vector2i size_;
 	float rotation_;
-	bool dirtyRenderPos_;
-	bool visible_;	
+	bool dirtyBoundingBox_;
+	SDL_Rect boundingBox_;
+	bool visible_;
+	Tweener tweener_;
+
+#ifdef DEBUG
+	Graphics* debugBBox_;
+#endif
 };
 
 #endif

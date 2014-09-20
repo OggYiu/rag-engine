@@ -1,8 +1,6 @@
 #ifndef __DISPLAYOBJECTCONTAINER_H__
 #define __DISPLAYOBJECTCONTAINER_H__
 
-//#include <ext/hash_map>
-//#include <hash_map>
 #include <unordered_map>
 #include <vector>
 #include "DisplayObjectBase.h"
@@ -28,11 +26,11 @@ public:
 	int getIndex( const DisplayObjectBase* entity ) const;
 	DisplayObjectVec& getChildren();
 
-	virtual void setX( const int x );
-	virtual void setY( const int y );
-
-protected:
-	void resetRenderPos_();
+	virtual void setX( const float x );
+	virtual void setY( const float y );
+	
+	void updateAllBoundingBox();
+	virtual void updateBoundingBox();
 	
 protected:
 	DisplayObjectMap _entityMap;

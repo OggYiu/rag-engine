@@ -14,8 +14,7 @@ GUI_Window::GUI_Window()
 	, overlayContainer_( nullptr )
 	, isDragging_( false )
 {
-	lastMouseX_ = 0;
-	lastMouseY_ = 0;
+	lastMousePos_[0] = lastMousePos_[1] = 0;
 }
 
 GUI_Window::GUI_Window( const float x, const float y, const float width, const float height )
@@ -24,10 +23,8 @@ GUI_Window::GUI_Window( const float x, const float y, const float width, const f
 	, overlayContainer_( nullptr )
 	, isDragging_( false )	  
 {
-	lastMouseX_ = 0;
-	lastMouseY_ = 0;
-	
-	setPosition( x, y );
+	lastMousePos_[0] = lastMousePos_[1] = 0;
+	setPos( x, y );
 	setSize( width, height );
 }
 
@@ -70,9 +67,9 @@ bool GUI_Window::resolved()
 	Graphics* graphics = new Graphics();
 
 	// draw border
-	graphics->setColor( 0, 0, 0, 255 );
+	graphics->setDrawColor( 0, 0, 0, 255 );
 	graphics->drawFrameRect( 0, 0, getWidth(), getHeight() );
-	graphics->setColor( 255, 255, 255, 50 );
+	graphics->setDrawColor( 255, 255, 255, 50 );
 	graphics->drawSolidRect( 0, 0, getWidth(), getHeight() );
 
 	// draw title bar
@@ -80,7 +77,7 @@ bool GUI_Window::resolved()
 		const int uiHeight = 30;
 		const int marginX = 6;
 		const int marginY = 6;
-		graphics->setColor( 255, 255, 255, 50 );
+		graphics->setDrawColor( 255, 255, 255, 50 );
 		graphics->drawSolidRect( marginX, marginY, getWidth() - marginX * 2, uiHeight );
 		this->addChild( graphics );
 	}
@@ -102,14 +99,14 @@ bool GUI_Window::eventHandler(const Event& event)
 	MouseEvent* mouseEvent = (MouseEvent*)(&event);
 	int mouseX = mouseEvent->getMouseX();
 	int mouseY = mouseEvent->getMouseY();
-	if ( lastMouseX_ < 0 ) {
-		lastMouseX_ = mouseX;
+	if ( lastMousePos_[0] < 0 ) {
+		lastMousePos_[0] = mouseX;
 	}
-	if ( lastMouseY_ < 0 ) {
-		lastMouseY_ = mouseY;
+	if ( lastMousePos_[1] < 0 ) {
+		lastMousePos_[1] = mouseY;
 	}
-	int diffMouseX = mouseX - lastMouseX_;
-	int diffMouseY = mouseY - lastMouseY_;
+	int diffMouseX = mouseX - lastMousePos_[0];
+	int diffMouseY = mouseY - lastMousePos_[1];
 	
 	if ( event.getType().compare( MouseEvent::MOUSE_DOWN ) == 0 ) {
 		isDragging_ = true;
@@ -127,8 +124,8 @@ bool GUI_Window::eventHandler(const Event& event)
 //			std::cout << "pos: " << this->getX() << ", " << this->getY() << std::endl;
 		}
 	}
-	lastMouseX_ = mouseX;
-	lastMouseY_ = mouseY;
+	lastMousePos_[0] = mouseX;
+	lastMousePos_[1] = mouseY;
 
 	return true;
 }

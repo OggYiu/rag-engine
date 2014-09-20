@@ -108,7 +108,7 @@ void Page_Gameplay::update(const double dt)
 				b = round(v * 255.0f);				
 			}
 //			mapCanvas_->setColor(0xFF000000 + (((int)round(0xFFFFFF * v))));
-			mapCanvas_->setColor(r, g, b, 100);
+			mapCanvas_->setDrawColor( r, g, b, 100 );
 			mapCanvas_->drawSolidRect(drawPosX, drawPosY, gg.getGridWidth(), gg.getGridHeight());
 		}
 	}

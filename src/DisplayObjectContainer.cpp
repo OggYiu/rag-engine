@@ -26,9 +26,7 @@ DisplayObjectContainer::~DisplayObjectContainer()
 }
 
 void DisplayObjectContainer::update(const double dt)
-{
-	DisplayObjectBase::update(dt);
-	
+{	
 	// std::cout << "display object container update" << std::endl;
 	DisplayObjectVec::iterator iter = _entityVec.begin();
 
@@ -46,6 +44,8 @@ void DisplayObjectContainer::update(const double dt)
 		(*iter)->update(dt);
 		++iter;
 	}
+	
+	DisplayObjectBase::update(dt);
 }
 
 void DisplayObjectContainer::render()
@@ -78,6 +78,9 @@ void DisplayObjectContainer::addChild( DisplayObjectBase* const entity )
 	entity->setParent(this);
 	_entityMap[entity->getId()] = entity;
 	_entityVec.push_back(entity);
+	entity->setPos( this->getX() + entity->getX(), this->getY() + entity->getY() );
+
+	dirtyBoundingBox_ = true;
 //	std::cout << "add child ended" << std::endl;
 }
 
@@ -96,6 +99,8 @@ void DisplayObjectContainer::removeChild(DisplayObjectBase* entity)
 //	std::vector<int> v;
 	DisplayObjectVec::iterator iter = std::remove(_entityVec.begin(), _entityVec.end(), entity);
 	_entityVec.erase(iter);
+	
+	dirtyBoundingBox_ = true;
 }
 
 void DisplayObjectContainer::releaseChild(DisplayObjectBase* entity)
@@ -104,7 +109,9 @@ void DisplayObjectContainer::releaseChild(DisplayObjectBase* entity)
 	{
 		removeChild(entity);
 		delete entity;
-		entity = nullptr;		
+		entity = nullptr;
+		
+		dirtyBoundingBox_ = true;
  	}
 }
 
@@ -120,35 +127,41 @@ void DisplayObjectContainer::releaseAllChildren()
 	}
 
 	_entityVec.clear();
+	
+	dirtyBoundingBox_ = true;
 }
 
-void DisplayObjectContainer::setX( const int x )
+void DisplayObjectContainer::setX( const float x )
 {
-	int diff = x - position_[0];
+//	float diff = x - position_[0];
 
 	DisplayObjectBase::setX( x );
-
+	
 	DisplayObjectVec::iterator iter = _entityVec.begin();
+	DisplayObjectVec::iterator endIter = _entityVec.end();	
 	DisplayObjectBase* obj = nullptr;
-	while (iter != _entityVec.end())
+	while ( iter != endIter )
 	{
 		obj = (*iter);
-		obj->setX( obj->getX() + diff );
+//		obj->setX( obj->getX() + diff );
+		obj->refreshPos();
 		++iter;
 	}
 }
 
-void DisplayObjectContainer::setY( const int y )
+void DisplayObjectContainer::setY( const float y )
 {
-	int diff = y - position_[1];
+//	int diff = y - position_[1];
 	DisplayObjectBase::setY( y );	
 
 	DisplayObjectVec::iterator iter = _entityVec.begin();
+	DisplayObjectVec::iterator endIter = _entityVec.end();	
 	DisplayObjectBase* obj = nullptr;
-	while (iter != _entityVec.end())
+	while ( iter != endIter )
 	{
 		obj = (*iter);
-		obj->setY( obj->getY() + diff );
+//		obj->setY( obj->getY() + diff );
+		obj->refreshPos();
 		++iter;
 	}		
 }
@@ -161,4 +174,65 @@ int DisplayObjectContainer::getIndex(const DisplayObjectBase* entity) const
 DisplayObjectContainer::DisplayObjectVec& DisplayObjectContainer::getChildren()
 {
 	return _entityVec;
+}
+
+void DisplayObjectContainer::updateAllBoundingBox()
+{
+	DisplayObjectVec::iterator iter = _entityVec.begin();
+	DisplayObjectVec::iterator endIter = _entityVec.end();	
+	while ( iter != endIter )
+	{
+		(*iter)->updateBoundingBox();
+		++iter;
+	}
+	
+	updateBoundingBox();
+}
+
+void DisplayObjectContainer::updateBoundingBox()
+{
+	if ( _entityVec.size() <= 0 ) {
+		boundingBox_.x = 0;
+		boundingBox_.y = 0;
+		boundingBox_.w = 0;
+		boundingBox_.h = 0;
+	} else {
+		int maxX = std::numeric_limits<int>::min();
+		int minX = std::numeric_limits<int>::max();
+		int maxY = std::numeric_limits<int>::min();
+		int minY = std::numeric_limits<int>::max();
+	
+		DisplayObjectVec::iterator iter = _entityVec.begin();
+		DisplayObjectVec::iterator endIter = _entityVec.end();	
+		// DisplayObjectBase* obj = nullptr;
+		SDL_Rect* bbox = nullptr;
+		// std::cout << "update bounding box..." << std::endl;
+		while ( iter != endIter )
+		{
+			bbox = &(*iter)->getBBox();
+			// std::cout << "bbox: " << bbox->x << ", " << bbox->y << ", " << bbox->w << ", " << bbox->h << std::endl;
+
+			minX = std::min<int>( bbox->x, minX );			
+			maxX = std::max<int>( bbox->x + bbox->w, maxX );
+			minY = std::min<int>( bbox->y, minY );			
+			maxY = std::max<int>( bbox->y + bbox->h, maxY );
+
+			++iter;
+		}
+
+		// std::cout << minX << ", " << minY << ", " << maxX << ", " << maxY << std::endl;
+		assert( ( maxX >= minX ) && "invalid maxx or minx" );
+		assert( ( maxY >= minY ) && "invalid maxy or miny" );
+		
+		int mx = minX;
+		int my = minY;
+		int mwidth = maxX - minX;
+		int mheight = maxY - minY;
+		boundingBox_.x = mx;
+		boundingBox_.y = my;
+		boundingBox_.w = mwidth;
+		boundingBox_.h = mheight;
+
+		// std::cout << std::endl;
+	}
 }

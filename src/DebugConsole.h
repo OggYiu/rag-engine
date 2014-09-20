@@ -2,6 +2,7 @@
 #define __DEBUGCONSOLE_H__
 
 #include <unistd.h>
+#include "Event.h"
 #include "DisplayObjectContainer.h"
 #include "Timer.h"
 
@@ -24,10 +25,12 @@ public:
 	
 protected:
 	virtual bool resolved();
-
+	bool eventHandler( const Event& event );
+		
 private:
 	Timer timer_;
 	GUI_Label* fpsLabel_;
+	GUI_Label* mousePosLabel_;	
 };
 
 #define debugConsole DebugConsole::getInstance();

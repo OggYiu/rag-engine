@@ -3,15 +3,17 @@
 #include <iostream>
 #include "Helper.h"
 
-DisplayObjectBase::DisplayObjectBase():
-	parent_(nullptr),
-	rotation_(0.0f),	
-	dirtyRenderPos_(false),
-	visible_(true)
-
+DisplayObjectBase::DisplayObjectBase()
+	: parent_( nullptr )
+	, rotation_( 0.0f )
+	, dirtyBoundingBox_( false )
+	, visible_( true )
+	, tweener_( Tweener( this ) )
 {
-	position_[0] = 0.0f;
-	position_[1] = 0.0f;
+	boundingBox_.x = boundingBox_.y = boundingBox_.w = boundingBox_.h = 0;
+
+	localPos_[0] = localPos_[1] = 0.0f;
+	stagePos_[0] = stagePos_[1] = 0.0f;	
 	
 	size_[0] = 0;
 	size_[1] = 0;
@@ -19,8 +21,8 @@ DisplayObjectBase::DisplayObjectBase():
 	scale_[0] = 1.0f;
 	scale_[1] = 1.0f;
 	
-	anchor_[0] = 0.5f;
-	anchor_[1] = 0.5f;
+	anchor_[0] = 0.0f;
+	anchor_[1] = 0.0f;
 }
 
 DisplayObjectBase::~DisplayObjectBase()
@@ -31,10 +33,27 @@ DisplayObjectBase::~DisplayObjectBase()
 void DisplayObjectBase::setParent( DisplayObjectContainer* parent )
 {
 	parent_ = parent;
-	dirtyRenderPos_ = true;
+	dirtyBoundingBox_ = true;
 }
 
-void DisplayObjectBase::setPosition( const float x, const float y)
+void DisplayObjectBase::update(const double dt)
+{
+	EventDispatcher::update( dt );
+
+	tweener_.update( dt );
+	
+	if ( dirtyBoundingBox_ ) {
+		// dirtyBoundingBox_ = false;
+		updateBoundingBox();
+	}
+}
+
+void DisplayObjectBase::refreshPos()
+{
+	setPos( localPos_[0], localPos_[1] );
+}
+
+void DisplayObjectBase::setPos( const float x, const float y)
 {
 	setX( x );
 	setY( y );	
@@ -42,26 +61,19 @@ void DisplayObjectBase::setPosition( const float x, const float y)
 
 void DisplayObjectBase::setX( const float x )
 {
-	position_[0] = x;
-	dirtyRenderPos_ = true;
-}
-
-float DisplayObjectBase::getX() const
-{
-	return position_[0];
+	float mod = parent_ != nullptr? parent_->getX() + parent_->getWidth() * parent_->getAnchorX() : 0;
+	localPos_[0] = x;
+	stagePos_[0] = x + mod;
+	dirtyBoundingBox_ = true;
 }
 
 void DisplayObjectBase::setY( const float y )
 {
-	position_[1] = y;
-	dirtyRenderPos_ = true;	
+	float mod = parent_ != nullptr? parent_->getY() + parent_->getHeight() * parent_->getAnchorY() : 0;
+	localPos_[1] = y;
+	stagePos_[1] = y + mod;
+	dirtyBoundingBox_ = true;	
 }
-
-float DisplayObjectBase::getY() const
-{
-	return position_[1];
-}
-
 void DisplayObjectBase::setSize( const int width, const int height )
 {
 	setWidth( width );
@@ -71,7 +83,7 @@ void DisplayObjectBase::setSize( const int width, const int height )
 void DisplayObjectBase::setWidth( const int width )
 {
 	size_[0] = width;
-	dirtyRenderPos_ = true;
+	dirtyBoundingBox_ = true;
 }
 
 int DisplayObjectBase::getWidth() const
@@ -87,7 +99,7 @@ float DisplayObjectBase::getScaledWidth() const
 void DisplayObjectBase::setHeight( const int height )
 {
 	size_[1] = height;
-	dirtyRenderPos_ = true;
+	dirtyBoundingBox_ = true;
 }
 
 int DisplayObjectBase::getHeight() const
@@ -104,7 +116,7 @@ float DisplayObjectBase::getScaledHeight() const
 void DisplayObjectBase::setScaleX( const float x )
 {
 	scale_[0] = x;
-	dirtyRenderPos_ = true;	
+	dirtyBoundingBox_ = true;	
 }
 
 float DisplayObjectBase::getScaleX() const
@@ -115,7 +127,7 @@ float DisplayObjectBase::getScaleX() const
 void DisplayObjectBase::setScaleY( const float y )
 {
 	scale_[1] = y;
-	dirtyRenderPos_ = true;	
+	dirtyBoundingBox_ = true;	
 }
 
 float DisplayObjectBase::getScaleY() const
@@ -132,7 +144,7 @@ void DisplayObjectBase::setAnchor( const float x, const float y )
 void DisplayObjectBase::setAnchorX( const float x )
 {
 	anchor_[0] = x;
-	dirtyRenderPos_ = true;		
+	dirtyBoundingBox_ = true;		
 }
 
 float DisplayObjectBase::getAnchorX() const
@@ -143,7 +155,7 @@ float DisplayObjectBase::getAnchorX() const
 void DisplayObjectBase::setAnchorY(const float y)
 {
 	anchor_[1] = y;
-	dirtyRenderPos_ = true;		
+	dirtyBoundingBox_ = true;		
 }
 
 float DisplayObjectBase::getAnchorY() const
@@ -173,5 +185,30 @@ void DisplayObjectBase::setVisible(const bool visible)
 
 bool DisplayObjectBase::hitTest( const int x, const int y ) const
 {
-	return hitTestPointVSRect(x, y, position_[0] - (size_[0] * scale_[0]) * anchor_[0], position_[1] - (size_[1] * scale_[1]) * anchor_[1], size_[0] * scale_[0], size_[1] * scale_[1]);
+	// return hitTestPointVSRect( x, y,
+	// 						   localPos_[0] - ( size_[0] * scale_[0] ) * anchor_[0],
+	// 						   localPos_[1] - ( size_[1] * scale_[1] ) * anchor_[1],
+	// 						   size_[0] * scale_[0],
+	// 						   size_[1] * scale_[1] );
+
+	return hitTestPointVSRect( x, y,
+							   boundingBox_.x,
+							   boundingBox_.y,
+							   boundingBox_.w,
+							   boundingBox_.h );
+}
+
+void DisplayObjectBase::updateBoundingBox()
+{
+	dirtyBoundingBox_ = false;
+	
+	int modWidth = round( getScaledWidth() );
+	int modHeight = round( getScaledHeight() );
+	int offsetX = floor( modWidth * anchor_[0] );
+	int offsetY = floor( modHeight * anchor_[1] );
+ 	boundingBox_.x = stagePos_[0] - offsetX - ( offsetX % 2 );
+	boundingBox_.y = stagePos_[1] - offsetY - ( offsetY % 2 );
+	boundingBox_.w = modWidth;
+	boundingBox_.h = modHeight;
+//	setRenderRect( renderX, renderY, renderW, renderH );
 }

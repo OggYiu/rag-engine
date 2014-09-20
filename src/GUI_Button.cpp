@@ -26,11 +26,10 @@ GUI_Button::GUI_Button( const int x, const int y, Texture* texture )
 	, label_( nullptr )
 	, state_(ButtonState::UP)
 {
-	GUI_Image* image = new GUI_Image( x, y , texture );
+	GUI_Image* image = new GUI_Image( 0, 0 , texture );
 	this->addChild( image );
-	// texture_ = texture;
-	// setPosition( x, y );
-	// setSize( texture_->getWidth(), texture_->getHeight() );
+	setPos( x, y );
+	setSize( texture->getWidth(), texture->getHeight() );
 }
 
 GUI_Button::~GUI_Button()
@@ -40,10 +39,24 @@ GUI_Button::~GUI_Button()
 void GUI_Button::setText( const std::string& text __attribute__((unused)) )
 {
 	if ( label_ != nullptr ) {
-//		this->removeChild( label_ );
+		this->removeChild( label_ );
 		SAFE_RELEASE( label_ );
 	}
-//	GUI_Label* label = new GUI_Label( 0, 0, const std::string& text, const std::string& fontName = FontMgr::DEFAULT_FONT_NAME, const int fontSize = FontMgr::DEFAULT_FONT_SIZE, const Uint8 red = 0, const Uint8 green = 0, const Uint8 blue = 0 );
+
+//	int textSize = round( this->getWidth() / 10 );
+	const int margin = round( this->getWidth() / 5 );
+	label_ = new GUI_Label( 0, 0, text );
+//	std::cout << this->getWidth() << ", " << this->getHeight() << " vs " << label_->getWidth() << ", " << label_->getHeight() << std::endl;
+	float factorX = (float)( this->getWidth() - margin * 2 ) / (float)label_->getWidth();
+	float factorY = (float)( this->getHeight() - margin * 2 ) / (float)label_->getHeight();
+	float scaleFactor = factorX < factorY? factorX : factorY;
+//	std::cout << "factors: " << factorX << " and " << factorY << std::endl;
+	label_->setWidth( round( label_->getWidth() * scaleFactor ) );
+	label_->setHeight( round( label_->getHeight() * scaleFactor ) );	
+	this->addChild( label_ );
+//	std::cout << "before: " << label_->getX() << ", " << label_->getY() << std::endl;
+//	label_->setX( margin );
+//	std::cout << "after: " << label_->getX() << ", " << label_->getY() << std::endl;	
 }
 
 bool GUI_Button::resolved()

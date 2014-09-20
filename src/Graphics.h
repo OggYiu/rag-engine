@@ -4,10 +4,12 @@
 #include "Eigen/Dense"
 #include <vector>
 #include "Object.h"
-#include "DisplayObjectBase.h"
+#include "DisplayObject.h"
 #include "Primitive.h"
 
-class Graphics : public DisplayObjectBase
+class Texture;
+
+class Graphics : public DisplayObject
 {
 private:
 	typedef std::vector<Primitive*> PrimitiveVec;
@@ -18,9 +20,9 @@ public:
 	~Graphics();	
 	
 public:
-	void setColor(const Uint32 color);
-	void setColor(const Uint8 r, const Uint8 g, const Uint8 b, const Uint8 a);
-	void setAlpha(const Uint8 a);
+	void setDrawColor( const Uint32 color );
+	void setDrawColor( const Uint8 r, const Uint8 g, const Uint8 b, const Uint8 a );
+	void setDrawAlpha( const Uint8 a );
 	void setLineThickness(const int thickness);
 	SDL_Texture* createTexture();
 	void clear();
@@ -32,13 +34,14 @@ public:
 	void drawFrameRect(const int x, const int y, const int width, const int height);
 	void drawRoundSolidRect( const int x, const int y, const int width, const int height, const float radius );
 	void drawRoundFrameRect( const int x, const int y, const int width, const int height, const float radius );
-	void render();
+	virtual void render();
 
 protected:
 	float lineThickness_;
-	Uint32 color_;
+	Uint32 drawColor_;
 	Eigen::Vector2i cursor_;
 	PrimitiveVec primitives_;
+	bool textureDirty_;
 };
 
 #endif
