@@ -16,6 +16,13 @@
 #include "SDL.h"
 #include "SDL2_gfxPrimitives.h"
 
+#define PI 3.14285714286
+#define RAD2DEG_ 57.2727272727
+#define DEG2RAD_ 0.01746031746
+
+#define RAD2DEG( a ) ( a * RAD2DEG_ )
+#define DEG2RAD( a ) ( a * DEG2RAD_ )
+
 #define SAFE_RELEASE(ptr)						\
 	{											\
 	 if ( ptr != nullptr )						\

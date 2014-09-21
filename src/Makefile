@@ -24,14 +24,14 @@ EIGEN_DIR = $(LIBDIR)/eigen
 EIGEN_IDIR = $(EIGEN_DIR)
 
 CC = g++
-CFLAGS = -I$(IDIR) -I$(SDLIDIR) -I$(LUAIDIR) -I$(CLAWIDIR) -I$(FREETYPE_IDIR) -L$(LUALIBDIR) -L$(SDLLIBDIR) -L$(CLAWLIBDIR) -L$(FREETYPE_LDIR) -I$(EIGEN_IDIR) -std=c++11 -W -Wall -Werror -g -llua5.2 -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -lclaw_tween -ldl -lfreetype -MD -MP
+CFLAGS = -I$(IDIR) -I$(SDLIDIR) -I$(LUAIDIR) -I$(CLAWIDIR) -I$(FREETYPE_IDIR) -L$(LUALIBDIR) -L$(SDLLIBDIR) -L$(CLAWLIBDIR) -L$(FREETYPE_LDIR) -I$(EIGEN_IDIR) -std=c++11 -W -Wall -Werror -g3 -llua5.2 -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -lclaw_tween -ldl -lfreetype -MD -MP
 
 _OBJ = 	Demo.o \
 		Object.o DisplayObjectBase.o DisplayObject.o DisplayObjectContainer.o Graphics.o \
 		GUI_Base.o GUI_BaseContainer.o GUI_Image.o GUI_Button.o GUI_Label.o GUI_Window.o \
 		MouseEvent.o Event.o EventListener.o EventDispatcher.o	\
 		Page_Gameplay.o	Page_GfxTest.o Page_LuaTest.o Page_Default.o Kernel.o Page.o Page_TestFont.o Page_TestUI.o Page_TestLinearAlgebra.o \
-		Tweener.o DebugConsole.o GameGlobal.o Profiler.o FontMgr.o Timer.o Texture.o TextureMgr.o \
+		Tweener.o DebugConsole.o GameGlobal.o Profiler.o FontMgr.o Timer.o Texture.o TextureMgr.o Transform.o \
 		Entity.o Entity_Emitter.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
