@@ -31,6 +31,5 @@ bool Page_TestLinearAlgebra::resolved()
 	// Eigen::Matrix3f m = trans.matrix();
 	// std::cout << "matrix3f: " << m << std::endl;
 
-	Transform f;
 	return true;
 }

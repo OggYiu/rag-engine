@@ -53,14 +53,14 @@ bool Page_LuaTest::eventHandler(const Event& event __attribute__((unused)) )
 	{
 		float x = randInRange(0, kernel.getScreenWidth());
 		float y = randInRange(0, kernel.getScreenHeight());
-		float distance = pow(image1_->getX()-x, 2) + pow(image1_->getY()-y, 2);
+		float distance = pow(image1_->transform().getX()-x, 2) + pow(image1_->transform().getY()-y, 2);
 		image1_->tweener().moveTo(distance / 100000.0f, x, y, boost::bind(&Page_LuaTest::here, this));
 	}
 
 	{
 		float x = randInRange(1, 5);
 		float y = randInRange(1, 5);
-		float distance = pow(image1_->getX()-x, 2) + pow(image1_->getY()-y, 2);
+		float distance = pow(image1_->transform().getX()-x, 2) + pow(image1_->transform().getY()-y, 2);
 		image1_->tweener().scaleTo(distance / 100000.0f, x, y, boost::bind(&Page_LuaTest::here, this));
 	}
 

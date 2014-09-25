@@ -78,7 +78,7 @@ void DisplayObjectContainer::addChild( DisplayObjectBase* const entity )
 	entity->setParent(this);
 	_entityMap[entity->getId()] = entity;
 	_entityVec.push_back(entity);
-	entity->setPos( this->getX() + entity->getX(), this->getY() + entity->getY() );
+	entity->transform().setPos( this->transform().getX() + entity->transform().getX(), this->transform().getY() + entity->transform().getY() );
 
 	dirtyBoundingBox_ = true;
 //	std::cout << "add child ended" << std::endl;
@@ -131,41 +131,6 @@ void DisplayObjectContainer::releaseAllChildren()
 	dirtyBoundingBox_ = true;
 }
 
-void DisplayObjectContainer::setX( const float x )
-{
-//	float diff = x - position_[0];
-
-	DisplayObjectBase::setX( x );
-	
-	DisplayObjectVec::iterator iter = _entityVec.begin();
-	DisplayObjectVec::iterator endIter = _entityVec.end();	
-	DisplayObjectBase* obj = nullptr;
-	while ( iter != endIter )
-	{
-		obj = (*iter);
-//		obj->setX( obj->getX() + diff );
-		obj->refreshPos();
-		++iter;
-	}
-}
-
-void DisplayObjectContainer::setY( const float y )
-{
-//	int diff = y - position_[1];
-	DisplayObjectBase::setY( y );	
-
-	DisplayObjectVec::iterator iter = _entityVec.begin();
-	DisplayObjectVec::iterator endIter = _entityVec.end();	
-	DisplayObjectBase* obj = nullptr;
-	while ( iter != endIter )
-	{
-		obj = (*iter);
-//		obj->setY( obj->getY() + diff );
-		obj->refreshPos();
-		++iter;
-	}		
-}
-
 int DisplayObjectContainer::getIndex(const DisplayObjectBase* entity) const
 {
 	return find(_entityVec.begin(), _entityVec.end(), entity) - _entityVec.begin();
@@ -176,21 +141,13 @@ DisplayObjectContainer::DisplayObjectVec& DisplayObjectContainer::getChildren()
 	return _entityVec;
 }
 
-void DisplayObjectContainer::updateAllBoundingBox()
+void DisplayObjectContainer::updateBoundingBox_()
 {
-	DisplayObjectVec::iterator iter = _entityVec.begin();
-	DisplayObjectVec::iterator endIter = _entityVec.end();	
-	while ( iter != endIter )
-	{
-		(*iter)->updateBoundingBox();
-		++iter;
+	if ( !dirtyBoundingBox_ ) {
+		return;
 	}
 	
-	updateBoundingBox();
-}
-
-void DisplayObjectContainer::updateBoundingBox()
-{
+	dirtyBoundingBox_ = false;
 	if ( _entityVec.size() <= 0 ) {
 		boundingBox_.x = 0;
 		boundingBox_.y = 0;
@@ -209,6 +166,7 @@ void DisplayObjectContainer::updateBoundingBox()
 		// std::cout << "update bounding box..." << std::endl;
 		while ( iter != endIter )
 		{
+			(*iter)->tryUpdateBoundingBox();
 			bbox = &(*iter)->getBBox();
 			// std::cout << "bbox: " << bbox->x << ", " << bbox->y << ", " << bbox->w << ", " << bbox->h << std::endl;
 
@@ -234,5 +192,38 @@ void DisplayObjectContainer::updateBoundingBox()
 		boundingBox_.h = mheight;
 
 		// std::cout << std::endl;
+	}
+}
+
+void DisplayObjectContainer::handleTransformPositionChanged_()
+{
+	DisplayObjectBase::handleTransformPositionChanged_();
+	updateAllWorldTrans_();
+}
+
+void DisplayObjectContainer::handleTransformRotationChanged_()
+{
+	DisplayObjectBase::handleTransformRotationChanged_();
+	updateAllWorldTrans_();
+}
+
+void DisplayObjectContainer::handleTransformScaleChanged_()
+{
+	DisplayObjectBase::handleTransformScaleChanged_();
+	updateAllWorldTrans_();
+}
+
+void DisplayObjectContainer::updateAllWorldTrans_()
+{
+	transform().updateWorldTrans();
+	
+	DisplayObjectVec::iterator iter = _entityVec.begin();
+	DisplayObjectVec::iterator endIter = _entityVec.end();	
+	DisplayObjectBase* obj = nullptr;
+	while ( iter != endIter )
+	{
+		obj = (*iter);
+		obj->transform().updateWorldTrans();
+		++iter;
 	}
 }

@@ -26,13 +26,13 @@ public:
 	int getIndex( const DisplayObjectBase* entity ) const;
 	DisplayObjectVec& getChildren();
 
-	virtual void setX( const float x );
-	virtual void setY( const float y );
-	
-	void updateAllBoundingBox();
-	virtual void updateBoundingBox();
-	
 protected:
+	virtual void updateBoundingBox_();
+	void updateAllWorldTrans_();
+	virtual void handleTransformPositionChanged_();
+	virtual void handleTransformRotationChanged_();
+	virtual void handleTransformScaleChanged_();
+	
 	DisplayObjectMap _entityMap;
 	DisplayObjectVec _entityVec;
 };

@@ -36,6 +36,10 @@ public:
 	void drawRoundFrameRect( const int x, const int y, const int width, const int height, const float radius );
 	virtual void render();
 
+	void updateTexture();
+protected:
+	void tryUpdateTexture_();
+	
 protected:
 	float lineThickness_;
 	Uint32 drawColor_;

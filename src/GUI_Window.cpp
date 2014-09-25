@@ -24,7 +24,7 @@ GUI_Window::GUI_Window( const float x, const float y, const float width, const f
 	, isDragging_( false )	  
 {
 	lastMousePos_[0] = lastMousePos_[1] = 0;
-	setPos( x, y );
+	transform().setPos( x, y );
 	setSize( width, height );
 }
 
@@ -116,8 +116,7 @@ bool GUI_Window::eventHandler(const Event& event)
 		if ( isDragging_ ) {
 			// static int x = 0;
 			// static int y = 0;
-			this->setX( this->getX() + diffMouseX );
-			this->setY( this->getY() + diffMouseY );
+			this->transform().setPos( this->transform().getX() + diffMouseX, this->transform().getY() + diffMouseY );
 			// this->setX( x++ );
 			// this->setY( y++ );
 

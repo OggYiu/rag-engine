@@ -9,6 +9,7 @@
 #include "Page.h"
 #include "Page_Default.h"
 #include "MouseEvent.h"
+#include "KeyboardEvent.h"
 #include "DebugConsole.h"
 // #include "sdl-widgets.h"
 
@@ -153,12 +154,14 @@ bool Kernel::loop()
 			{
 				_quit = true;
 			}
-			else if (e.type == SDL_KEYDOWN)
+			else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP )
 			{
-				// key code reference : https://wiki.libsdl.org/SDL_Keycode
-
+				std::unique_ptr<KeyboardEvent> ptr = std::unique_ptr<KeyboardEvent>( new KeyboardEvent( e.type == SDL_KEYDOWN? KeyboardEvent::KEY_DOWN : KeyboardEvent::KEY_UP, e.key.timestamp, e.key.keysym.sym, (int)e.key.keysym.mod, (int)e.key.repeat ) );
+				stage_->dispatchEvent( *ptr.get() );
+				
 				switch (e.key.keysym.sym)
 				{
+
 				case SDLK_ESCAPE:
 					_quit = true;
 					break;

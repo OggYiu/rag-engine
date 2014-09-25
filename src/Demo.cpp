@@ -3,6 +3,7 @@
 #include "Kernel.h"
 #include "Settings.h"
 
+#include "Page_TestDisplayObject.h"
 #include "Page_LuaTest.h"
 #include "Page_GfxTest.h"
 #include "Page_Gameplay.h"
@@ -28,6 +29,7 @@ int main( int argc, char* argv[] )
 	// Page_Gameplay* startPage = new Page_Gameplay();	
 //	Page_TestFont* startPage = new Page_TestFont();
 	// Page_TestUI* startPage = new Page_TestUI();
-	Page_TestLinearAlgebra* startPage = new Page_TestLinearAlgebra();	
+	// Page_TestLinearAlgebra* startPage = new Page_TestLinearAlgebra();
+	Page_TestDisplayObject* startPage = new Page_TestDisplayObject();
 	return kernel.exec( argc, argv, settings, startPage ) ? 0 : 1;
 }

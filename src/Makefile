@@ -29,9 +29,9 @@ CFLAGS = -I$(IDIR) -I$(SDLIDIR) -I$(LUAIDIR) -I$(CLAWIDIR) -I$(FREETYPE_IDIR) -L
 _OBJ = 	Demo.o \
 		Object.o DisplayObjectBase.o DisplayObject.o DisplayObjectContainer.o Graphics.o \
 		GUI_Base.o GUI_BaseContainer.o GUI_Image.o GUI_Button.o GUI_Label.o GUI_Window.o \
-		MouseEvent.o Event.o EventListener.o EventDispatcher.o	\
-		Page_Gameplay.o	Page_GfxTest.o Page_LuaTest.o Page_Default.o Kernel.o Page.o Page_TestFont.o Page_TestUI.o Page_TestLinearAlgebra.o \
-		Tweener.o DebugConsole.o GameGlobal.o Profiler.o FontMgr.o Timer.o Texture.o TextureMgr.o Transform.o \
+		MouseEvent.o Event.o EventListener.o EventDispatcher.o TransformEvent.o KeyboardEvent.o \
+		Page_Gameplay.o	Page_GfxTest.o Page_LuaTest.o Page_Default.o Kernel.o Page.o Page_TestFont.o Page_TestUI.o Page_TestLinearAlgebra.o Page_TestDisplayObject.o \
+		Tweener.o DebugConsole.o GameGlobal.o Profiler.o FontMgr.o Timer.o Texture.o TextureMgr.o Transform.o Logger.o \
 		Entity.o Entity_Emitter.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 

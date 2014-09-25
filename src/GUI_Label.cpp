@@ -29,7 +29,7 @@ GUI_Label::GUI_Label( const float x, const float y, const std::string& text, con
 		recreateTexture();
 	}
 	
-	setPos(x, y);
+	transform().setPos( x, y );
 }
 
 GUI_Label::~GUI_Label()

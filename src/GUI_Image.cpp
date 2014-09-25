@@ -13,7 +13,7 @@ GUI_Image::GUI_Image( const float x, const float y, const std::string& path )
 //	int height = 0;
 	Texture* texture = Texture::createImageTexture( path );
 	setTexture( texture );
-	setPos( x, y );
+	transform().setPos( x, y );
 	// setSize( texture->getWidth(), texture->getHeight() );
 	// setTexture( texture );
 }
@@ -21,7 +21,7 @@ GUI_Image::GUI_Image( const float x, const float y, const std::string& path )
 GUI_Image::GUI_Image( const float x, const float y, Texture* const texture )
 {
 	setTexture( texture );
-	setPos( x, y );
+	transform().setPos( x, y );
 }
 
 GUI_Image::~GUI_Image()

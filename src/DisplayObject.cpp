@@ -72,7 +72,14 @@ void DisplayObject::render()
 		return;
 	}
 
-	texture_->render( clipRect_, &boundingBox_, rotation_, center_, flip_ );
+	// updateBoundingBox();
+	updateBoundingBox_();	
+
+	// std::cout << "display obect render: " << std::endl;
+	// std::cout << "bouding box: " << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl; 
+	
+	float rotation = transform_.getRot();
+	texture_->render( clipRect_, &boundingBox_, rotation, center_, flip_ );
 }
 	
 void DisplayObject::setTexture( Texture* texture )

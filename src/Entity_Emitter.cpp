@@ -12,8 +12,7 @@ Entity_Emitter::Entity_Emitter(const float x, const float y, const float radius)
 	, renderRadius_(0)
 	, animDir_(true)	  
 {
-	this->setX(x);
-	this->setY(y);
+	this->transform().setPos( x, y );
 //	std::cout << "i am emitter and my id is " << this->getId() << std::endl;
 }
 
@@ -34,7 +33,7 @@ float Entity_Emitter::getRadius() const
 
 float Entity_Emitter::calculate(const float x, const float y)
 {
-	return (renderRadius_ / sqrt( (x-this->getX())*(x-this->getX()) + (y-this->getY())*(y-this->getY()) ) );
+	return (renderRadius_ / sqrt( (x-this->transform().getX())*(x-this->transform().getX()) + (y-this->transform().getY())*(y-this->transform().getY()) ) );
 }
 
 void Entity_Emitter::update(const double dt)

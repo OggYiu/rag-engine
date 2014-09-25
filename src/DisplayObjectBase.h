@@ -5,6 +5,7 @@
 #include "Eigen/Dense"
 #include "EventDispatcher.h"
 #include "Tweener.h"
+#include "Transform.h"
 
 class DisplayObjectContainer;
 
@@ -20,21 +21,19 @@ public:
 	
 public:
    	void setParent( DisplayObjectContainer* parent );
+	DisplayObjectContainer* getParent() { return parent_; }
 	virtual void render() = 0;
-
-public:
 	virtual void update(const double dt);
-	void refreshPos();
-	void setPos( const float x, const float y );
+	// void refreshPos();
+	// void setPos( const float x, const float y );
+	// virtual void setX( const float x );
+	// virtual void setY( const float y );
 	
-	virtual void setX( const float x );
-	virtual void setY( const float y );
-	
-	float getX() const { return localPos_[0]; }
-	float getY() const { return localPos_[1]; }
+	// float getX() const { return localPos_[0]; }
+	// float getY() const { return localPos_[1]; }
 
-	float getStageX() const { return stagePos_[0]; }
-	float getStageY() const { return stagePos_[1]; }
+	// float getStageX() const { return stagePos_[0]; }
+	// float getStageY() const { return stagePos_[1]; }
 
 	void setSize( const int width, const int height );
 	void setWidth( const int width );
@@ -45,17 +44,17 @@ public:
 	int getHeight() const;
 	float getScaledHeight() const;	
 
-	void setScaleX( const float x );
-	float getScaleX() const;
+	// void setScaleX( const float x );
+	// float getScaleX() const;
 
-	void setScaleY( const float y );
-	float getScaleY() const;
+	// void setScaleY( const float y );
+	// float getScaleY() const;
 
 	void setAnchor( const float x, const float y );
 	void setAnchorX( const float x );
-	float getAnchorX() const;
-
 	void setAnchorY( const float y );
+	
+	float getAnchorX() const;
 	float getAnchorY() const;
 
 	void setRotation( const float rotation );
@@ -64,30 +63,36 @@ public:
 	bool isVisible() const;
 	void setVisible( const bool visible );
 	
-	bool hitTest( const int x, const int y ) const;
-
-	int getBBoxX() const { return boundingBox_.x; }
-	int getBBoxY() const { return boundingBox_.y; }
-	int getBBoxWidth() const { return boundingBox_.w; }
-	int getBBoxHeight() const { return boundingBox_.h; }
+	bool hitTest( const int x, const int y );
 	SDL_Rect& getBBox() { return boundingBox_; }
 
 	Tweener& tweener() { return tweener_; }
+	Transform& transform() { return transform_; }
+	
+	void updateBoundingBox();
+	void tryUpdateBoundingBox();
 
-	virtual void updateBoundingBox();
+protected:
+	bool transformEventHandler( const Event& event );
+	virtual void updateBoundingBox_();
+	virtual void handleTransformPositionChanged_();
+	virtual void handleTransformRotationChanged_();
+	virtual void handleTransformScaleChanged_();
 
 protected:
 	DisplayObjectContainer* parent_;
-	Eigen::Vector2f localPos_;
-	Eigen::Vector2f stagePos_;
+	// Eigen::Vector2f localPos_;
+	// Eigen::Vector2f stagePos_;
 	Eigen::Vector2f anchor_;
-	Eigen::Vector2f scale_;
+	// Eigen::Vector2f scale_;
 	Eigen::Vector2i size_;
-	float rotation_;
+	// float rotation_;
 	bool dirtyBoundingBox_;
 	SDL_Rect boundingBox_;
 	bool visible_;
 	Tweener tweener_;
+	Transform transform_;
+	// bool dirtyMatrix_;
 
 #ifdef DEBUG
 	Graphics* debugBBox_;

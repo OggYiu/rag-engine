@@ -4,6 +4,7 @@
 #include <memory>
 #include "DisplayObjectBase.h"
 #include "Helper.h"
+#include "Transform.h"
 
 Tweener::Tweener( DisplayObjectBase* owner )
 	: owner_( owner )
@@ -29,8 +30,11 @@ void Tweener::moveTo(const float duration, const float x, const float y, finish_
 {
 	clear();
 
-	claw::tween::single_tweener t1 = claw::tween::single_tweener(owner_->getX(), x, duration, boost::bind(&DisplayObjectBase::setX, owner_, _1), claw::tween::easing_linear::ease_in );
-	claw::tween::single_tweener t2 = claw::tween::single_tweener(owner_->getY(), y, duration, boost::bind(&DisplayObjectBase::setY, owner_, _1), claw::tween::easing_linear::ease_in );
+	// claw::tween::single_tweener t1 = claw::tween::single_tweener(owner_->getX(), x, duration, boost::bind(&DisplayObjectBase::setX, owner_, _1), claw::tween::easing_linear::ease_in );
+	// claw::tween::single_tweener t2 = claw::tween::single_tweener(owner_->getY(), y, duration, boost::bind(&DisplayObjectBase::setY, owner_, _1), claw::tween::easing_linear::ease_in );
+	
+	claw::tween::single_tweener t1 = claw::tween::single_tweener(owner_->transform().getX(), x, duration, boost::bind(&Transform::setX, owner_->transform(), _1), claw::tween::easing_linear::ease_in );
+	claw::tween::single_tweener t2 = claw::tween::single_tweener(owner_->transform().getY(), y, duration, boost::bind(&Transform::setY, owner_->transform(), _1), claw::tween::easing_linear::ease_in );
 	tweenGroup_ = new claw::tween::tweener_group();
 	tweenGroup_->insert(t1);
 	tweenGroup_->insert(t2);	
@@ -45,8 +49,8 @@ void Tweener::scaleTo(const float duration, const float x, const float y, finish
 {
 	clear();
 
-	claw::tween::single_tweener t1 = claw::tween::single_tweener(owner_->getScaleX(), x, duration, boost::bind(&DisplayObjectBase::setScaleX, owner_, _1), claw::tween::easing_linear::ease_in );
-	claw::tween::single_tweener t2 = claw::tween::single_tweener(owner_->getScaleY(), y, duration, boost::bind(&DisplayObjectBase::setScaleY, owner_, _1), claw::tween::easing_linear::ease_in );	
+	claw::tween::single_tweener t1 = claw::tween::single_tweener( owner_->transform().getScaleX(), x, duration, boost::bind( &Transform::setScaleX, &owner_->transform(), _1 ), claw::tween::easing_linear::ease_in );
+	claw::tween::single_tweener t2 = claw::tween::single_tweener( owner_->transform().getScaleY(), y, duration, boost::bind( &Transform::setScaleY, owner_->transform(), _1 ), claw::tween::easing_linear::ease_in );	
 
 	tweenGroup_ = new claw::tween::tweener_group();
 	tweenGroup_->insert(t1);

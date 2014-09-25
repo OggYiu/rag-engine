@@ -60,8 +60,8 @@ void Graphics::clear()
 	}
 
 	primitives_.clear();
-	textureDirty_ = true;
-}
+	updateTexture();
+ }
 
 // Draws a line using the current line style from the current drawing position to (x, y); the current drawing position is then set to (x, y).
 // 	Graphics
@@ -69,14 +69,14 @@ void Graphics::lineTo( const int x, const int y )
 {
 	primitives_.push_back( new Line( round( cursor_[0] ), round( cursor_[1] ), x, y, drawColor_ ) );
 	cursor_[0] = x; cursor_[1] = y;
-	textureDirty_ = true;
+	updateTexture();
 }
 
 void Graphics::aalineTo( const int x, const int y )
 {
 	primitives_.push_back( new AALine( cursor_[0], cursor_[1], x, y, drawColor_ ) );
 	cursor_[0] = x; cursor_[1] = y;
-	textureDirty_ = true;
+	updateTexture();
 }
 
 // Moves the current drawing position to (x, y).
@@ -89,34 +89,45 @@ void Graphics::moveTo( const int x, const int y )
 void Graphics::drawPixel(const int x, const int y)
 {
 	primitives_.push_back(new Pixel(x, y, drawColor_));
-	textureDirty_ = true;
+	updateTexture();
 }
 
 void Graphics::drawSolidRect(const int x, const int y, const int width, const int height)
 {
 	primitives_.push_back(new SolidRect(x, y, width, height, drawColor_));
-	textureDirty_ = true;
+	updateTexture();
 }
 
 void Graphics::drawFrameRect(const int x, const int y, const int width, const int height)
 {
 	primitives_.push_back(new FrameRect(x, y, width, height, drawColor_));
-	textureDirty_ = true;
+	updateTexture();
 }
 
 void Graphics::drawRoundSolidRect( const int x, const int y, const int width, const int height, const float radius )
 {
 	primitives_.push_back( new RoundSolidRect( x, y, width, height, radius, drawColor_ ) );
-	textureDirty_ = true;
+	updateTexture();
 }
 
 void Graphics::drawRoundFrameRect( const int x, const int y, const int width, const int height, const float radius )
 {
 	primitives_.push_back( new RoundFrameRect( x, y, width, height, radius, drawColor_ ) );
-	textureDirty_ = true;
+	updateTexture();
 }
 
 void Graphics::render()
+{
+	tryUpdateTexture_();
+	DisplayObject::render();
+}
+
+void Graphics::updateTexture()
+{
+	textureDirty_ = true;
+}
+
+void Graphics::tryUpdateTexture_()
 {
 	if ( textureDirty_ ) {
 		releaseTexture();
@@ -127,27 +138,7 @@ void Graphics::render()
 		Texture* texture = new Texture( sdlTexture );
 		setTexture( texture );
 		updateBoundingBox();
-		// std::cout << "texture size: " << texture->getWidth() << ", " << texture->getHeight() << std::endl;
-
-		// std::cout << "texture created" << std::endl;
-			// texture_->render( clipRect_, &boundingBox_, rotation_, center_, flip_ );
-		// std::cout << "bounding box: " << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl;
-		// PrimitiveIter iter = primitives_.begin();
-		// PrimitiveIter endIter = primitives_.end();
-		// if ( parent_ != nullptr ) {
-		// 	while ( iter != endIter )
-		// 	{
-		// 		(*iter)->render( parent_->getX(), parent_->getY() );
-		// 		++iter;
-		// 	}
-		// } else {
-		// 	while ( iter != endIter )
-		// 	{
-		// 		(*iter)->render();
-		// 		++iter;
-		// 	}
-		// }
+		updateBoundingBox_();
 	}
-
-	DisplayObject::render();
 }
+

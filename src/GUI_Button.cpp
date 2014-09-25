@@ -28,7 +28,7 @@ GUI_Button::GUI_Button( const int x, const int y, Texture* texture )
 {
 	GUI_Image* image = new GUI_Image( 0, 0 , texture );
 	this->addChild( image );
-	setPos( x, y );
+	transform().setPos( x, y );
 	setSize( texture->getWidth(), texture->getHeight() );
 }
 
@@ -119,10 +119,10 @@ bool GUI_Button::eventHandler( const Event& event )
 						// clicked handler
 						claw::tween::tweener_group group;
 						group.insert(
-							claw::tween::single_tweener(1.0f, TWEEN_HOVER_SCALE, TWEEN_HOVER_DURATION, boost::bind(&DisplayObject::setScaleX, this, _1), claw::tween::easing_linear::ease_in )
+							claw::tween::single_tweener( 1.0f, TWEEN_HOVER_SCALE, TWEEN_HOVER_DURATION, boost::bind( &Transform::setScaleX, &transform(), _1 ), claw::tween::easing_linear::ease_in )
 							);
 						group.insert(
-							claw::tween::single_tweener(1.0f, TWEEN_HOVER_SCALE, TWEEN_HOVER_DURATION, boost::bind(&DisplayObject::setScaleY, this, _1), claw::tween::easing_linear::ease_in )
+							claw::tween::single_tweener( 1.0f, TWEEN_HOVER_SCALE, TWEEN_HOVER_DURATION, boost::bind( &Transform::setScaleY, &transform(), _1 ), claw::tween::easing_linear::ease_in )
 							);
 
 						tweenSeq_.insert(group);
@@ -141,10 +141,10 @@ bool GUI_Button::eventHandler( const Event& event )
 			{
 				claw::tween::tweener_group group;
 				group.insert(
-					claw::tween::single_tweener(TWEEN_HOVER_SCALE, 1.0f, TWEEN_HOVER_DURATION, boost::bind(&DisplayObject::setScaleX, this, _1), claw::tween::easing_linear::ease_in )
+					claw::tween::single_tweener( TWEEN_HOVER_SCALE, 1.0f, TWEEN_HOVER_DURATION, boost::bind( &Transform::setScaleX, &transform(), _1 ), claw::tween::easing_linear::ease_in )
 					);
 				group.insert(
-					claw::tween::single_tweener(TWEEN_HOVER_SCALE, 1.0f, TWEEN_HOVER_DURATION, boost::bind(&DisplayObject::setScaleY, this, _1), claw::tween::easing_linear::ease_in )
+					claw::tween::single_tweener( TWEEN_HOVER_SCALE, 1.0f, TWEEN_HOVER_DURATION, boost::bind( &Transform::setScaleY, &transform(), _1 ), claw::tween::easing_linear::ease_in )
 					);
 
 				tweenSeq_.insert(group);
@@ -170,16 +170,16 @@ bool GUI_Button::eventHandler( const Event& event )
 				claw::tween::tweener_group group1;
 				claw::tween::tweener_group group2;
 				group1.insert(
-					claw::tween::single_tweener(TWEEN_HOVER_SCALE, TWEEN_HIT_SCALE, TWEEN_HIT_DURATION, boost::bind(&DisplayObject::setScaleX, this, _1), claw::tween::easing_linear::ease_in )
+					claw::tween::single_tweener( TWEEN_HOVER_SCALE, TWEEN_HIT_SCALE, TWEEN_HIT_DURATION, boost::bind( &Transform::setScaleX, &transform(), _1 ), claw::tween::easing_linear::ease_in )
 					);
 				group1.insert(
-					claw::tween::single_tweener(TWEEN_HOVER_SCALE, TWEEN_HIT_SCALE, TWEEN_HIT_DURATION, boost::bind(&DisplayObject::setScaleY, this, _1), claw::tween::easing_linear::ease_in )
+					claw::tween::single_tweener( TWEEN_HOVER_SCALE, TWEEN_HIT_SCALE, TWEEN_HIT_DURATION, boost::bind( &Transform::setScaleY, &transform(), _1 ), claw::tween::easing_linear::ease_in )
 					);
 				group2.insert(
-					claw::tween::single_tweener(TWEEN_HIT_SCALE, TWEEN_HOVER_SCALE, TWEEN_HIT_DURATION, boost::bind(&DisplayObject::setScaleX, this, _1), claw::tween::easing_linear::ease_in )
+					claw::tween::single_tweener( TWEEN_HIT_SCALE, TWEEN_HOVER_SCALE, TWEEN_HIT_DURATION, boost::bind( &Transform::setScaleX, &transform(), _1 ), claw::tween::easing_linear::ease_in )
 					);
 				group2.insert(
-					claw::tween::single_tweener(TWEEN_HIT_SCALE, TWEEN_HOVER_SCALE, TWEEN_HIT_DURATION, boost::bind(&DisplayObject::setScaleY, this, _1), claw::tween::easing_linear::ease_in )
+					claw::tween::single_tweener( TWEEN_HIT_SCALE, TWEEN_HOVER_SCALE, TWEEN_HIT_DURATION, boost::bind( &Transform::setScaleY, &transform(), _1 ), claw::tween::easing_linear::ease_in )
 					);
 
 				tweenSeq_.insert(group1);
