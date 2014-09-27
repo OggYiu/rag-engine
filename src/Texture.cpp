@@ -75,6 +75,6 @@ void Texture::render( SDL_Rect* clipRect, SDL_Rect* renderRect, const double ang
 		assert( false && "invalid texture" );
 		return;
 	}
-	
+
 	SDL_RenderCopyEx( kernel.getRenderer(), sdlTexture_, clipRect, renderRect, angle, center, flip );
 }

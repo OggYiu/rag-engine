@@ -34,7 +34,6 @@ Transform::~Transform()
 {
 }
 
-
 void Transform::setPos( const float x, const float y ) {
 	localTrans_.translation().x() = x;
 	localTrans_.translation().y() = y;
@@ -43,6 +42,7 @@ void Transform::setPos( const float x, const float y ) {
 }
 
 void Transform::setX( const float x ) {
+	// std::cout << "transform, setx: " << x << std::endl;
 	localTrans_.translation().x() = x;
 	updateWorldTrans();
 	this->dispatchEvent( TransformEvent( TransformEvent::TRANSFORM_POSITION_CHANGED, *this ) );

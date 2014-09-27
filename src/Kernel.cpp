@@ -158,17 +158,6 @@ bool Kernel::loop()
 			{
 				std::unique_ptr<KeyboardEvent> ptr = std::unique_ptr<KeyboardEvent>( new KeyboardEvent( e.type == SDL_KEYDOWN? KeyboardEvent::KEY_DOWN : KeyboardEvent::KEY_UP, e.key.timestamp, e.key.keysym.sym, (int)e.key.keysym.mod, (int)e.key.repeat ) );
 				stage_->dispatchEvent( *ptr.get() );
-				
-				switch (e.key.keysym.sym)
-				{
-
-				case SDLK_ESCAPE:
-					_quit = true;
-					break;
-				// case SDL_MOUSEMOTION:
-				// 	std::cout << "mouse motion"p << std::endl;
-				// 	break;
-				}
 			}
 			else if (e.type == SDL_MOUSEMOTION)
 			{
@@ -242,7 +231,10 @@ void Kernel::create()
 
 	// init debug console
 	debugConsole_ = new DebugConsole();
-	debugContainer_->addChild(debugConsole_);	
+	debugContainer_->addChild(debugConsole_);
+
+	getStage().addEventListener( KeyboardEvent::KEY_DOWN, bindEventHandler( &Kernel::eventHandler, this ), this );
+	getStage().addEventListener( KeyboardEvent::KEY_UP, bindEventHandler( &Kernel::eventHandler, this ), this );
 }
 
 void Kernel::free_font()
@@ -263,6 +255,37 @@ void Kernel::free_glyphs()
 			SDL_FreeSurface(glyphs_[i]);
 		glyphs_[i]=0;
 	}
+}
+
+bool Kernel::eventHandler( const Event& event )
+{
+	if ( event.isEqual( KeyboardEvent::KEY_DOWN ) || event.isEqual( KeyboardEvent::KEY_UP ) ) {
+		bool isDown = event.isEqual( KeyboardEvent::KEY_DOWN );
+		KeyboardEvent* e = (KeyboardEvent*)&event;
+		switch ( e->getKeycode() ) {
+		case SDLK_ESCAPE:
+			_quit = true;
+			break;
+		case SDLK_BACKQUOTE:
+			if ( isDown ) {
+				toggleDebugConsoleVisible();
+			}
+			break;
+		}
+	}
+
+	return true;
+}
+
+void Kernel::toggleDebugConsoleVisible()
+{
+	debugConsole_->setVisible( !debugConsole_->isVisible() );
+	// std::cout << debugConsole_->isVisible() << std::endl;
+}
+
+void Kernel::addDebugMsg( const std::string& msg, const Uint32 color )
+{
+	debugConsole_->addDebugMsg( msg, color );
 }
 
 void Kernel::update(const double dt)

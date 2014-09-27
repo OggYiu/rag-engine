@@ -14,9 +14,10 @@ public:
 public:	
 	virtual void update(const double dt);
 	virtual void render();
-	
+
 protected:
 	virtual bool resolved();
+	void here();
 };
 
 #endif

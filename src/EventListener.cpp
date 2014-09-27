@@ -13,7 +13,7 @@ EventListener::~EventListener()
 
 bool EventListener::isEqual(const std::string& type, const Object* invoker) const
 {
-	return type == type_ && invoker_ == invoker;
+	return type.compare( type_ ) == 0 && invoker_ == invoker;
 }
 
 bool EventListener::exec(const Event& event)

@@ -114,15 +114,14 @@ static inline float easeOutQuart(float t, float b, float c, float d)
 
 static inline Uint32 RGBA2Int(const Uint8 r, const Uint8 g, const Uint8 b, const Uint8 a)
 {        
-//	return (((((a << 8) + r) << 8) + g) << 8) + b;
-	return (((((a << 8) + b) << 8) + g) << 8) + r;
+	return (((((a << 8) + r) << 8) + g) << 8) + b;
 }
 
-static inline void int2RGBA(Uint32 color, Uint8& r, Uint8& g, Uint8& b, Uint8& a)
+static inline void int2RGBA( Uint32 color, Uint8& r, Uint8& g, Uint8& b, Uint8& a)
 {
-	b = color & 0xFF; color = color >> 8;
-	g = color & 0xFF; color = color >> 8;
 	r = color & 0xFF; color = color >> 8;
+	g = color & 0xFF; color = color >> 8;
+	b = color & 0xFF; color = color >> 8;
 	a = color & 0xFF;
 }
 

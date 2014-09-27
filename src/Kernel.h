@@ -9,13 +9,15 @@
 #include "SDL_ttf.h"
 #include "Settings.h"
 #include "Stage.h"
+#include "Object.h"
+#include "Event.h"
 
 #define GLYPH_SIZE 128
 
 class Page;
 class DebugConsole;
 
-class Kernel
+class Kernel : public Object
 {
 public:
 	Kernel();
@@ -37,16 +39,19 @@ public:
 	int getScreenHeight() const;
 	std::string getBaseDir() const;
 	Stage& getStage() const;
+	void addDebugMsg( const std::string& msg, const Uint32 color = 0xFF000000 );
 
 private:
 	bool initSDL();
 	bool loop();
-	void update(const double dt);
+	virtual void update(const double dt);
 	void render();
 	void setPage(Page* page);
 	void create();
 	void free_font();
 	void free_glyphs();
+	bool eventHandler( const Event& event );
+	void toggleDebugConsoleVisible();
 	
 private:
 	SDL_Renderer* renderer_;

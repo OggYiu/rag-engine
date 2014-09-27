@@ -28,8 +28,8 @@ int main( int argc, char* argv[] )
 	// Page_GfxTest* startPage = new Page_GfxTest();
 	// Page_Gameplay* startPage = new Page_Gameplay();	
 //	Page_TestFont* startPage = new Page_TestFont();
-	// Page_TestUI* startPage = new Page_TestUI();
+	Page_TestUI* startPage = new Page_TestUI();
 	// Page_TestLinearAlgebra* startPage = new Page_TestLinearAlgebra();
-	Page_TestDisplayObject* startPage = new Page_TestDisplayObject();
+	// Page_TestDisplayObject* startPage = new Page_TestDisplayObject();
 	return kernel.exec( argc, argv, settings, startPage ) ? 0 : 1;
 }

@@ -20,7 +20,7 @@ unsigned int Event::getTimestamp() const
 	return timestamp_;
 }
 
-bool Event::isEqual( const std::string& type )
+bool Event::isEqual( const std::string& type ) const
 {
 	return type_.compare( type ) == 0;
 }

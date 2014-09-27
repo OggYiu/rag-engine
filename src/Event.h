@@ -17,7 +17,7 @@ public:
 	// getter and setter
 	const std::string& getType() const;
 	unsigned int getTimestamp() const;
-	bool isEqual( const std::string& type );
+	bool isEqual( const std::string& type ) const;
 	
 public:
 	const std::string type_;

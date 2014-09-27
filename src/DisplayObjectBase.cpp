@@ -3,14 +3,18 @@
 #include <iostream>
 #include "Helper.h"
 #include "TransformEvent.h"
+#include "MouseEvent.h"
+#include "Component_Base.h"
+#include "Component_Dragging.h"
 
 DisplayObjectBase::DisplayObjectBase()
 	: parent_( nullptr )
-	  // , rotation_( 0.0f )
-	, dirtyBoundingBox_( false )
+	, needReleased_( false )
 	, visible_( true )
 	, tweener_( Tweener( this ) )
 	, transform_( this )
+	, dirtyBoundingBox_( false )	  
+
 {
 	transform_.addEventListener( TransformEvent::TRANSFORM_POSITION_CHANGED, bindEventHandler( &DisplayObjectBase::transformEventHandler, this ), this );
 	transform_.addEventListener( TransformEvent::TRANSFORM_ROTATION_CHANGED, bindEventHandler( &DisplayObjectBase::transformEventHandler, this ), this );
@@ -34,7 +38,9 @@ DisplayObjectBase::DisplayObjectBase()
 
 DisplayObjectBase::~DisplayObjectBase()
 {
-//	std::cout << "displayobjectbase decon" << std::endl;
+	transform_.removeEventListener( TransformEvent::TRANSFORM_POSITION_CHANGED, this );
+	transform_.removeEventListener( TransformEvent::TRANSFORM_ROTATION_CHANGED, this );	
+	transform_.removeEventListener( TransformEvent::TRANSFORM_SCALE_CHANGED, this );
 }
 
 void DisplayObjectBase::setParent( DisplayObjectContainer* parent )
@@ -48,6 +54,34 @@ void DisplayObjectBase::update(const double dt)
 {
 	EventDispatcher::update( dt );
 	tweener_.update( dt );
+}
+
+void DisplayObjectBase::release()
+{
+	if ( needReleased_ ) {
+		logger.w( "display object base", "already released" );
+	}
+	needReleased_ = true;
+}
+
+void DisplayObjectBase::addComponent( Component_Base* component )
+{
+	if ( components_[component->getComponentName()] != nullptr ) {
+		logger.e( "displayobjectbase", "component already existed" );
+		std::cout << "line: " << __LINE__ << ", file: " << __FILE__ << std::endl;
+	}
+}
+
+void DisplayObjectBase::removeComponent( const std::string& name )
+{
+	if ( components_[name] != nullptr ) {
+		return;
+	}
+	
+	std::stringstream ss;
+	ss << "component does not existed: " << name;
+	logger.e( "displayobjectbase", ss.str() );
+	std::cout << "line: " << __LINE__ << ", file: " << __FILE__ << std::endl;
 }
 
 // void DisplayObjectBase::setPos( const float x, const float y)
@@ -175,7 +209,22 @@ void DisplayObjectBase::updateBoundingBox()
 
 void DisplayObjectBase::tryUpdateBoundingBox()
 {
+	// std::cout << "try update bounding box" << std::endl;
 	updateBoundingBox_();
+}
+
+void DisplayObjectBase::setDragEnable( const bool enable )
+{
+	if ( components_[Component_Dragging::NAME] != nullptr && enable ) {
+		logger.e( "display object base", "dragging mode already enabled" );
+		return;
+	}
+
+	if ( enable ) {
+		addComponent( new Component_Dragging( this ) );
+	} else {
+		removeComponent( Component_Dragging::NAME );
+	}
 }
 
 void DisplayObjectBase::updateBoundingBox_()
@@ -183,7 +232,6 @@ void DisplayObjectBase::updateBoundingBox_()
 	if ( !dirtyBoundingBox_ ) {
 		return;
 	}
-		
 	dirtyBoundingBox_ = false;
 	int modWidth = round( getScaledWidth() );
 	int modHeight = round( getScaledHeight() );
@@ -219,6 +267,8 @@ bool DisplayObjectBase::transformEventHandler( const Event& event )
 void DisplayObjectBase::handleTransformPositionChanged_()
 {
 	updateBoundingBox();
+
+	// std::cout << "handleTransformPositionChanged_()" << std::endl;
 }
 
 void DisplayObjectBase::handleTransformRotationChanged_()

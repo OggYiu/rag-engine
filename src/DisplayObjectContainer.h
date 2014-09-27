@@ -1,6 +1,7 @@
 #ifndef __DISPLAYOBJECTCONTAINER_H__
 #define __DISPLAYOBJECTCONTAINER_H__
 
+#include <string>
 #include <unordered_map>
 #include <vector>
 #include "DisplayObjectBase.h"
@@ -19,13 +20,16 @@ public:
 	virtual void render();
 	virtual void update(const double dt);
 	
-	void addChild( DisplayObjectBase* const entity );
+	virtual void addChild( DisplayObjectBase* const entity );
 	void removeChild( DisplayObjectBase* entity );
+	void removeChildAt( const int index );
 	void releaseChild( DisplayObjectBase* entity );
+	void releaseChildAt( const int index );
 	void releaseAllChildren();
 	int getIndex( const DisplayObjectBase* entity ) const;
 	DisplayObjectVec& getChildren();
-
+	virtual void updateBoundingBox();
+	
 protected:
 	virtual void updateBoundingBox_();
 	void updateAllWorldTrans_();

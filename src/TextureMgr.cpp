@@ -31,17 +31,19 @@ SDL_Texture* TextureMgr::createEmptySDLTexture( const int width, const int heigh
 {
 	SDL_Texture* sdlTexture = nullptr;
 	SDL_Surface* surface = SDL_CreateRGBSurface( 0, width, height, 32, 0, 0, 0, 0 );
-	SDL_Rect rect;
+	// SDL_Rect rect;
 	int result;
-	rect = { 0, 0, width, height };
-	result = SDL_FillRect( surface, &rect, SDL_MapRGB( surface->format, red, green, blue ) );
-	if (result == 0) {
+	// rect = { 0, 0, width, height };
+	result = SDL_FillRect( surface, nullptr, SDL_MapRGB( surface->format, red, green, blue ) );
+	if (result != 0) {
 		showSDLError();
+		return nullptr;
 	}
 
 	sdlTexture = SDL_CreateTextureFromSurface( kernel.getRenderer(), surface );
 	if ( sdlTexture == nullptr ) {
 		showSDLError();
+		return nullptr;
 	}
 	if ( alpha < 255 ) {
 		SDL_SetTextureBlendMode( sdlTexture, SDL_BLENDMODE_BLEND );
@@ -82,10 +84,12 @@ SDL_Texture* TextureMgr::createSDLTextureFromImage( const std::string& path, int
 	return texture;
 }
 
-SDL_Texture* TextureMgr::createTTFTexture( const std::string& text, const std::string& fontName, const int fontSize, const Uint8 red, const Uint8 green, const Uint8 blue, const Uint8 alpha, int* width, int* height )
+SDL_Texture* TextureMgr::createTTFTexture( const std::string& text, const std::string& fontName, const int fontSize, const Uint32 color, int* width, int* height )
 {
 	SDL_Texture* texture = nullptr;
 	TTF_Font* font = fontMgr.createFont( fontName, fontSize );
+	Uint8 red, green, blue, alpha;
+	int2RGBA( color, red, green, blue, alpha );
 	SDL_Surface* textSurface = TTF_RenderText_Solid( font, text.c_str(), { red, green, blue, alpha } );
 	if( textSurface == nullptr )
 	{

@@ -26,7 +26,7 @@ public:
 	
 	void setAlpha( const Uint8 alpha );
 	Uint8 getAlpha() const { return alpha_; }
-
+	
 protected:
 	void releaseTexture();
 	

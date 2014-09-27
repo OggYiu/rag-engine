@@ -7,6 +7,7 @@
 #include "Timer.h"
 
 class GUI_Label;
+class GUI_VBox;
 
 class DebugConsole : public DisplayObjectContainer
 {
@@ -20,8 +21,7 @@ public:
 	
 public:
 	virtual void update(const double dt);
-	int getId() const;
-	bool isReleased() const { return released_; }
+	void addDebugMsg( const std::string& msg, const Uint32 color = 0xFF000000 );
 	
 protected:
 	virtual bool resolved();
@@ -30,7 +30,8 @@ protected:
 private:
 	Timer timer_;
 	GUI_Label* fpsLabel_;
-	GUI_Label* mousePosLabel_;	
+	GUI_Label* mousePosLabel_;
+	GUI_VBox* vbox_;
 };
 
 #define debugConsole DebugConsole::getInstance();

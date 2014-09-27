@@ -3,12 +3,11 @@
 #include <iostream>
 #include <assert.h>
 
-int Object::s_nextObjectId = 1;
-Object::Object():
-	released_(false),
-	updated_(false),
-	age_(0),
-	id_(Object::s_nextObjectId++)
+int Object::s_nextId = 0;
+
+Object::Object()
+	: id_( s_nextId++ )
+	, updated_(false)
 {
 }
 
@@ -17,7 +16,7 @@ Object::~Object()
 //	std::cout << "object decon" << std::endl;	
 }
 
-void Object::update(const double dt)
+void Object::update( const double dt __attribute__((unused)) )
 {
 	if (!updated_)
 	{
@@ -28,12 +27,5 @@ void Object::update(const double dt)
 		}
 		updated_ = true;
 	}
-	age_ += dt;
 }
-
-int Object::getId() const
-{
-	return id_;
-}
-
 

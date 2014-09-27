@@ -1,20 +1,27 @@
 #ifndef __DISPLAYOBJECTBASE_H__
 #define __DISPLAYOBJECTBASE_H__
 
+#include <map>
 #include "SDL.h"
 #include "Eigen/Dense"
 #include "EventDispatcher.h"
 #include "Tweener.h"
 #include "Transform.h"
+#include "Logger.h"
 
 class DisplayObjectContainer;
+class Component_Base;
 
 #ifdef DEBUG
 class Graphics;
 #endif
 
 class DisplayObjectBase : public EventDispatcher
-{	
+{
+public:
+	typedef std::map< std::string, Component_Base* > ComponentMap;
+	typedef ComponentMap::iterator ComponentIter; 
+	
 public:
 	DisplayObjectBase();
 	virtual ~DisplayObjectBase();
@@ -24,17 +31,13 @@ public:
 	DisplayObjectContainer* getParent() { return parent_; }
 	virtual void render() = 0;
 	virtual void update(const double dt);
-	// void refreshPos();
-	// void setPos( const float x, const float y );
-	// virtual void setX( const float x );
-	// virtual void setY( const float y );
+
+	void release();
+	bool needReleased() { return needReleased_; }
 	
-	// float getX() const { return localPos_[0]; }
-	// float getY() const { return localPos_[1]; }
-
-	// float getStageX() const { return stagePos_[0]; }
-	// float getStageY() const { return stagePos_[1]; }
-
+	void addComponent( Component_Base* component );
+	void removeComponent( const std::string& name );
+	
 	void setSize( const int width, const int height );
 	void setWidth( const int width );
 	int getWidth() const;
@@ -43,12 +46,6 @@ public:
 	void setHeight( const int height );
 	int getHeight() const;
 	float getScaledHeight() const;	
-
-	// void setScaleX( const float x );
-	// float getScaleX() const;
-
-	// void setScaleY( const float y );
-	// float getScaleY() const;
 
 	void setAnchor( const float x, const float y );
 	void setAnchorX( const float x );
@@ -71,32 +68,35 @@ public:
 	
 	void updateBoundingBox();
 	void tryUpdateBoundingBox();
+	void setDragEnable( const bool enable );
+	void removeMouseEventListeners();
 
 protected:
 	bool transformEventHandler( const Event& event );
 	virtual void updateBoundingBox_();
+	bool needUpdateBoundingBox() { return dirtyBoundingBox_; }
+	void doneUpdateBoundingBox() { dirtyBoundingBox_ = false; }
 	virtual void handleTransformPositionChanged_();
 	virtual void handleTransformRotationChanged_();
 	virtual void handleTransformScaleChanged_();
 
 protected:
 	DisplayObjectContainer* parent_;
-	// Eigen::Vector2f localPos_;
-	// Eigen::Vector2f stagePos_;
+	bool needReleased_;
 	Eigen::Vector2f anchor_;
-	// Eigen::Vector2f scale_;
 	Eigen::Vector2i size_;
-	// float rotation_;
-	bool dirtyBoundingBox_;
 	SDL_Rect boundingBox_;
 	bool visible_;
 	Tweener tweener_;
 	Transform transform_;
-	// bool dirtyMatrix_;
+	ComponentMap components_;
 
 #ifdef DEBUG
 	Graphics* debugBBox_;
 #endif
+
+private:	
+	bool dirtyBoundingBox_;
 };
 
 #endif

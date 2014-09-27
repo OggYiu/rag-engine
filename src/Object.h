@@ -3,24 +3,23 @@
 
 class Object
 {
+private:
+	static int s_nextId;
+	
 public:
 	Object();
 	virtual ~Object();
 
 public:
 	virtual void update(const double dt);
-	int getId() const;
-	bool isReleased() const { return released_; }
+	int getId() { return id_; }
 	
 protected:
 	virtual bool resolved() { return true; }
 	
 public:
-	bool released_;
-	bool updated_;
-	double age_;
 	int id_;
-	static int s_nextObjectId;
+	bool updated_;
 };
 
 #endif

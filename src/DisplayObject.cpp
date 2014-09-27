@@ -68,6 +68,10 @@ void DisplayObject::setAlpha(Uint8 alpha)
 
 void DisplayObject::render()
 {
+	if ( !isVisible() ) {
+		return;
+	}
+	
 	if ( texture_ == nullptr ) {
 		return;
 	}

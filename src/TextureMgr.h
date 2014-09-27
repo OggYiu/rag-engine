@@ -22,7 +22,7 @@ public:
 public:
 	SDL_Texture* createImageSDLTexture( const std::string& path, int* width = nullptr, int* height = nullptr );
 	SDL_Texture* createEmptySDLTexture( const int width, const int height, const Uint8 red = 255, const Uint8 green = 255, const Uint8 blue = 255, const Uint8 alpha = 255 );
-	SDL_Texture* createTTFTexture( const std::string& text, const std::string& fontName = FontMgr::DEFAULT_FONT_NAME, const int fontSize = FontMgr::DEFAULT_FONT_SIZE, const Uint8 red = 255, const Uint8 green = 255, const Uint8 blue = 255, const Uint8 alpha = 255, int* width = nullptr, int* height = nullptr );
+	SDL_Texture* createTTFTexture( const std::string& text, const std::string& fontName = FontMgr::DEFAULT_FONT_NAME, const int fontSize = FontMgr::DEFAULT_FONT_SIZE, const Uint32 color = 0xFFFFFFFF, int* width = nullptr, int* height = nullptr );
 	SDL_Texture* createPrimitiveTexture( const std::vector<Primitive*>& primitives );
 	void releaseSDLTexture( SDL_Texture* sdlTexture );
 	

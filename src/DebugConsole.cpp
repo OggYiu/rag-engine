@@ -2,9 +2,11 @@
 
 #include <sstream>
 #include "GUI_Label.h"
+#include "GUI_VBox.h"
 #include "MouseEvent.h"
 #include "Kernel.h"
 #include "Helper.h"
+#include "Logger.h"
 
 static int countedFrames = 0;
 
@@ -35,23 +37,41 @@ void DebugConsole::update(const double dt)
 	++countedFrames;
 }
 
+void DebugConsole::addDebugMsg( const std::string& msg, const Uint32 color )
+{
+	GUI_Label* label = new GUI_Label( 4, 0, msg.c_str(), "pf_ronda_seven", 12, color );
+	vbox_->addChild( label );
+
+	// if ( vbox_->getHeight() > kernel.getScreenHeight() ) {
+	// 	std::cout << vbox_->getHeight() << ", " << kernel.getScreenHeight() << ", result: " << ( vbox_->getHeight() > kernel.getScreenHeight() ) << std::endl;
+	// 	vbox_->releaseChildAt( 0 );
+	// 	vbox_->rearrangeChildren();
+	// }
+
+	// std::stringstream ss;
+	// ss << vbox_->getHeight();
+	// std::string str = ss.str();
+	// logger.d( "debug console", str );
+}
+
 bool DebugConsole::resolved()
 {
 	Parent::resolved();
 
-	fpsLabel_ = new GUI_Label( 4, 0, "AVG FPS: 9999", "pf_ronda_seven", 12, 0, 0, 0 );
-
-//	std::cout << "fps: " << fpsLabel_->getWidth() << ", " << fpsLabel_->getHeight() << std::endl;
-//	fpsLabel_->setPos( fpsLabel_->getWidth() / 2.0f, fpsLabel_->getHeight() / 2.0f );
-	fpsLabel_->setAnchor( 0.0f, 0.0f );
+	fpsLabel_ = new GUI_Label( 0, 0, "AVG FPS: 9999", "pf_ronda_seven", 12, 0xFF000000 );
+	fpsLabel_->transform().setX( kernel.getScreenWidth() - fpsLabel_->getWidth() - 32 );
 	this->addChild( fpsLabel_ );
 	
-	mousePosLabel_ = new GUI_Label( 4, fpsLabel_->getHeight(), "hello", "pf_ronda_seven", 12, 0, 0, 255, 200 );
+	mousePosLabel_ = new GUI_Label( 0, fpsLabel_->getHeight(), "mouse, x: 000, y: 000", "pf_ronda_seven", 12, 0xAA0000FF );
+	mousePosLabel_->transform().setX( kernel.getScreenWidth() - 160 );
 	this->addChild( mousePosLabel_ );
 	
 	timer_.start();
 
 	kernel.getStage().addEventListener( MouseEvent::MOUSE_MOVE, bindEventHandler( &DebugConsole::eventHandler, this ), this );
+
+	vbox_ = new GUI_VBox();
+	this->addChild( vbox_ );
 	
 	return true;
 }
