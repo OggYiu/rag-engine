@@ -13,7 +13,7 @@ public:
 	static const std::string KEY_UP;
 
 public:
-	KeyboardEvent( const std::string& type, const unsigned int timestamp, const SDL_Keycode keycode, const int mod, const int repeat );
+	KeyboardEvent( const std::string& type, const SDL_Keycode keycode, const int mod, const int repeat );
 
 	SDL_Keycode getKeycode() const { return keycode_; }
 	int getMod() const { return mod_; }

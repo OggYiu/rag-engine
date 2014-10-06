@@ -9,12 +9,14 @@
 #include <vector>
 #include <limits>
 #include <assert.h>
-#include "Event.h"
-#include "Kernel.h"
-#include "Primitive.h"
 #include "SDL_ttf.h"
 #include "SDL.h"
 #include "SDL2_gfxPrimitives.h"
+#include "Eigen/Dense"
+#include "Event.h"
+#include "Kernel.h"
+#include "Primitive.h"
+#include "DisplayObjectBase.h"
 
 #define PI 3.14285714286
 #define RAD2DEG_ 57.2727272727
@@ -32,60 +34,9 @@
 	  }											\
 	 }
 
-static inline SDL_Texture* createTextureFromPrimitives( const std::vector<Primitive*>& primitives )
+static inline bool isEqual( const float v1, const float v2 )
 {
-	SDL_Texture* sdlTexture = nullptr;
-	SDL_Renderer* renderer = kernel.getRenderer();
-	int maxX = std::numeric_limits<int>::min();
-	int minX = std::numeric_limits<int>::max();
-	int maxY = std::numeric_limits<int>::min();
-	int minY = std::numeric_limits<int>::max();
-
-	std::vector<Primitive*>::const_iterator iter = primitives.begin();
-	std::vector<Primitive*>::const_iterator endIter = primitives.end();
-
-	BBox box;
-	while ( iter != endIter ) {
-		(*iter)->getBoundingBox( box );
-		// std::cout << "primitive: " << box.x1() << ", " << box.y1() << ", " << box.x2() << ", " << box.y2() << std::endl;
-		minX = std::min( minX, box.x1() );
-		maxX = std::max( maxX, box.x2() );
-		minY = std::min( minY, box.y1() );
-		maxY = std::max( maxY, box.y2() );
-		++iter;
-	}
-
-	// std::cout << "result: " << minX << ", " << minY << ", " << maxX << ", " << maxY << std::endl;
-
-	if ( maxX <= minX || maxY <= minY ) {
-		return nullptr;
-	}
-
-	// int width = maxX - minX;
-	// int height = maxY - minY;	
-	// sdlTexture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height );
-	sdlTexture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, maxX, maxY );
-
-	// std::cout << "create texture size: " << width << ", " << height << std::endl;
-	if ( sdlTexture == nullptr ) {
-		assert( false && "failed to create sdl texture" );
-		return nullptr;
-	}
-	SDL_SetTextureBlendMode( sdlTexture, SDL_BLENDMODE_BLEND );
-	
-	SDL_SetRenderTarget( renderer, sdlTexture );
-	// SDL_RenderClear( renderer );
-	
-	iter = primitives.begin();
-	endIter = primitives.end();
-	while ( iter != endIter ) {
-		(*iter)->render();
-		++iter;
-	}
-
-	SDL_SetRenderTarget( renderer, nullptr );
-	// std::cout << "end createTextureFromPrimitives" << std::endl;
-	return sdlTexture;
+    return fabs( v1 - v2 ) < std::numeric_limits<float>::epsilon();
 }
 
 static inline void insertBaseDir(std::string& str)
@@ -164,6 +115,16 @@ static inline bool hitTestPointVSRect(const int x1, const int y1, const int x2, 
 	}
 	
 	return true;
+}
+
+static inline Eigen::Vector2f worldToLocalPos( const float x, const float y, DisplayObjectBase* displayObj )
+{
+	Eigen::Vector2f pos;
+	float t_x = x - displayObj->transform().getStageX();
+	float t_y = y - displayObj->transform().getStageY();
+	pos[0] = t_x;
+	pos[1] = t_y;	
+	return pos;
 }
 
 #endif

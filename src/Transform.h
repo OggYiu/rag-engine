@@ -18,13 +18,15 @@ public:
 	void setX( const float x );
 	void setY( const float y );
 
+	void setStagePos( const float x, const float y );
 	void setStageX( const float x );
 	void setStageY( const float y );	
 	
 	void getPos( float& x, float& y );
-
 	float getX();
 	float getY();
+
+	void getStagePos( float& x, float& y );
 	float getStageX();
 	float getStageY();
 
@@ -35,11 +37,13 @@ public:
 	void setScaleX( const float scale );
 	void setScaleY( const float scale );
 	float getScaleX() const;
-	float getScaleY() const;	
+	float getScaleY() const;
 	
 	Eigen::Matrix4f& getLocalMatrix();
 	Eigen::Matrix4f& getWorldMatrix();
 
+	void worldToLocalPos( const float worldX, const float worldY, float& localX, float& localY );
+	void localToWorldPos( const float localX, const float localY, float& worldX, float& worldY );
 	void updateWorldTrans();
 	void print();
 	

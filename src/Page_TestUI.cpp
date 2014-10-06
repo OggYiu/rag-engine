@@ -13,6 +13,7 @@
 #include "TextureMgr.h"
 #include "GradientRect.h"
 #include "GUI_VScrollBar.h"
+#include "GUI_ScrollVBox.h"
 
 Page_TestUI::Page_TestUI()
 {
@@ -32,32 +33,27 @@ void Page_TestUI::render()
 	Page::render();
 }
 
-void foo( Primitive* primitives[] ) {
-	std::cout << "size: " << sizeof( primitives ) << std::endl;
-}
-
 bool Page_TestUI::resolved()
 {
 	Page::resolved();
 
 	// vbox example
 	{
-		GUI_VBox* box = new GUI_VBox();
+		GUI_VBox* box = new GUI_VBox( 0.0f, 0.0f, 100.0f, 200.0f );
 		this->addChild( box );
 		box->tweener().moveTo( 1.0f, 100.0f, 100.0f, boost::bind(&Page_TestUI::here, this));
 
 		{
 			const int count = 10;
-			const int w = 128;
-			const int h = 64;
+			// const int w = 128;
+			// const int h = 64;
 
 			for ( int i = 0; i < count; ++i ) {
-				SDL_Texture* sdlTexture = textureMgr.createEmptySDLTexture( w, h, round( rand() * 255 ), round( rand() * 255 ), round( rand() * 255 ), 100 );
-
 				DisplayObject* displayObject = new DisplayObject();
-				Texture* texture = new Texture( sdlTexture );
+				Texture* texture = textureMgr.createImageTexture( "assets/test1.png" );
+				// Texture* texture = textureMgr.createEmptyTexture( w, h, round( rand() * 255 ), round( rand() * 255 ), round( rand() * 255 ), 100 );
 				displayObject->setTexture( texture );
-				box->addChild( displayObject );
+				box->addItem( displayObject );
 			}
 		}
 	}
@@ -66,19 +62,21 @@ bool Page_TestUI::resolved()
 		std::vector<Primitive*> vec;
 		GradientRect rect( 0, 0, 100, 200, RGBA2Int( 255, 0, 0, 0 ), RGBA2Int( 255, 0, 0, 255 ) );
 		vec.push_back( &rect );
-		SDL_Texture* sdlTexture = createTextureFromPrimitives( vec );
-		Texture* texture = new Texture( sdlTexture );
+		Texture* texture = textureMgr.getInstance().createPrimitivesTexture( vec );
 		DisplayObject* object = new DisplayObject();
 		object->setTexture( texture );
 		this->addChild( object );
 	}
 
 	{
-		GUI_VScrollBar* bar = new GUI_VScrollBar( 16.0f, 200.0f, 0.0f, 100.0f );
-		bar->transform().setPos( 150.0f, 100.0f );
+		GUI_VScrollBar* bar = new GUI_VScrollBar( 150.0f, 100.0f, 16.0f, 200.0f );
 		this->addChild( bar );
 	}
 
+	{
+		GUI_ScrollVBox* vbox = new GUI_ScrollVBox( 300.0f, 100.0f, 300.0f, 300.0f );
+		this->addChild( vbox );
+	}
 	return true;
 }
 

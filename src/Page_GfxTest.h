@@ -10,7 +10,6 @@ public:
 	~Page_GfxTest();
 	
 public:
-   	virtual void enter();
 	virtual void update(const double dt);
 
 protected:

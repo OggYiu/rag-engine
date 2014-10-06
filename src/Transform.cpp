@@ -38,35 +38,48 @@ void Transform::setPos( const float x, const float y ) {
 	localTrans_.translation().x() = x;
 	localTrans_.translation().y() = y;
 	updateWorldTrans();
-	this->dispatchEvent( TransformEvent( TransformEvent::TRANSFORM_POSITION_CHANGED, *this ) );
+	TransformEvent transformEvent( TransformEvent::TRANSFORM_POSITION_CHANGED, *this );
+	this->dispatchEvent( transformEvent );
 }
 
 void Transform::setX( const float x ) {
 	// std::cout << "transform, setx: " << x << std::endl;
 	localTrans_.translation().x() = x;
 	updateWorldTrans();
-	this->dispatchEvent( TransformEvent( TransformEvent::TRANSFORM_POSITION_CHANGED, *this ) );
+	TransformEvent transformEvent( TransformEvent::TRANSFORM_POSITION_CHANGED, *this );
+	this->dispatchEvent( transformEvent );
 }
 	
 void Transform::setY( const float y ) {
 	localTrans_.translation().y() = y;
 	updateWorldTrans();
-	this->dispatchEvent( TransformEvent( TransformEvent::TRANSFORM_POSITION_CHANGED, *this ) );
+	TransformEvent transformEvent( TransformEvent::TRANSFORM_POSITION_CHANGED, *this );
+	this->dispatchEvent( transformEvent );
 }
 
-// void Transform::setStageX( const float x )
-// {
-// 	worldTransDirty_ = true;
-// 	updateWorldTrans();
-// 	setX( x- worldTrans_.translation().x );
-// }
+void Transform::setStagePos( const float x, const float y )
+{
+	updateWorldTrans_();
+	float localX, localY;
+	worldToLocalPos( x, y, localX, localY );
+	setPos( localX, localY );
+}
 
-// void Transform::setStageY( const float y )
-// {
-// 	worldTransDirty_ = true;
-// 	updateWorldTrans();
-// 	setX( x- worldTrans_.translation().x );
-// }
+void Transform::setStageX( const float x )
+{
+	updateWorldTrans_();
+	float localX, localY;
+	worldToLocalPos( x, getStageY(), localX, localY );
+	setX( localX );
+}
+
+void Transform::setStageY( const float y )
+{
+	updateWorldTrans_();
+	float localX, localY;
+	worldToLocalPos( getStageX(), y, localX, localY );	
+	setY( localY );
+}
 	
 void Transform::getPos( float& x, float& y ) {
 	x = localTrans_.translation().x();
@@ -81,6 +94,13 @@ float Transform::getX()
 float Transform::getY()
 {
 	return localTrans_.translation().y();
+}
+
+void Transform::getStagePos( float& x, float& y )
+{
+	updateWorldTrans_();
+	x = worldTrans_.translation().x();
+	y = worldTrans_.translation().y();
 }
 
 float Transform::getStageX()
@@ -100,7 +120,8 @@ void Transform::setRot( const float angle )
 	localRotAngle_.angle() = angle;
 	localTrans_.rotate( localRotAngle_ );
 	updateWorldTrans();
-	this->dispatchEvent( TransformEvent( TransformEvent::TRANSFORM_ROTATION_CHANGED, *this ) );
+	TransformEvent transformEvent( TransformEvent::TRANSFORM_ROTATION_CHANGED, *this );
+	this->dispatchEvent( transformEvent );
 }
 
 float Transform::getRot()
@@ -116,7 +137,8 @@ void Transform::setScale( const float x, const float y, const float z )
 	// std::cout << "setscale : " <<  localScale_.x() << ", " << localScale_.y() << ", " << localScale_.z() << std::endl;
 	localTrans_.scale( localScale_ );
 	updateWorldTrans();
-	this->dispatchEvent( TransformEvent( TransformEvent::TRANSFORM_SCALE_CHANGED, *this ) );
+	TransformEvent transformEvent( TransformEvent::TRANSFORM_SCALE_CHANGED, *this );
+	this->dispatchEvent( transformEvent );
 }
 
 void Transform::setScaleX( const float scale )
@@ -124,7 +146,8 @@ void Transform::setScaleX( const float scale )
 	localScale_.x() = scale;
 	localTrans_.scale( localScale_ );
 	updateWorldTrans();
-	this->dispatchEvent( TransformEvent( TransformEvent::TRANSFORM_SCALE_CHANGED, *this ) );	
+	TransformEvent transformEvent( TransformEvent::TRANSFORM_SCALE_CHANGED, *this );
+	this->dispatchEvent( transformEvent );
 }
 
 void Transform::setScaleY( const float scale )
@@ -132,7 +155,8 @@ void Transform::setScaleY( const float scale )
 	localScale_.y() = scale;
 	localTrans_.scale( localScale_ );
 	updateWorldTrans();
-	this->dispatchEvent( TransformEvent( TransformEvent::TRANSFORM_SCALE_CHANGED, *this ) );	
+	TransformEvent transformEvent( TransformEvent::TRANSFORM_SCALE_CHANGED, *this );
+	this->dispatchEvent( transformEvent );
 }
 
 float Transform::getScaleX() const
@@ -154,6 +178,32 @@ Eigen::Matrix4f& Transform::getWorldMatrix()
 {
 	updateWorldTrans_();
 	return worldTrans_.matrix();
+}
+
+void Transform::worldToLocalPos( const float worldX, const float worldY, float& localX, float& localY )
+{
+	if ( owner_->getParent() != nullptr ) {
+		float parentX, parentY;
+		owner_->getParent()->transform().getStagePos( parentX, parentY );
+		localX = worldX - parentX;
+		localY = worldY - parentY;
+	} else {
+		localX = worldX;
+		localY = worldY;
+	}
+}
+
+void Transform::localToWorldPos( const float localX, const float localY, float& worldX, float& worldY )
+{
+	if ( owner_->getParent() != nullptr ) {
+		float parentX, parentY;
+		owner_->getParent()->transform().getStagePos( parentX, parentY );
+		worldX = parentX + localX;
+		worldY = parentY + localY;		
+	} else {
+		worldX = localX;
+		worldY = localY;
+	}
 }
 
 void Transform::updateWorldTrans()

@@ -21,6 +21,7 @@ public:
 	virtual void render();
 	void setTexture( Texture* texture );
 	void setColor( const Uint8 red, const Uint8 green, const Uint8 blue );
+	
 	void setBlendMode( const SDL_BlendMode blending );
 	SDL_BlendMode getBlendMode() const { return blending_; }
 	
@@ -29,11 +30,11 @@ public:
 	
 protected:
 	void releaseTexture();
+	virtual void updateBoundingBox_();
 	
 protected:
 	Texture* texture_;
 	SDL_Point* center_;
-	SDL_Rect* clipRect_;
 	SDL_RendererFlip flip_;
 	SDL_BlendMode blending_;
 	Uint8 alpha_;

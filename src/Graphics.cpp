@@ -5,6 +5,7 @@
 #include "Helper.h"
 #include "Kernel.h"
 #include "Texture.h"
+#include "TextureMgr.h"
 
 Graphics::Graphics()
 	: lineThickness_(1)
@@ -42,11 +43,6 @@ void Graphics::setDrawAlpha( const Uint8 a )
 void Graphics::setLineThickness(const int thickness)
 {
 	lineThickness_ = thickness;
-}
-
-SDL_Texture* Graphics::createTexture()
-{
-	return createTextureFromPrimitives( primitives_ );
 }
 
 void Graphics::clear()
@@ -133,9 +129,7 @@ void Graphics::tryUpdateTexture_()
 		releaseTexture();
 		textureDirty_ = false;
 		
-		SDL_Texture* sdlTexture = nullptr;
-		sdlTexture = createTextureFromPrimitives( primitives_ );
-		Texture* texture = new Texture( sdlTexture );
+		Texture* texture = textureMgr.getInstance().createPrimitivesTexture( primitives_ );
 		setTexture( texture );
 		updateBoundingBox();
 		updateBoundingBox_();

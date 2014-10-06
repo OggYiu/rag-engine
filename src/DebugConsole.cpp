@@ -20,7 +20,7 @@ DebugConsole::~DebugConsole()
 
 void DebugConsole::update(const double dt)
 {
-	Parent::update(dt);
+	DisplayObjectContainer::update(dt);
 
 	//Calculate and correct fps
 	float avgFPS = countedFrames / ( timer_.getTicks() / 1000.f );
@@ -40,7 +40,7 @@ void DebugConsole::update(const double dt)
 void DebugConsole::addDebugMsg( const std::string& msg, const Uint32 color )
 {
 	GUI_Label* label = new GUI_Label( 4, 0, msg.c_str(), "pf_ronda_seven", 12, color );
-	vbox_->addChild( label );
+	vbox_->addItem( label );
 
 	// if ( vbox_->getHeight() > kernel.getScreenHeight() ) {
 	// 	std::cout << vbox_->getHeight() << ", " << kernel.getScreenHeight() << ", result: " << ( vbox_->getHeight() > kernel.getScreenHeight() ) << std::endl;
@@ -56,7 +56,7 @@ void DebugConsole::addDebugMsg( const std::string& msg, const Uint32 color )
 
 bool DebugConsole::resolved()
 {
-	Parent::resolved();
+	DisplayObjectContainer::resolved();
 
 	fpsLabel_ = new GUI_Label( 0, 0, "AVG FPS: 9999", "pf_ronda_seven", 12, 0xFF000000 );
 	fpsLabel_->transform().setX( kernel.getScreenWidth() - fpsLabel_->getWidth() - 32 );
@@ -70,7 +70,7 @@ bool DebugConsole::resolved()
 
 	kernel.getStage().addEventListener( MouseEvent::MOUSE_MOVE, bindEventHandler( &DebugConsole::eventHandler, this ), this );
 
-	vbox_ = new GUI_VBox();
+	vbox_ = new GUI_VBox( 0.0f, 0.0f, kernel.getScreenWidth(), kernel.getScreenHeight() );
 	this->addChild( vbox_ );
 	
 	return true;

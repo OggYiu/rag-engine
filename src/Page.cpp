@@ -7,7 +7,3 @@ Page::Page()
 Page::~Page()
 {
 }
-
-void Page::enter()
-{
-}

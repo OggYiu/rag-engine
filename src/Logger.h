@@ -2,6 +2,7 @@
 #define __LOGGER_H__
 
 #include <string>
+#include <assert.h>
 #include "SDL.h"
 
 class Logger
@@ -11,10 +12,19 @@ public:
 	~Logger();
 
 public:
-	void trace( const std::string& tag, const std::string& msg, const Uint32 color );
-	void d( const std::string& tag, const std::string& msg );
-	void w( const std::string& tag, const std::string& msg );
-	void e( const std::string& tag, const std::string& msg );	
+	void trace( const std::string& tag, const std::string& msg, const int line, const std::string& filename, const Uint32 color );
+	
+	inline void d( const std::string& tag, const std::string& msg, const int line = __LINE__, const std::string& filename = __FILE__ ) {
+		trace( tag, msg, line, filename, 0xFF00FF00 );
+	}
+
+	inline void w( const std::string& tag, const std::string& msg, const int line = __LINE__, const std::string& filename = __FILE__ ) {
+	trace( tag, msg, line, filename, 0xFFFFFF00 );
+}
+	inline void e( const std::string& tag, const std::string& msg, const int line = __LINE__, const std::string& filename = __FILE__ ) {
+	trace( tag, msg, line, filename, 0xFFFF0000 );
+	assert( false );
+}
 	
 public:
 	static Logger& getInstance();

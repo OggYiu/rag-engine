@@ -20,7 +20,6 @@ public:
 	~Page_LuaTest();
 	
 public:
-   	virtual void enter();
 	virtual void update(const double dt);
 
 protected:

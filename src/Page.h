@@ -8,13 +8,5 @@ class Page : public DisplayObjectContainer
 public:
 	Page();
 	virtual ~Page();
-	
-public:
-	virtual void enter();
-
-private:
-	
-	// void update(double dt);
-	// void render();
 };
 #endif

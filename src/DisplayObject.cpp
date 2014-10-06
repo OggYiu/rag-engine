@@ -8,7 +8,6 @@
 DisplayObject::DisplayObject()
 	: texture_( nullptr )
 	, center_( nullptr )
-	, clipRect_( nullptr )
 	, flip_( SDL_FLIP_NONE )
 	, blending_( SDL_BLENDMODE_NONE )
 	, alpha_( 255 )
@@ -22,7 +21,6 @@ DisplayObject:: ~DisplayObject()
 {
 	releaseTexture();
 	SAFE_RELEASE( center_ );
-	SAFE_RELEASE( clipRect_ );
 }
 
 void DisplayObject::releaseTexture()
@@ -77,13 +75,14 @@ void DisplayObject::render()
 	}
 
 	// updateBoundingBox();
-	updateBoundingBox_();	
+	updateBoundingBox_();
 
 	// std::cout << "display obect render: " << std::endl;
 	// std::cout << "bouding box: " << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl; 
 	
 	float rotation = transform_.getRot();
-	texture_->render( clipRect_, &boundingBox_, rotation, center_, flip_ );
+	// texture_->render( clipRect_, &boundingBox_, rotation, center_, flip_ );
+	texture_->render( nullptr, &boundingBox_, rotation, center_, flip_ );	
 }
 	
 void DisplayObject::setTexture( Texture* texture )
@@ -91,4 +90,15 @@ void DisplayObject::setTexture( Texture* texture )
 	releaseTexture();
 	texture_ = texture;
 	setSize( texture_->getWidth(), texture->getHeight() );
+}
+
+void DisplayObject::updateBoundingBox_()
+{
+	if ( !dirtyBoundingBox_ ) {
+		return;
+	}
+
+	DisplayObjectBase::updateBoundingBox_();
+
+	setClipRect( 0, 0, getWidth(), getHeight() );
 }

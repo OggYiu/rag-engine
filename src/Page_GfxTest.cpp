@@ -11,11 +11,6 @@ Page_GfxTest::~Page_GfxTest()
 {
 }
 
-void Page_GfxTest::enter()
-{
-	Page::enter();
-}
-
 void Page_GfxTest::update(const double dt)
 {
 	Page::update(dt);

@@ -15,7 +15,7 @@ public:
 	static const std::string MOUSE_LOSE_HOVER;
 
 public:
-	MouseEvent(const std::string& type, const int x, const int y);
+	MouseEvent( const std::string& type, const int x, const int y );
 
 	// getter and setter
 	int getMouseX() { return mouseX_; }

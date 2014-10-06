@@ -27,17 +27,21 @@ public:
 	virtual ~DisplayObjectBase();
 	
 public:
-   	void setParent( DisplayObjectContainer* parent );
 	DisplayObjectContainer* getParent() { return parent_; }
 	virtual void render() = 0;
 	virtual void update(const double dt);
+	virtual void handleAddedToParent( DisplayObjectContainer* container );
+	virtual void handleRemovedFromParent( DisplayObjectContainer* container );
 
-	void release();
+	void detachFromParent();
+	void release();	
 	bool needReleased() { return needReleased_; }
+	void setClipRect( const int x, const int y, const int width, const int height );
 	
 	void addComponent( Component_Base* component );
 	void removeComponent( const std::string& name );
-	
+
+	void getSize( int* width, int* height );
 	void setSize( const int width, const int height );
 	void setWidth( const int width );
 	int getWidth() const;
@@ -68,23 +72,21 @@ public:
 	
 	void updateBoundingBox();
 	void tryUpdateBoundingBox();
-	void setDragEnable( const bool enable );
-	void removeMouseEventListeners();
-
+	virtual bool dragEventHandler( const Event& event );
+	virtual void handleTransformEvent();
+	
 protected:
 	bool transformEventHandler( const Event& event );
 	virtual void updateBoundingBox_();
 	bool needUpdateBoundingBox() { return dirtyBoundingBox_; }
 	void doneUpdateBoundingBox() { dirtyBoundingBox_ = false; }
-	virtual void handleTransformPositionChanged_();
-	virtual void handleTransformRotationChanged_();
-	virtual void handleTransformScaleChanged_();
 
 protected:
 	DisplayObjectContainer* parent_;
 	bool needReleased_;
 	Eigen::Vector2f anchor_;
 	Eigen::Vector2i size_;
+	SDL_Rect clipRect_;
 	SDL_Rect boundingBox_;
 	bool visible_;
 	Tweener tweener_;
@@ -95,7 +97,6 @@ protected:
 	Graphics* debugBBox_;
 #endif
 
-private:	
 	bool dirtyBoundingBox_;
 };
 

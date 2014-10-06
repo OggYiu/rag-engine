@@ -3,7 +3,6 @@
 #include <iostream>
 #include <memory>
 #include <libgen.h>
-// #include<stdlib.h>
 #include "Helper.h"
 #include "Settings.h"
 #include "Page.h"
@@ -11,7 +10,6 @@
 #include "MouseEvent.h"
 #include "KeyboardEvent.h"
 #include "DebugConsole.h"
-// #include "sdl-widgets.h"
 
 static Kernel s_kernel;
 
@@ -156,7 +154,7 @@ bool Kernel::loop()
 			}
 			else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP )
 			{
-				std::unique_ptr<KeyboardEvent> ptr = std::unique_ptr<KeyboardEvent>( new KeyboardEvent( e.type == SDL_KEYDOWN? KeyboardEvent::KEY_DOWN : KeyboardEvent::KEY_UP, e.key.timestamp, e.key.keysym.sym, (int)e.key.keysym.mod, (int)e.key.repeat ) );
+				std::unique_ptr<KeyboardEvent> ptr = std::unique_ptr<KeyboardEvent>( new KeyboardEvent( e.type == SDL_KEYDOWN? KeyboardEvent::KEY_DOWN : KeyboardEvent::KEY_UP, e.key.keysym.sym, (int)e.key.keysym.mod, (int)e.key.repeat ) );
 				stage_->dispatchEvent( *ptr.get() );
 			}
 			else if (e.type == SDL_MOUSEMOTION)
@@ -338,7 +336,6 @@ void Kernel::setPage(Page* page)
 	
 	currentPage_ = page;
 	pageContainer_->addChild(currentPage_);
-	currentPage_->enter();
 }
 
 SDL_Window* Kernel::getWindow()

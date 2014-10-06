@@ -1,9 +1,28 @@
 #include "GUI_VBox.h"
 
-GUI_VBox::GUI_VBox()
-	: nextPosY_( 0 )
+#include "GUI_VScrollBar.h"
+#include "GUI_Image.h"
+#include "Primitive.h"
+#include "Logger.h"
+#include "TextureMgr.h"
+#include "Helper.h"
+
+GUI_VBox::GUI_VBox( const int x, const int y, const int width, const int height )
+	: itemsContainer_( nullptr )
+	, bg_( nullptr )
+	, nextPosY_( 0 )
 	, marginY_( MARGIN_Y )
 {
+	setSize( width, height );
+	transform().setPos( x, y );
+
+	std::vector<Primitive*> primitives;
+	primitives.push_back( new SolidRect ( 0, 0, width, height, RGBA2Int( 0, 0, 0, 100 ) ) );
+	bg_ = new GUI_Image( 0, 0, primitives );
+	this->addChild( bg_ );
+	
+	itemsContainer_ = new GUI_BaseContainer();
+	this->addChild( itemsContainer_ );
 }
 
 GUI_VBox::~GUI_VBox()
@@ -12,8 +31,8 @@ GUI_VBox::~GUI_VBox()
 
 void GUI_VBox::rearrangeChildren()
 {
-	DisplayObjectVec::iterator iter = _entityVec.begin();
-	DisplayObjectVec::iterator endIter = _entityVec.end();
+	DisplayObjectVec::iterator iter = itemsContainer_->getChildren().begin();
+	DisplayObjectVec::iterator endIter = itemsContainer_->getChildren().end();
 	
 	float nextX = 0;
 	float nextY = 0;	
@@ -24,8 +43,14 @@ void GUI_VBox::rearrangeChildren()
 	}
 }
 
-void GUI_VBox::addChild( DisplayObjectBase* const entity )
+void GUI_VBox::addItem( DisplayObjectBase* const entity )
 {
-	GUI_BaseContainer::addChild( entity );
+	itemsContainer_->addChild( entity );
+	// this->addChild( entity );	
 	rearrangeChildren();
+}
+
+bool GUI_VBox::resolved()
+{		
+	return true;
 }

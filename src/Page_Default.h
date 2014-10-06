@@ -8,7 +8,5 @@ class Page_Default : public Page
 public:
 	Page_Default();
 	~Page_Default();
-public:
-   	void enter();
 };
 #endif

@@ -32,4 +32,6 @@ struct BBox
 	int h;
 };
 
+typedef BBox Rect;
+
 #endif

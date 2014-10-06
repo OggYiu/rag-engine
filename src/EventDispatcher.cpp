@@ -53,9 +53,10 @@ void EventDispatcher::removeEventListener( const std::string& type, const Object
 	}
 }
 
-bool EventDispatcher::dispatchEvent(const Event& event)
-
+bool EventDispatcher::dispatchEvent( Event& event )
 {
+	event.setSender( this );
+
 	EventDispatcher::EventListeners::iterator iter = listeners_.begin();
 	EventDispatcher::EventListeners::iterator endIter = listeners_.end();
 	EventListener* el;
@@ -78,12 +79,3 @@ bool EventDispatcher::dispatchEvent(const Event& event)
 
 	return true;
 }
-
-// std::string EventDispatcher::generateId(const std::string& str, const Object* invoker)
-// {
-// 	std::stringstream id;
-// 	id << invoker->getId() << ":" << str.c_str();
-// 	std::string mapId = "";
-// 	id >> mapId;
-// 	return mapId;
-// }

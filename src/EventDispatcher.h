@@ -36,7 +36,7 @@ public:
 	
 //	void addEventListener(const std::string type, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false);
 
-	bool dispatchEvent( const Event& event );
+	bool dispatchEvent( Event& event );
 //	bool dispatchEvent(std::unique_ptr<Event> event);
 // Dispatches an event into the event flow.
 // 	EventDispatcher

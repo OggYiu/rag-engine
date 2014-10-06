@@ -18,11 +18,6 @@ Page_LuaTest::~Page_LuaTest()
 		lua_close(luaState_);
 	}
 }
-	
-void Page_LuaTest::enter()
-{
-	Page::enter();
-}
 
 void Page_LuaTest::update(const double dt)
 {
@@ -32,15 +27,6 @@ void Page_LuaTest::update(const double dt)
 bool Page_LuaTest::resolved()
 {
 	Page::resolved();
-
-//	reload();
-
-	GUI_Button* button1 = GUI_Button::createImageButton(100, 100, "assets/ui/button1.png");
-	this->addChild(button1);
-	button1->addEventListener(MouseEvent::MOUSE_DOWN, bindEventHandler(&Page_LuaTest::eventHandler, this), this);
-
-	image1_ = new GUI_Image(kernel.getScreenWidth()/2, kernel.getScreenHeight()/2, "assets/alex.png");
-	this->addChild(image1_);
 
 //	foo object;
 //    somefunction(&forwarder, &object);

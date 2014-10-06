@@ -16,17 +16,12 @@ Page_Gameplay::~Page_Gameplay()
 //	std::cout << "page gameplay decon" << std::endl;
 }	
 
-void Page_Gameplay::enter()
-{
-	Parent::enter();
-}
-
 void Page_Gameplay::update(const double dt)
 {
 //	std::cout << "page game play update started " << std::endl;
 //	Page::update(dt);
 	
-	Parent::update(dt);
+	Page::update(dt);
 
 //	std::cout << "page game play update started " << std::endl;
 	mapCanvas_->clear();
@@ -116,7 +111,7 @@ void Page_Gameplay::update(const double dt)
 
 bool Page_Gameplay::resolved()
 {
-	Parent::resolved();
+	Page::resolved();
 
 	// float min = 10.0f;
 	// float max = 100.0f;	

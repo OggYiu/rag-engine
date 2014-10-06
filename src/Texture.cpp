@@ -25,20 +25,6 @@ Texture::~Texture()
 	}
 }
 
-Texture* Texture::createImageTexture( const std::string& path )
-{
-	int width = 0;
-	int height = 0;
-	SDL_Texture* sdlTexture = textureMgr.createImageSDLTexture( path, &width, &height );
-	return new Texture( sdlTexture, width, height );
-}
-
-Texture* Texture::createEmptyTexture( const int width, const int height, const Uint8 red, const Uint8 green, const Uint8 blue, const Uint8 alpha )
-{
-	SDL_Texture* sdlTexture = textureMgr.createEmptySDLTexture( width, height, red, green, blue, alpha );
-	return new Texture( sdlTexture, width, height );
-}
-
 void Texture::setColor( const Uint8 red, const Uint8 green, const Uint8 blue )
 {
 	if ( sdlTexture_ == nullptr ) {

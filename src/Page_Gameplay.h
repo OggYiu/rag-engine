@@ -8,15 +8,11 @@ class Entity_Emitter;
 
 class Page_Gameplay : public Page
 {
-private:
-	typedef Page Parent;
-	
 public:
 	Page_Gameplay();
 	virtual ~Page_Gameplay();
 	
 public:
-   	virtual void enter();
 	virtual void update(const double dt);
 
 protected:

@@ -11,6 +11,7 @@
 #include "Stage.h"
 #include "GUI_Image.h"
 #include "GUI_Label.h"
+#include "TextureMgr.h"
 
 static const float TWEEN_HIT_SCALE = 1.3f;
 static const float TWEEN_HIT_DURATION = 0.07f;
@@ -26,7 +27,7 @@ GUI_Button::GUI_Button( const int x, const int y, Texture* texture )
 	, label_( nullptr )
 	, state_(ButtonState::UP)
 {
-	GUI_Image* image = new GUI_Image( 0, 0 , texture );
+	GUI_Image* image = new GUI_Image( 0, 0, texture );
 	this->addChild( image );
 	transform().setPos( x, y );
 	setSize( texture->getWidth(), texture->getHeight() );
@@ -70,7 +71,7 @@ bool GUI_Button::resolved()
 
 GUI_Button* GUI_Button::createSimpleButton( const char* title, const int x, const int y, const int w, const int h, const Uint8 red, const Uint8 green, const Uint8 blue, const Uint8 alpha )
 {	
-	Texture* texture = Texture::createEmptyTexture( w, h, red, green, blue, alpha );
+	Texture* texture = textureMgr.getInstance().createEmptyTexture( w, h, red, green, blue, alpha );
 	GUI_Button* button = new GUI_Button( x, y, texture );
 	button->setText( title );
 	return button;
@@ -78,7 +79,7 @@ GUI_Button* GUI_Button::createSimpleButton( const char* title, const int x, cons
 
 GUI_Button* GUI_Button::createImageButton( const int x, const int y, const std::string& path )
 {
-	Texture* texture = Texture::createImageTexture( path );
+	Texture* texture = textureMgr.getInstance().createImageTexture( path );
 	GUI_Button* button = new GUI_Button( x, y, texture );
 	return button;
 }
@@ -127,7 +128,9 @@ bool GUI_Button::eventHandler( const Event& event )
 
 						tweenSeq_.insert(group);
 
-						this->dispatchEvent(Event(MouseEvent::MOUSE_HOVER));
+						MouseEvent mouseEvent( MouseEvent::MOUSE_HOVER, mouseX, mouseY );
+						// this->dispatchEvent( MouseEvent( MouseEvent::MOUSE_HOVER, mouseX, mouseY ) );
+						this->dispatchEvent( mouseEvent );
 					}
 					state_ = ButtonState::HOVER;
 				}
@@ -149,13 +152,14 @@ bool GUI_Button::eventHandler( const Event& event )
 
 				tweenSeq_.insert(group);
 
-				this->dispatchEvent(Event(MouseEvent::MOUSE_LOSE_HOVER ));
+				MouseEvent mouseEvent( MouseEvent::MOUSE_LOSE_HOVER, mouseX, mouseY );
+				this->dispatchEvent( mouseEvent );
 			}
 			hovered_ = false;
 		}
 		// texture_ = textures_[state_];
 	}
-	else if (event.getType().compare(MouseEvent::MOUSE_DOWN) == 0)
+	else if ( event.getType().compare( MouseEvent::MOUSE_DOWN ) == 0 )
 	{
 		// std::cout << "mouse down " << mouseEvent->getMouseX() << ", " << mouseEvent->getMouseY() << std::endl;
 
@@ -185,20 +189,22 @@ bool GUI_Button::eventHandler( const Event& event )
 				tweenSeq_.insert(group1);
 				tweenSeq_.insert(group2);
 
-				this->dispatchEvent(Event(MouseEvent::MOUSE_DOWN));
+				MouseEvent mouseEvent( MouseEvent::MOUSE_DOWN, mouseX, mouseY );
+				this->dispatchEvent( mouseEvent );
 			}
 			clicked_ = true;
 		}
 
 	}
-	else if (event.getType().compare(MouseEvent::MOUSE_UP) == 0)
+	else if ( event.getType().compare( MouseEvent::MOUSE_UP ) == 0 )
 	{
 		// std::cout << "mouse hover " << mouseEvent->getMouseX() << ", " << mouseEvent->getMouseY() << std::endl;
 
 		if (hitTest(mouseX, mouseY))
 		{
 			state_ = ButtonState::HOVER;
-			this->dispatchEvent(Event(MouseEvent::MOUSE_UP));
+			MouseEvent mouseEvent( MouseEvent::MOUSE_UP, mouseX, mouseY );
+			this->dispatchEvent( mouseEvent );
 			// handler
 		}
 		else

@@ -10,6 +10,7 @@
 #include "Page_TestFont.h"
 #include "Page_TestUI.h"
 #include "Page_TestLinearAlgebra.h"
+#include "Page_TestCO.h"
 
 int main( int argc, char* argv[] )
 {
@@ -29,6 +30,7 @@ int main( int argc, char* argv[] )
 	// Page_Gameplay* startPage = new Page_Gameplay();	
 //	Page_TestFont* startPage = new Page_TestFont();
 	Page_TestUI* startPage = new Page_TestUI();
+	// Page_TestCO* startPage = new Page_TestCO();	
 	// Page_TestLinearAlgebra* startPage = new Page_TestLinearAlgebra();
 	// Page_TestDisplayObject* startPage = new Page_TestDisplayObject();
 	return kernel.exec( argc, argv, settings, startPage ) ? 0 : 1;

@@ -3,6 +3,7 @@
 
 #include "Eigen/Dense"
 #include "Component_Base.h"
+#include "Types.h"
 
 class Event;
 class DisplayObjectBase;
@@ -13,7 +14,7 @@ public:
 	static const std::string NAME;
 	
 public:
-	Component_Dragging( DisplayObjectBase* owner );
+	Component_Dragging( DisplayObjectBase* owner, const int boundX, const int boundY, const int boundWidth, const int boundHeight );
 	virtual ~Component_Dragging();
 
 protected:
@@ -21,7 +22,8 @@ protected:
 
 protected:
 	bool isDragging_;
-	Eigen::Vector2i mouseOffsetPos_;
+	Eigen::Vector2f mouseOffsetPos_;
+	BBox bound_;
 };
 
 #endif

@@ -27,7 +27,6 @@ DisplayObjectContainer::~DisplayObjectContainer()
 
 void DisplayObjectContainer::update(const double dt)
 {	
-	// std::cout << "display object container update" << std::endl;
 	DisplayObjectVec::iterator iter = _entityVec.begin();
 
 //	std::cout << "size: " << _entityVec.size() << std::endl;
@@ -57,7 +56,8 @@ void DisplayObjectContainer::render()
 	updateBoundingBox_();
 	
 	DisplayObjectVec::iterator iter = _entityVec.begin();
-	while (iter != _entityVec.end())
+	DisplayObjectVec::iterator endIter = _entityVec.end();	
+	while (iter != endIter )
 	{
 		if ( (*iter)->isVisible() )
 		{
@@ -70,8 +70,10 @@ void DisplayObjectContainer::render()
 
 void DisplayObjectContainer::addChild( DisplayObjectBase* const entity )
 {
-//	std::cout << "add child" << std::endl;
-	// check if it existed already
+	if ( this == entity ) {
+		logger.e( "DisplayObjectContainer", "you cannot add yourself" );
+		return;
+	}
 
 	if (_entityMap[entity->getId()] != nullptr)
 	{
@@ -81,13 +83,13 @@ void DisplayObjectContainer::addChild( DisplayObjectBase* const entity )
 		return;
 	}
 
-	entity->setParent(this);
+	entity->handleAddedToParent( this );
 	_entityMap[entity->getId()] = entity;
 	_entityVec.push_back(entity);
-	entity->transform().setPos( this->transform().getX() + entity->transform().getX(), this->transform().getY() + entity->transform().getY() );
-
+	// entity->transform().setPos( this->transform().getX() + entity->transform().getX(), this->transform().getY() + entity->transform().getY() );
+	entity->transform().setPos( entity->transform().getX(), entity->transform().getY() );
 	updateBoundingBox();
-//	std::cout << "add child ended" << std::endl;
+	resetAllChildrenClipRect();
 }
 
 void DisplayObjectContainer::removeChild(DisplayObjectBase* entity)
@@ -100,8 +102,9 @@ void DisplayObjectContainer::removeChild(DisplayObjectBase* entity)
 		assert(false && msg);
 		return;
 	}
-	
+
 	_entityMap[entity->getId()] = nullptr;
+	entity->handleRemovedFromParent( this );
 //	std::vector<int> v;
 	DisplayObjectVec::iterator iter = std::remove(_entityVec.begin(), _entityVec.end(), entity);
 	_entityVec.erase(iter);
@@ -172,14 +175,6 @@ DisplayObjectContainer::DisplayObjectVec& DisplayObjectContainer::getChildren()
 void DisplayObjectContainer::updateBoundingBox()
 {
 	DisplayObjectBase::updateBoundingBox();
-	
-	// DisplayObjectVec::iterator iter = _entityVec.begin();
-	// DisplayObjectVec::iterator endIter = _entityVec.end();	
-	// while ( iter != endIter )
-	// {
-	// 	(*iter)->updateBoundingBox();
-	// 	++iter;
-	// }
 }
 
 void DisplayObjectContainer::updateBoundingBox_()
@@ -242,22 +237,29 @@ void DisplayObjectContainer::updateBoundingBox_()
 	// std::cout << "container bounding box: " << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl;
 }
 
-void DisplayObjectContainer::handleTransformPositionChanged_()
+void DisplayObjectContainer::handleTransformEvent()
 {
-	DisplayObjectBase::handleTransformPositionChanged_();
-	updateAllWorldTrans_();
+	DisplayObjectBase::handleTransformEvent();
+	
+	DisplayObjectVec::iterator iter = _entityVec.begin();
+	DisplayObjectVec::iterator endIter = _entityVec.end();
+	while ( iter != endIter )
+	{
+		(*iter)->handleTransformEvent();
+		(*iter)->transform().updateWorldTrans();
+		++iter;
+	}
 }
 
-void DisplayObjectContainer::handleTransformRotationChanged_()
-{
-	DisplayObjectBase::handleTransformRotationChanged_();
-	updateAllWorldTrans_();
-}
-
-void DisplayObjectContainer::handleTransformScaleChanged_()
-{
-	DisplayObjectBase::handleTransformScaleChanged_();
-	updateAllWorldTrans_();
+void DisplayObjectContainer::resetAllChildrenClipRect()
+{	
+	DisplayObjectVec::iterator iter = _entityVec.begin();
+	DisplayObjectVec::iterator endIter = _entityVec.end();
+	
+	while ( iter != endIter )
+	{
+		++iter;
+	}
 }
 
 void DisplayObjectContainer::updateAllWorldTrans_()

@@ -14,10 +14,10 @@ Logger::~Logger()
 {
 }
 
-void Logger::trace( const std::string& tag, const std::string& msg, const Uint32 color )
+void Logger::trace( const std::string& tag, const std::string& msg, const int line, const std::string& filename, const Uint32 color )
 {
 	std::stringstream ss;
-	ss << "<" << tag << "> : \"" << msg << "\"";
+	ss << "<" << tag << "> : \"" << msg << "\", line: " << line << ", file: " << filename;
 	std::string str = ss.str();
 
 	if ( !drawToScreen_ ) {
@@ -25,22 +25,6 @@ void Logger::trace( const std::string& tag, const std::string& msg, const Uint32
 	} else {
 		kernel.getInstance().addDebugMsg( str, color );
 	}
-}
-
-void Logger::d( const std::string& tag, const std::string& msg )
-{
-	trace( tag, msg, 0xFF00FF00 );
-}
-
-void Logger::w( const std::string& tag, const std::string& msg )
-{
-	trace( tag, msg, 0xFFFFFF00 );
-}
-
-void Logger::e( const std::string& tag, const std::string& msg )
-{
-	trace( tag, msg, 0xFFFF0000 );
-	assert( false );
 }
 	
 Logger& Logger::getInstance()

@@ -29,13 +29,12 @@ public:
 	int getIndex( const DisplayObjectBase* entity ) const;
 	DisplayObjectVec& getChildren();
 	virtual void updateBoundingBox();
+	void handleTransformEvent();
+	void resetAllChildrenClipRect();
 	
 protected:
 	virtual void updateBoundingBox_();
 	void updateAllWorldTrans_();
-	virtual void handleTransformPositionChanged_();
-	virtual void handleTransformRotationChanged_();
-	virtual void handleTransformScaleChanged_();
 	
 	DisplayObjectMap _entityMap;
 	DisplayObjectVec _entityVec;

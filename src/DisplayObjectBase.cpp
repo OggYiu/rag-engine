@@ -4,6 +4,7 @@
 #include "Helper.h"
 #include "TransformEvent.h"
 #include "MouseEvent.h"
+#include "DragEvent.h"
 #include "Component_Base.h"
 #include "Component_Dragging.h"
 
@@ -43,17 +44,46 @@ DisplayObjectBase::~DisplayObjectBase()
 	transform_.removeEventListener( TransformEvent::TRANSFORM_SCALE_CHANGED, this );
 }
 
-void DisplayObjectBase::setParent( DisplayObjectContainer* parent )
-{
-	parent_ = parent;
-	transform_.updateWorldTrans();
-	updateBoundingBox();
-}
-
 void DisplayObjectBase::update(const double dt)
 {
 	EventDispatcher::update( dt );
 	tweener_.update( dt );
+}
+
+void DisplayObjectBase::handleAddedToParent( DisplayObjectContainer* container )
+{
+	if ( container == nullptr ||
+		 container == parent_ ) {
+		logger.getInstance().e( "tag", "invalid display container" );
+		return;
+	}
+
+	parent_ = container;
+	transform_.updateWorldTrans();
+	updateBoundingBox();
+}
+
+void DisplayObjectBase::handleRemovedFromParent( DisplayObjectContainer* container )
+{
+	if ( container == nullptr ||
+		 container != parent_ ) {
+		logger.getInstance().e( "tag", "invalid display container" );
+		return;
+	}
+
+	parent_ = nullptr;
+	transform_.updateWorldTrans();
+	updateBoundingBox();
+}
+
+void DisplayObjectBase::detachFromParent()
+{
+	if ( parent_ == nullptr ) {
+		logger.getInstance().e( "tag", "nothing to detact from" );
+		return;
+	}
+
+	parent_->removeChild( this );
 }
 
 void DisplayObjectBase::release()
@@ -62,6 +92,14 @@ void DisplayObjectBase::release()
 		logger.w( "display object base", "already released" );
 	}
 	needReleased_ = true;
+}
+
+void DisplayObjectBase::setClipRect( const int x, const int y, const int width, const int height )
+{
+	clipRect_.x = x;
+	clipRect_.y = y;
+	clipRect_.w = width;
+	clipRect_.h = height;
 }
 
 void DisplayObjectBase::addComponent( Component_Base* component )
@@ -104,10 +142,17 @@ void DisplayObjectBase::removeComponent( const std::string& name )
 // 	dirtyBoundingBox_ = true;	
 // }
 
+void DisplayObjectBase::getSize( int* width, int* height )
+{
+	*width = getWidth();
+	*height = getHeight();
+}
+
 void DisplayObjectBase::setSize( const int width, const int height )
 {
 	setWidth( width );
 	setHeight( height );
+	updateBoundingBox();
 	
 	// std::cout << "setSize" << std::endl;
 	// std::cout << width << ", " << height << std::endl << std::endl;
@@ -213,25 +258,31 @@ void DisplayObjectBase::tryUpdateBoundingBox()
 	updateBoundingBox_();
 }
 
-void DisplayObjectBase::setDragEnable( const bool enable )
+bool DisplayObjectBase::dragEventHandler( const Event& event __attribute__((unused)) )
 {
-	if ( components_[Component_Dragging::NAME] != nullptr && enable ) {
-		logger.e( "display object base", "dragging mode already enabled" );
-		return;
-	}
-
-	if ( enable ) {
-		addComponent( new Component_Dragging( this ) );
-	} else {
-		removeComponent( Component_Dragging::NAME );
-	}
+	return true;
 }
+
+// void DisplayObjectBase::setDragEnable( const bool enable )
+// {
+// 	if ( components_[Component_Dragging::NAME] != nullptr && enable ) {
+// 		logger.e( "display object base", "dragging mode already enabled" );
+// 		return;
+// 	}
+
+// 	if ( enable ) {
+// 		addComponent( new Component_Dragging( this, 0, 0, getWidth(), getHeight() ) );
+// 	} else {
+// 		removeComponent( Component_Dragging::NAME );
+// 	}
+// }
 
 void DisplayObjectBase::updateBoundingBox_()
 {
 	if ( !dirtyBoundingBox_ ) {
 		return;
 	}
+	
 	dirtyBoundingBox_ = false;
 	int modWidth = round( getScaledWidth() );
 	int modHeight = round( getScaledHeight() );
@@ -242,41 +293,28 @@ void DisplayObjectBase::updateBoundingBox_()
 	boundingBox_.y = transform_.getStageY() - offsetY - ( offsetY % 2 );
 	boundingBox_.w = modWidth;
 	boundingBox_.h = modHeight;
-
+	
 	// std::cout << "updateBoundingBox" << std::endl;
 	// std::cout << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl << std::endl;
 }
 
-bool DisplayObjectBase::transformEventHandler( const Event& event )
+bool DisplayObjectBase::transformEventHandler( const Event& event __attribute__((unused)) )
 {
-	std::string type = event.getType();
-	// TransformEvent* e = (TransformEvent*)(&event);
-
-	// std::cout << "type got : " << type << std::endl;
-	if ( type.compare( TransformEvent::TRANSFORM_POSITION_CHANGED ) == 0 ) {
-		handleTransformPositionChanged_();
-	} else if ( type.compare( TransformEvent::TRANSFORM_ROTATION_CHANGED ) == 0 ) {
-		handleTransformRotationChanged_();
-	} else if ( type.compare( TransformEvent::TRANSFORM_SCALE_CHANGED ) == 0 ) {
-		handleTransformScaleChanged_();
-	}
-
+	// std::string type = event.getType();
+	// if ( type.compare( TransformEvent::TRANSFORM_POSITION_CHANGED ) == 0 ) {
+	// 	handleTransformPositionChanged_();
+	// } else if ( type.compare( TransformEvent::TRANSFORM_ROTATION_CHANGED ) == 0 ) {
+	// 	handleTransformRotationChanged_();
+	// } else if ( type.compare( TransformEvent::TRANSFORM_SCALE_CHANGED ) == 0 ) {
+	// 	handleTransformScaleChanged_();
+	// }
+	
+	handleTransformEvent();
+	
 	return true;
 }
 
-void DisplayObjectBase::handleTransformPositionChanged_()
-{
-	updateBoundingBox();
-
-	// std::cout << "handleTransformPositionChanged_()" << std::endl;
-}
-
-void DisplayObjectBase::handleTransformRotationChanged_()
-{
-	updateBoundingBox();
-}
-
-void DisplayObjectBase::handleTransformScaleChanged_()
+void DisplayObjectBase::handleTransformEvent()
 {
 	updateBoundingBox();
 }

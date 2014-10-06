@@ -2,11 +2,11 @@
 #define __COMPONENT_BASE_H__
 
 #include <string>
-#include "Object.h"
+#include "EventDispatcher.h"
 
 class DisplayObjectBase;
 
-class Component_Base : public Object
+class Component_Base : public EventDispatcher
 {
 public:
 	static const std::string NAME;

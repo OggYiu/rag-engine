@@ -45,8 +45,7 @@ void GUI_Label::recreateTexture()
 {
 	releaseTexture();
 
-	SDL_Texture* sdlTexture = textureMgr.createTTFTexture( text_, fontName_, fontSize_, color_ );
-	texture_ = new Texture( sdlTexture );
+	texture_ = textureMgr.createTTFTexture( text_, fontName_, fontSize_, color_ );
 	setSize( texture_->getWidth(), texture_->getHeight() );
 }
 
