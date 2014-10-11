@@ -81,8 +81,8 @@ void DisplayObject::render()
 	// std::cout << "bouding box: " << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl; 
 	// std::cout << "x: " << clipRect_.x << ", " << clipRect_.y << ", " << clipRect_.w << ", " << clipRect_.h << std::endl;
 	float rotation = transform_.getRot();
-	texture_->render( &clipRect_, &boundingBox_, rotation, center_, flip_ );
-	// texture_->render( nullptr, &boundingBox_, rotation, center_, flip_ );	
+	// texture_->render( &clipRect_, &boundingBox_, rotation, center_, flip_ );
+	texture_->render( nullptr, &boundingBox_, rotation, center_, flip_ );	
 }
 	
 void DisplayObject::setTexture( Texture* texture )
