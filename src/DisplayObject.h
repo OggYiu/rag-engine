@@ -31,9 +31,11 @@ public:
 protected:
 	void releaseTexture();
 	virtual void updateBoundingBox_();
-	
-protected:
+
+private:
 	Texture* texture_;
+
+protected:
 	SDL_Point* center_;
 	SDL_RendererFlip flip_;
 	SDL_BlendMode blending_;
@@ -41,6 +43,7 @@ protected:
 	Uint8 red_;
 	Uint8 green_;
 	Uint8 blue_;
+
 };
 
 #endif

@@ -21,6 +21,7 @@ public:
 	virtual void update(const double dt);
 	
 	virtual void addChild( DisplayObjectBase* const entity );
+	virtual void setClipRect( const int x, const int y, const int width, const int height );	
 	void removeChild( DisplayObjectBase* entity );
 	void removeChildAt( const int index );
 	void releaseChild( DisplayObjectBase* entity );
@@ -30,14 +31,16 @@ public:
 	DisplayObjectVec& getChildren();
 	virtual void updateBoundingBox();
 	void handleTransformEvent();
-	void resetAllChildrenClipRect();
 	
 protected:
 	virtual void updateBoundingBox_();
 	void updateAllWorldTrans_();
+	void resetAllChildrenClipRect();
+	void resetAllChildrenClipRect_();
 	
 	DisplayObjectMap _entityMap;
 	DisplayObjectVec _entityVec;
+	bool needResetAllChildrenClipRect_;
 };
 
 #endif

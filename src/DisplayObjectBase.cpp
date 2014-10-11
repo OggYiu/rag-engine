@@ -24,17 +24,17 @@ DisplayObjectBase::DisplayObjectBase()
 	boundingBox_.x = boundingBox_.y = boundingBox_.w = boundingBox_.h = 0;
 
 	transform_.setPos( 0.0f, 0.0f );
-	// localPos_[0] = localPos_[1] = 0.0f;
-	// stagePos_[0] = stagePos_[1] = 0.0f;	
 	
 	size_[0] = 0;
 	size_[1] = 0;
 	
-	// scale_[0] = 1.0f;
-	// scale_[1] = 1.0f;
-	
 	anchor_[0] = 0.0f;
 	anchor_[1] = 0.0f;
+
+	clipRect_.x = 0;
+	clipRect_.y = 0;
+	clipRect_.w = 0;
+	clipRect_.h = 0;	
 }
 
 DisplayObjectBase::~DisplayObjectBase()
@@ -142,10 +142,10 @@ void DisplayObjectBase::removeComponent( const std::string& name )
 // 	dirtyBoundingBox_ = true;	
 // }
 
-void DisplayObjectBase::getSize( int* width, int* height )
+void DisplayObjectBase::getSize( int& width, int& height )
 {
-	*width = getWidth();
-	*height = getHeight();
+	width = getWidth();
+	height = getHeight();
 }
 
 void DisplayObjectBase::setSize( const int width, const int height )

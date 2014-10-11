@@ -38,44 +38,53 @@ bool Page_TestUI::resolved()
 	Page::resolved();
 
 	// vbox example
-	{
-		GUI_VBox* box = new GUI_VBox( 0.0f, 0.0f, 100.0f, 200.0f );
-		this->addChild( box );
-		box->tweener().moveTo( 1.0f, 100.0f, 100.0f, boost::bind(&Page_TestUI::here, this));
+	// {
+	// 	GUI_VBox* box = new GUI_VBox( 0.0f, 0.0f, 100.0f, 200.0f );
+	// 	this->addChild( box );
+	// 	box->tweener().moveTo( 1.0f, 100.0f, 100.0f, boost::bind(&Page_TestUI::here, this));
 
-		{
-			const int count = 10;
-			// const int w = 128;
-			// const int h = 64;
+	// 	{
+	// 		const int count = 10;
+	// 		for ( int i = 0; i < count; ++i ) {
+	// 			DisplayObject* displayObject = new DisplayObject();
+	// 			Texture* texture = textureMgr.createImageTexture( "assets/test1.png" );
+	// 			displayObject->setTexture( texture );
+	// 			box->addItem( displayObject );
+	// 		}
+	// 	}
+	// }
 
-			for ( int i = 0; i < count; ++i ) {
-				DisplayObject* displayObject = new DisplayObject();
-				Texture* texture = textureMgr.createImageTexture( "assets/test1.png" );
-				// Texture* texture = textureMgr.createEmptyTexture( w, h, round( rand() * 255 ), round( rand() * 255 ), round( rand() * 255 ), 100 );
-				displayObject->setTexture( texture );
-				box->addItem( displayObject );
-			}
-		}
-	}
+	// {
+	// 	std::vector<Primitive*> vec;
+	// 	GradientRect rect( 0, 0, 100, 200, RGBA2Int( 255, 0, 0, 0 ), RGBA2Int( 255, 0, 0, 255 ) );
+	// 	vec.push_back( &rect );
+	// 	Texture* texture = textureMgr.getInstance().createPrimitivesTexture( vec );
+	// 	DisplayObject* object = new DisplayObject();
+	// 	object->setTexture( texture );
+	// 	this->addChild( object );
+	// }
 
-	{
-		std::vector<Primitive*> vec;
-		GradientRect rect( 0, 0, 100, 200, RGBA2Int( 255, 0, 0, 0 ), RGBA2Int( 255, 0, 0, 255 ) );
-		vec.push_back( &rect );
-		Texture* texture = textureMgr.getInstance().createPrimitivesTexture( vec );
-		DisplayObject* object = new DisplayObject();
-		object->setTexture( texture );
-		this->addChild( object );
-	}
-
-	{
-		GUI_VScrollBar* bar = new GUI_VScrollBar( 150.0f, 100.0f, 16.0f, 200.0f );
-		this->addChild( bar );
-	}
+	// {
+	// 	GUI_VScrollBar* bar = new GUI_VScrollBar( 150.0f, 100.0f, 16.0f, 200.0f );
+	// 	this->addChild( bar );
+	// }
 
 	{
 		GUI_ScrollVBox* vbox = new GUI_ScrollVBox( 300.0f, 100.0f, 300.0f, 300.0f );
 		this->addChild( vbox );
+		vbox->setClipRect( 0, 0, 30, 30 );
+
+		const int count = 20;
+		for ( int i = 0; i < count; ++i )
+		{
+			std::stringstream ss;
+			ss << "text" << ( i + 1 );
+			std::string str = ss.str();
+			
+			GUI_Label* label = new GUI_Label( 0.0f, 0.0f, str );
+			vbox->addItem( label );
+			std::cout << "label: " << label->transform().getX() << ", " << label->transform().getY() << ", " << label->getWidth() << ", " << label->getHeight() << std::endl;
+		}
 	}
 	return true;
 }
