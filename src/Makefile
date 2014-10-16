@@ -33,7 +33,7 @@ _OBJ = 	Demo.o \
 		Page_Gameplay.o	Page_GfxTest.o Page_LuaTest.o Page_Default.o Kernel.o Page.o Page_TestFont.o Page_TestUI.o Page_TestLinearAlgebra.o Page_TestDisplayObject.o Page_TestCO.o \
 		Tweener.o DebugConsole.o GameGlobal.o Profiler.o FontMgr.o Timer.o Texture.o TextureMgr.o Transform.o Logger.o GradientRect.o \
 		Entity.o Entity_Emitter.o Entity_Bot.o \
-		Component_Base.o Component_Dragging.o \
+		Component_Base.o Component_Dragging.o Component_ClipContainer.o \
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 

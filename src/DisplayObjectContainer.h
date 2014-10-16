@@ -31,12 +31,13 @@ public:
 	DisplayObjectVec& getChildren();
 	virtual void updateBoundingBox();
 	void handleTransformEvent();
+	// void foo();
 	
 protected:
 	virtual void updateBoundingBox_();
 	void updateAllWorldTrans_();
-	void resetAllChildrenClipRect();
-	void resetAllChildrenClipRect_();
+	// void resetAllChildrenClipRect();
+	// void resetAllChildrenClipRect_();
 	
 	DisplayObjectMap _entityMap;
 	DisplayObjectVec _entityVec;

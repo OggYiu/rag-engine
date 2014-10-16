@@ -229,6 +229,7 @@ void Kernel::create()
 
 	// init debug console
 	debugConsole_ = new DebugConsole();
+	debugConsole_->setVisible( false );
 	debugContainer_->addChild(debugConsole_);
 
 	getStage().addEventListener( KeyboardEvent::KEY_DOWN, bindEventHandler( &Kernel::eventHandler, this ), this );
@@ -266,7 +267,7 @@ bool Kernel::eventHandler( const Event& event )
 			break;
 		case SDLK_BACKQUOTE:
 			if ( isDown ) {
-				toggleDebugConsoleVisible();
+				toggleDebugConsole();
 			}
 			break;
 		}
@@ -275,11 +276,21 @@ bool Kernel::eventHandler( const Event& event )
 	return true;
 }
 
-void Kernel::toggleDebugConsoleVisible()
+void Kernel::toggleDebugConsole()
 {
 	debugConsole_->setVisible( !debugConsole_->isVisible() );
-	// std::cout << debugConsole_->isVisible() << std::endl;
 }
+
+void Kernel::closeDebugConsole()
+{
+	debugConsole_->setVisible( false );	
+}
+
+void Kernel::openDebugConsole()
+{
+	debugConsole_->setVisible( true );
+}
+
 
 void Kernel::addDebugMsg( const std::string& msg, const Uint32 color )
 {

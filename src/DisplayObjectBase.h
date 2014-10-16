@@ -36,7 +36,9 @@ public:
 	void detachFromParent();
 	void release();	
 	bool needReleased() { return needReleased_; }
-	virtual void setClipRect( const int x, const int y, const int width, const int height );
+	virtual void setClipRect( const int x, const int y, const int w, const int h );
+	virtual void setRenderRect( const int x, const int y, const int w, const int h );	
+	void clearClipRect();
 	
 	void addComponent( Component_Base* component );
 	void removeComponent( const std::string& name );
@@ -65,7 +67,7 @@ public:
 	void setVisible( const bool visible );
 	
 	bool hitTest( const int x, const int y );
-	SDL_Rect& getBBox() { return boundingBox_; }
+	virtual SDL_Rect& getBBox();
 
 	Tweener& tweener() { return tweener_; }
 	Transform& transform() { return transform_; }
@@ -86,7 +88,8 @@ protected:
 	bool needReleased_;
 	Eigen::Vector2f anchor_;
 	Eigen::Vector2i size_;
-	SDL_Rect clipRect_;
+	SDL_Rect* clipRect_;
+	SDL_Rect renderRect_;	
 	SDL_Rect boundingBox_;
 	bool visible_;
 	Tweener tweener_;

@@ -11,6 +11,7 @@
 DisplayObjectBase::DisplayObjectBase()
 	: parent_( nullptr )
 	, needReleased_( false )
+	, clipRect_( nullptr )
 	, visible_( true )
 	, tweener_( Tweener( this ) )
 	, transform_( this )
@@ -31,10 +32,7 @@ DisplayObjectBase::DisplayObjectBase()
 	anchor_[0] = 0.0f;
 	anchor_[1] = 0.0f;
 
-	clipRect_.x = 0;
-	clipRect_.y = 0;
-	clipRect_.w = 0;
-	clipRect_.h = 0;	
+	// setClipRect( 0, 0, 0, 0 );
 }
 
 DisplayObjectBase::~DisplayObjectBase()
@@ -94,12 +92,29 @@ void DisplayObjectBase::release()
 	needReleased_ = true;
 }
 
-void DisplayObjectBase::setClipRect( const int x, const int y, const int width, const int height )
+void DisplayObjectBase::setClipRect( const int x, const int y, const int w, const int h )
 {
-	clipRect_.x = x;
-	clipRect_.y = y;
-	clipRect_.w = width;
-	clipRect_.h = height;
+	clearClipRect();
+	// clipRect_ = new SDL_Rect( x, y, width, height );
+	clipRect_ = new SDL_Rect();
+	clipRect_->x = x;
+	clipRect_->y = y;
+	clipRect_->w = w;
+	clipRect_->h = h;
+	// std::cout << "DisplayObjectBase::setClipRect: " << x << ", " << y << ", " << width << ", " << height << std::endl;
+}
+
+void DisplayObjectBase::setRenderRect( const int x, const int y, const int w, const int h )
+{
+	renderRect_.x = x;
+	renderRect_.y = y;
+	renderRect_.w = w;
+	renderRect_.h = h;
+}
+
+void DisplayObjectBase::clearClipRect()
+{
+	SAFE_RELEASE( clipRect_ );
 }
 
 void DisplayObjectBase::addComponent( Component_Base* component )
@@ -108,6 +123,8 @@ void DisplayObjectBase::addComponent( Component_Base* component )
 		logger.e( "displayobjectbase", "component already existed" );
 		std::cout << "line: " << __LINE__ << ", file: " << __FILE__ << std::endl;
 	}
+	
+	components_[component->getComponentName()] = component;
 }
 
 void DisplayObjectBase::removeComponent( const std::string& name )
@@ -116,31 +133,11 @@ void DisplayObjectBase::removeComponent( const std::string& name )
 		return;
 	}
 	
-	std::stringstream ss;
-	ss << "component does not existed: " << name;
-	logger.e( "displayobjectbase", ss.str() );
-	std::cout << "line: " << __LINE__ << ", file: " << __FILE__ << std::endl;
+	// std::stringstream ss;
+	// ss << "component does not existed: " << name;
+	// logger.e( "displayobjectbase", ss.str() );
+	// std::cout << "line: " << __LINE__ << ", file: " << __FILE__ << std::endl;
 }
-
-// void DisplayObjectBase::setPos( const float x, const float y)
-// {
-// 	setX( x );
-// 	setY( y );	
-// }
-
-// void DisplayObjectBase::setX( const float x )
-// {
-// 	transform_.setX( x );
-// 	updateBoundingBox();
-// }
-
-// void DisplayObjectBase::setY( const float y )
-// {
-// 	float mod = parent_ != nullptr? parent_->transform().getY() + parent_->getHeight() * parent_->getAnchorY() : 0;
-// 	localPos_[1] = y;
-// 	stagePos_[1] = y + mod;
-// 	dirtyBoundingBox_ = true;	
-// }
 
 void DisplayObjectBase::getSize( int& width, int& height )
 {
@@ -173,6 +170,7 @@ int DisplayObjectBase::getWidth() const
 
 float DisplayObjectBase::getScaledWidth() const
 {
+	// std::cout << "get scaled width, size_[0]: " << size_[0] << ", getScaleX: " << transform_.getScaleX() << std::endl;
 	return size_[0] * transform_.getScaleX();
 }
 
@@ -239,6 +237,11 @@ bool DisplayObjectBase::hitTest( const int x, const int y )
 							   boundingBox_.h );
 }
 
+SDL_Rect& DisplayObjectBase::getBBox()
+{
+	tryUpdateBoundingBox();
+	return boundingBox_;
+}
 // Eigen::Matrix4f& DisplayObjectBase::getMatrix()
 // {
 // 	if ( dirtyMatrix_ ) {
@@ -260,6 +263,9 @@ void DisplayObjectBase::tryUpdateBoundingBox()
 
 bool DisplayObjectBase::dragEventHandler( const Event& event __attribute__((unused)) )
 {
+	DragEvent* dragEvent = (DragEvent*)&event;
+	DragEvent e( dragEvent->getType(), dragEvent->get_owner() );
+	this->dispatchEvent( e );
 	return true;
 }
 
@@ -293,9 +299,11 @@ void DisplayObjectBase::updateBoundingBox_()
 	boundingBox_.y = transform_.getStageY() - offsetY - ( offsetY % 2 );
 	boundingBox_.w = modWidth;
 	boundingBox_.h = modHeight;
+
+	setRenderRect( boundingBox_.x, boundingBox_.y, boundingBox_.w, boundingBox_.h );
 	
 	// std::cout << "updateBoundingBox" << std::endl;
-	// std::cout << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl << std::endl;
+	// std::cout << "DisplayObjectBase::updateBoundingBox_: " << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl << std::endl;
 }
 
 bool DisplayObjectBase::transformEventHandler( const Event& event __attribute__((unused)) )

@@ -56,7 +56,7 @@ void DisplayObjectContainer::render()
 	}
 	
 	updateBoundingBox_();
-	resetAllChildrenClipRect_();
+	// resetAllChildrenClipRect_();
 	
 	DisplayObjectVec::iterator iter = _entityVec.begin();
 	DisplayObjectVec::iterator endIter = _entityVec.end();	
@@ -93,7 +93,7 @@ void DisplayObjectContainer::addChild( DisplayObjectBase* const entity )
 	// entity->transform().setPos( this->transform().getX() + entity->transform().getX(), this->transform().getY() + entity->transform().getY() );
 	entity->transform().setPos( entity->transform().getX(), entity->transform().getY() );
 	updateBoundingBox();
-	resetAllChildrenClipRect();
+	// resetAllChildrenClipRect();
 }
 
 void DisplayObjectContainer::setClipRect( const int x, const int y, const int width, const int height )
@@ -192,8 +192,9 @@ void DisplayObjectContainer::updateBoundingBox_()
 	if ( !needUpdateBoundingBox() ) {
 		return;
 	}
-
 	doneUpdateBoundingBox();
+
+	// std::cout << "DisplayObjectContainer::updateBoundingBox_ began ------------------------------" << std::endl;
 	
 	if ( _entityVec.size() <= 0 ) {
 		boundingBox_.x = 0;
@@ -207,26 +208,37 @@ void DisplayObjectContainer::updateBoundingBox_()
 		int minY = std::numeric_limits<int>::max();
 
 		DisplayObjectVec::iterator iter = _entityVec.begin();
-		DisplayObjectVec::iterator endIter = _entityVec.end();	
-		// DisplayObjectBase* obj = nullptr;
+		DisplayObjectVec::iterator endIter = _entityVec.end();
+		// std::cout << "children count: " << _entityVec.size() << std::endl;
 		SDL_Rect* bbox = nullptr;
-		// std::cout << "update bounding box..." << std::endl;
+		DisplayObjectBase* displayObj = nullptr;
 		while ( iter != endIter )
 		{
-			(*iter)->tryUpdateBoundingBox();
-			bbox = &(*iter)->getBBox();
-			(*iter)->updateBoundingBox();
-			// std::cout << "bbox: " << bbox->x << ", " << bbox->y << ", " << bbox->w << ", " << bbox->h << std::endl;
+			displayObj = (*iter);
+			displayObj->tryUpdateBoundingBox();
+			bbox = &displayObj->getBBox();
 
-			minX = std::min<int>( bbox->x, minX );			
-			maxX = std::max<int>( bbox->x + bbox->w, maxX );
-			minY = std::min<int>( bbox->y, minY );			
-			maxY = std::max<int>( bbox->y + bbox->h, maxY );
+			// std::cout << "obj bounding: " << bbox->x << ", " << bbox->y << ", " << bbox->w << ", " << bbox->h << std::endl;
+			// float x1 = bbox->x + displayObj->transform().getX();
+			// float x2 = x1 + bbox->w;
+			// float y1 = bbox->y + displayObj->transform().getY();
+			// float y2 = y1 + bbox->h;
+			
+			float x1 = bbox->x;
+			float x2 = x1 + bbox->w;
+			float y1 = bbox->y;
+			float y2 = y1 + bbox->h;
+
+			minX = std::min<int>( x1, minX );			
+			maxX = std::max<int>( x2, maxX );
+			minY = std::min<int>( y1, minY );			
+			maxY = std::max<int>( y2, maxY );
+
+			// std::cout << "min and max: " << minX << ", " << minY << ", " << maxX << ", " << maxY << std::endl << std::endl;
 
 			++iter;
 		}
 
-		// std::cout << minX << ", " << minY << ", " << maxX << ", " << maxY << std::endl;
 		assert( ( maxX >= minX ) && "invalid maxx or minx" );
 		assert( ( maxY >= minY ) && "invalid maxy or miny" );
 		
@@ -239,12 +251,10 @@ void DisplayObjectContainer::updateBoundingBox_()
 		boundingBox_.w = mwidth;
 		boundingBox_.h = mheight;
 
-		setSize( mwidth, mheight );
-		// std::cout << "transfomr(): " << transform().getWorldMatrix() << std::endl;
-		// std::cout << std::endl;
+		// std::cout << "result bounding box: " << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl;
 	}
 
-	// std::cout << "container bounding box: " << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl;
+	// std::cout << "DisplayObjectContainer::updateBoundingBox_ end ------------------------------" << std::endl;
 }
 
 void DisplayObjectContainer::handleTransformEvent()
@@ -261,48 +271,90 @@ void DisplayObjectContainer::handleTransformEvent()
 	}
 }
 
-void DisplayObjectContainer::resetAllChildrenClipRect()
-{
-	needResetAllChildrenClipRect_ = true;
-}
+// void DisplayObjectContainer::foo()
+// {
+// 	if ( clipRect_ == nullptr ) {
+// 		return;
+// 	}
+	
+// 	DisplayObjectVec::iterator iter = _entityVec.begin();
+// 	DisplayObjectVec::iterator endIter = _entityVec.end();
+// 	float localX, localY;
+// 	float stageX, stageY;
+// 	while ( iter != endIter )
+// 	{
+// 		SDL_Rect& bbox = (*iter)->getBBox();
+// 		(*iter)->transform().getPos( localX, localY );
+// 		(*iter)->transform().getStagePos( stageX, stageY );			
 
-void DisplayObjectContainer::resetAllChildrenClipRect_()
-{
-	if ( !needResetAllChildrenClipRect_ ) {
-		return;
-	}
+// 		if ( localY < 0 ) {
+// 			if ( localY < ( localY + bbox.h ) ) {
+// 				(*iter)->setClipRect( 0, 0, 0, 0 );
+// 				(*iter)->setRenderRect( 0, 0, 0, 0 );
+// 			} else {
+// 				float part1 = fabs( localY );
+// 				float part2 = bbox.h - part1;
+// 				(*iter)->setClipRect( 0, part1, bbox.w, part2 );
+// 				(*iter)->setRenderRect( stageX, stageY + part1, bbox.w, part2 );
+// 			}
+// 		} else 	if ( clipRect_->h > ( localY + bbox.h ) ) {
+// 			(*iter)->setClipRect( 0, 0, bbox.w, bbox.h );
+// 			(*iter)->setRenderRect( stageX, stageY, bbox.w, bbox.h );						
+// 		} else {
+// 			if ( clipRect_->h > localY ) {
+// 				(*iter)->setClipRect( 0, 0, bbox.w, ( clipRect_->h - localY) );
+// 				(*iter)->setRenderRect( stageX, stageY, bbox.w, ( clipRect_->h - localY) );
+// 			} else {
+// 				(*iter)->setClipRect( 0, 0, 0, 0 );
+// 				(*iter)->setRenderRect( 0, 0, 0, 0 );
+// 			}
+// 		}
+// 		++iter;
+// 	}
+// }
 
-	float x, y;
-	int w, h;
-	float x1, x2, y1, y2;
-	float a1, a2, b1, b2;
-	a1 = clipRect_.x;
-	b1 = clipRect_.y;
-	a2 = clipRect_.x + clipRect_.w;
-	b2 = clipRect_.y + clipRect_.h;
-	std::cout << std::endl;
-	std::cout << "cliprect 1111: " << clipRect_.x << ", " << clipRect_.y << ", " << clipRect_.w << ", " << clipRect_.h << std::endl;	
-	DisplayObjectBase* obj;
-	DisplayObjectVec::iterator iter = _entityVec.begin();
-	DisplayObjectVec::iterator endIter = _entityVec.end();
-	while ( iter != endIter )
-	{
-		obj = (*iter);
-		obj->transform().getPos( x, y );
-		obj->getSize( w, h );
+// void DisplayObjectContainer::resetAllChildrenClipRect()
+// {
+// 	needResetAllChildrenClipRect_ = true;
+// }
 
-		x1 = a1 > x? a1 : x;
-		y1 = b1 > y? b1 : y;
-		x2 = a2 < ( x + w )? a2 : ( x + w );
-		y2 = b2 < ( y + h )? b2 : ( y + h );
-		std::cout << "cliprect 2222: " << x1 << ", " << y1 << ", " << x2 << ", " << y2 << std::endl;	
-		obj->setClipRect( x1, y1, x2 - x1, y2 - y1 );
+// void DisplayObjectContainer::resetAllChildrenClipRect_()
+// {
+// 	if ( !needResetAllChildrenClipRect_ ) {
+// 		return;
+// 	}
+
+// 	float x, y;
+// 	int w, h;
+// 	float x1, x2, y1, y2;
+// 	float a1, a2, b1, b2;
+// 	a1 = clipRect_.x;
+// 	b1 = clipRect_.y;
+// 	a2 = clipRect_.x + clipRect_.w;
+// 	b2 = clipRect_.y + clipRect_.h;
+// 	std::cout << std::endl;
+// 	std::cout << "cliprect 1111: " << clipRect_.x << ", " << clipRect_.y << ", " << clipRect_.w << ", " << clipRect_.h << std::endl;	
+// 	DisplayObjectBase* obj;
+// 	DisplayObjectVec::iterator iter = _entityVec.begin();
+// 	DisplayObjectVec::iterator endIter = _entityVec.end();
+// 	while ( iter != endIter )
+// 	{
+// 		obj = (*iter);
+// 		obj->transform().getPos( x, y );
+// 		obj->getSize( w, h );
+
+// 		x1 = a1 > x? a1 : x;
+// 		y1 = b1 > y? b1 : y;
+// 		x2 = a2 < ( x + w )? a2 : ( x + w );
+// 		y2 = b2 < ( y + h )? b2 : ( y + h );
+// 		std::cout << "cliprect 2222: " << x1 << ", " << y1 << ", " << x2 << ", " << y2 << std::endl;	
+// 		obj->setClipRect( x1, y1, x2 - x1, y2 - y1 );
 		
-		++iter;
-	}
-	std::cout << std::endl;	
-	needResetAllChildrenClipRect_ = false;
-}
+// 		++iter;
+// 	}
+// 	std::cout << std::endl;	
+// 	needResetAllChildrenClipRect_ = false;
+// }
 
 void DisplayObjectContainer::updateAllWorldTrans_()
 {

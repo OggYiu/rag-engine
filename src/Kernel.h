@@ -51,7 +51,9 @@ private:
 	void free_font();
 	void free_glyphs();
 	bool eventHandler( const Event& event );
-	void toggleDebugConsoleVisible();
+	void toggleDebugConsole();
+	void closeDebugConsole();
+	void openDebugConsole();
 	
 private:
 	SDL_Renderer* renderer_;

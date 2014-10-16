@@ -182,15 +182,25 @@ Eigen::Matrix4f& Transform::getWorldMatrix()
 
 void Transform::worldToLocalPos( const float worldX, const float worldY, float& localX, float& localY )
 {
-	if ( owner_->getParent() != nullptr ) {
-		float parentX, parentY;
-		owner_->getParent()->transform().getStagePos( parentX, parentY );
-		localX = worldX - parentX;
-		localY = worldY - parentY;
-	} else {
-		localX = worldX;
-		localY = worldY;
-	}
+	float stageX, stageY;
+	this->getStagePos( stageX, stageY );
+	localX = worldX - stageX;
+	localY = worldY - stageY;
+
+	// std::cout << "Transform::worldToLocalPos: " << std::endl;
+	// std::cout << "input pos: " << worldX << ", " << worldY << std::endl;
+	// std::cout << "stage pos: " << stageX << ", " << stageY << std::endl;
+	// std::cout << "local pos: " << localX << ", " << localY << std::endl;	
+	
+	// if ( owner_->getParent() != nullptr ) {
+	// 	float parentX, parentY;
+	// 	owner_->getParent()->transform().getStagePos( parentX, parentY );
+	// 	localX = worldX - parentX;
+	// 	localY = worldY - parentY;
+	// } else {
+	// 	localX = worldX;
+	// 	localY = worldY;
+	// }
 }
 
 void Transform::localToWorldPos( const float localX, const float localY, float& worldX, float& worldY )

@@ -83,7 +83,7 @@ bool Page_TestUI::resolved()
 			
 			GUI_Label* label = new GUI_Label( 0.0f, 0.0f, str );
 			vbox->addItem( label );
-			std::cout << "label: " << label->transform().getX() << ", " << label->transform().getY() << ", " << label->getWidth() << ", " << label->getHeight() << std::endl;
+			// std::cout << "label: " << label->transform().getX() << ", " << label->transform().getY() << ", " << label->getWidth() << ", " << label->getHeight() << std::endl;
 		}
 	}
 	return true;

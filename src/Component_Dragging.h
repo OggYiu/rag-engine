@@ -21,8 +21,9 @@ protected:
 	bool mouseEventHandler( const Event& event );
 
 protected:
-	bool isDragging_;
 	Eigen::Vector2f mouseOffsetPos_;
+	Eigen::Vector2f lastMousePos_;	
+	bool isDragging_;
 	BBox bound_;
 };
 

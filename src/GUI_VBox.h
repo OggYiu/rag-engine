@@ -19,6 +19,8 @@ public:
 	virtual void render();
 	virtual void addChild( DisplayObjectBase* const entity );
 	virtual void setClipRect( const int x, const int y, const int width, const int height );
+	virtual SDL_Rect& getBBox();
+	GUI_BaseContainer* get_itemsContainer();
 	void addChild_( DisplayObjectBase* const entity );
 	
 	void setMarginY();
@@ -27,14 +29,12 @@ public:
 protected:
 	virtual bool resolved();
 	void rearrangeChildren();
-	void rearrangeChildren_();
 	
 protected:
 	GUI_BaseContainer* itemsContainer_;
 	GUI_Image* bg_;
 	float nextPosY_;
 	float marginY_;
-	bool needRearrange_;
 };
 
 #endif

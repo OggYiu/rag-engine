@@ -7,10 +7,10 @@ const std::string MouseEvent::MOUSE_UP("MOUSE_UP");
 const std::string MouseEvent::MOUSE_HOVER("MOUSE_HOVER");
 const std::string MouseEvent::MOUSE_LOSE_HOVER("MOUSE_LOSE_HOVER");
 
-MouseEvent::MouseEvent(const std::string& type, const int mouseX, const int mouseY)
-	: Event(type)
-	, mouseX_(mouseX)
-	, mouseY_(mouseY)
+MouseEvent::MouseEvent( const std::string& type, const int mouseX, const int mouseY )
+	: Event( type )
+	, mouseX_( mouseX )
+	, mouseY_( mouseY )
 {
 	
 }

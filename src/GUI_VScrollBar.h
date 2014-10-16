@@ -9,6 +9,9 @@ class Event;
 class GUI_VScrollBar : public GUI_BaseContainer
 {
 public:
+	const static int BAR_WIDTH = 16;
+	
+public:
 	// GUI_VScrollBar();
 	GUI_VScrollBar( const int x, const int y, const int width, const int height, const float curValue = 0.0f, const float maxValue = 100.0f );
 	virtual ~GUI_VScrollBar();

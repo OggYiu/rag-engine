@@ -4,6 +4,7 @@
 #include <string>
 #include "Event.h"
 
+class DisplayObjectBase;
 class DragEvent : public Event
 {
 public:
@@ -12,8 +13,14 @@ public:
 	static const std::string DRAG_ENDED;	
 
 public:
-	DragEvent( const std::string& type );
+	DragEvent( const std::string& type, DisplayObjectBase* owner );
 	virtual ~DragEvent();
+
+public:
+	DisplayObjectBase* get_owner();
+	
+protected:
+	DisplayObjectBase* owner_;
 };
 
 #endif

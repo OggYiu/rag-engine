@@ -80,6 +80,7 @@ float GUI_VScrollBar::getPercentage()
 
 bool GUI_VScrollBar::dragEventHandler( const Event& event )
 {
+	// std::cout << "gui vscrollbar, dragEventHandler" << std::endl;
 	DragEvent* dragEvent = ( DragEvent* )&event;
 	if ( dragEvent->getType() == DragEvent::DRAG_BEGAN ) {
 	}

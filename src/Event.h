@@ -27,7 +27,7 @@ public:
 	bool isEqual( const std::string& type ) const;
 	
 public:
-	EventDispatcher* sender_;
+	const EventDispatcher* sender_;
 	const std::string type_;
 	Uint32 timestamp_;
 };
