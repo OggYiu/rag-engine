@@ -32,7 +32,7 @@ GUI_ScrollVBox::~GUI_ScrollVBox()
 {
 }
 
-void GUI_ScrollVBox::addChild( DisplayObjectBase* const entity __attribute__((unused)) )
+void GUI_ScrollVBox::addChild(DisplayObjectBase* const entity ATTR_UNUSED )
 {
 	logger.getInstance().e( "GUI_ScrollVBox", "please use addChild_ instead" );
 }
