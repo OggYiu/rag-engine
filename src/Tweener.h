@@ -5,7 +5,7 @@
 #include "claw/tween/tweener_group.hpp"
 #include "claw/tween/tweener_sequence.hpp"
 #include "claw/tween/easing/easing_linear.hpp"
-#include "boost/bind.hpp"
+//#include "boost/bind.hpp"
 
 class DisplayObjectBase;
 class Tweener
@@ -27,8 +27,7 @@ public:
 	void update(const float dt);
 
 protected:
-	DisplayObjectBase
-* owner_;
+	DisplayObjectBase* owner_;
 	claw::tween::tweener_sequence* tweenSeq_;
 	claw::tween::tweener_group* tweenGroup_;
 	claw::tween::single_tweener* tweenSingle_;	

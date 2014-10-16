@@ -3,6 +3,7 @@
 #include "GUI_VBox.h"
 #include "GUI_VScrollBar.h"
 #include "Logger.h"
+#include "Helper.h"
 
 GUI_ScrollVBox::GUI_ScrollVBox( const int x, const int y, const int width, const int height )
 	: box_( nullptr )
@@ -16,7 +17,7 @@ GUI_ScrollVBox::~GUI_ScrollVBox()
 {
 }
 
-void GUI_ScrollVBox::addChild( DisplayObjectBase* const entity __attribute__((unused)) )
+void GUI_ScrollVBox::addChild(DisplayObjectBase* const entity ATTR_UNUSED )
 {
 	logger.getInstance().e( "GUI_ScrollVBox", "" );
 }

@@ -1,5 +1,6 @@
 #include "Page_TestUI.h"
 
+#include "boost/bind.hpp"
 #include "GUI_Label.h"
 #include "GUI_Image.h"
 #include "GUI_Window.h"

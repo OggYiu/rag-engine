@@ -1,5 +1,6 @@
 #include "Tweener.h"
 
+#include "boost/bind.hpp"
 #include <functional>
 #include <memory>
 #include "DisplayObjectBase.h"
@@ -47,7 +48,7 @@ void Tweener::scaleTo(const float duration, const float x, const float y, finish
 	clear();
 
 	claw::tween::single_tweener t1 = claw::tween::single_tweener( owner_->transform().getScaleX(), x, duration, boost::bind( &Transform::setScaleX, &owner_->transform(), _1 ), claw::tween::easing_linear::ease_in );
-	claw::tween::single_tweener t2 = claw::tween::single_tweener( owner_->transform().getScaleY(), y, duration, boost::bind( &Transform::setScaleY, owner_->transform(), _1 ), claw::tween::easing_linear::ease_in );	
+	claw::tween::single_tweener t2 = claw::tween::single_tweener( owner_->transform().getScaleY(), y, duration, boost::bind( &Transform::setScaleY, &owner_->transform(), _1 ), claw::tween::easing_linear::ease_in );	
 
 	tweenGroup_ = new claw::tween::tweener_group();
 	tweenGroup_->insert(t1);

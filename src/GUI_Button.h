@@ -6,7 +6,7 @@
 #include "claw/tween/tweener_group.hpp"
 #include "claw/tween/tweener_sequence.hpp"
 #include "claw/tween/easing/easing_linear.hpp"
-#include "boost/bind.hpp"
+//#include "boost/bind.hpp"
 #include "SDL.h"
 
 #include "GUI_BaseContainer.h"

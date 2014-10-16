@@ -258,7 +258,7 @@ void DisplayObjectBase::tryUpdateBoundingBox()
 	updateBoundingBox_();
 }
 
-bool DisplayObjectBase::dragEventHandler( const Event& event __attribute__((unused)) )
+bool DisplayObjectBase::dragEventHandler(const Event& event ATTR_UNUSED )
 {
 	return true;
 }
@@ -298,7 +298,7 @@ void DisplayObjectBase::updateBoundingBox_()
 	// std::cout << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl << std::endl;
 }
 
-bool DisplayObjectBase::transformEventHandler( const Event& event __attribute__((unused)) )
+bool DisplayObjectBase::transformEventHandler(const Event& event ATTR_UNUSED )
 {
 	// std::string type = event.getType();
 	// if ( type.compare( TransformEvent::TRANSFORM_POSITION_CHANGED ) == 0 ) {

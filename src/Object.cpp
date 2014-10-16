@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <assert.h>
+#include "Helper.h"
 
 int Object::s_nextId = 0;
 
@@ -16,7 +17,7 @@ Object::~Object()
 //	std::cout << "object decon" << std::endl;	
 }
 
-void Object::update( const double dt __attribute__((unused)) )
+void Object::update(const double dt ATTR_UNUSED )
 {
 	if (!updated_)
 	{
