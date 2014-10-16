@@ -16,18 +16,25 @@ public:
 	~GUI_VBox();
 
 public:
+	virtual void render();
+	virtual void addChild( DisplayObjectBase* const entity );
+	virtual void setClipRect( const int x, const int y, const int width, const int height );
+	void addChild_( DisplayObjectBase* const entity );
+	
 	void setMarginY();
-	void rearrangeChildren();
 	void addItem( DisplayObjectBase* const entity );
 	
 protected:
 	virtual bool resolved();
+	void rearrangeChildren();
+	void rearrangeChildren_();
 	
 protected:
 	GUI_BaseContainer* itemsContainer_;
 	GUI_Image* bg_;
 	float nextPosY_;
 	float marginY_;
+	bool needRearrange_;
 };
 
 #endif

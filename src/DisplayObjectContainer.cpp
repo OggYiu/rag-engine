@@ -9,6 +9,7 @@
 // #include "Texture.h"
 
 DisplayObjectContainer::DisplayObjectContainer()
+	: needResetAllChildrenClipRect_( false )
 {
 }
 
@@ -49,11 +50,13 @@ void DisplayObjectContainer::update(const double dt)
 
 void DisplayObjectContainer::render()
 {
+	// std::cout << std::endl;
 	if ( !isVisible() ) {
 		return;
 	}
 	
 	updateBoundingBox_();
+	resetAllChildrenClipRect_();
 	
 	DisplayObjectVec::iterator iter = _entityVec.begin();
 	DisplayObjectVec::iterator endIter = _entityVec.end();	
@@ -66,6 +69,7 @@ void DisplayObjectContainer::render()
 
 		++iter;
 	}
+	// std::cout << std::endl;
 }
 
 void DisplayObjectContainer::addChild( DisplayObjectBase* const entity )
@@ -89,6 +93,12 @@ void DisplayObjectContainer::addChild( DisplayObjectBase* const entity )
 	// entity->transform().setPos( this->transform().getX() + entity->transform().getX(), this->transform().getY() + entity->transform().getY() );
 	entity->transform().setPos( entity->transform().getX(), entity->transform().getY() );
 	updateBoundingBox();
+	resetAllChildrenClipRect();
+}
+
+void DisplayObjectContainer::setClipRect( const int x, const int y, const int width, const int height )
+{
+	DisplayObjectBase::setClipRect( x, y, width, height );
 	resetAllChildrenClipRect();
 }
 
@@ -252,14 +262,46 @@ void DisplayObjectContainer::handleTransformEvent()
 }
 
 void DisplayObjectContainer::resetAllChildrenClipRect()
-{	
+{
+	needResetAllChildrenClipRect_ = true;
+}
+
+void DisplayObjectContainer::resetAllChildrenClipRect_()
+{
+	if ( !needResetAllChildrenClipRect_ ) {
+		return;
+	}
+
+	float x, y;
+	int w, h;
+	float x1, x2, y1, y2;
+	float a1, a2, b1, b2;
+	a1 = clipRect_.x;
+	b1 = clipRect_.y;
+	a2 = clipRect_.x + clipRect_.w;
+	b2 = clipRect_.y + clipRect_.h;
+	std::cout << std::endl;
+	std::cout << "cliprect 1111: " << clipRect_.x << ", " << clipRect_.y << ", " << clipRect_.w << ", " << clipRect_.h << std::endl;	
+	DisplayObjectBase* obj;
 	DisplayObjectVec::iterator iter = _entityVec.begin();
 	DisplayObjectVec::iterator endIter = _entityVec.end();
-	
 	while ( iter != endIter )
 	{
+		obj = (*iter);
+		obj->transform().getPos( x, y );
+		obj->getSize( w, h );
+
+		x1 = a1 > x? a1 : x;
+		y1 = b1 > y? b1 : y;
+		x2 = a2 < ( x + w )? a2 : ( x + w );
+		y2 = b2 < ( y + h )? b2 : ( y + h );
+		std::cout << "cliprect 2222: " << x1 << ", " << y1 << ", " << x2 << ", " << y2 << std::endl;	
+		obj->setClipRect( x1, y1, x2 - x1, y2 - y1 );
+		
 		++iter;
 	}
+	std::cout << std::endl;	
+	needResetAllChildrenClipRect_ = false;
 }
 
 void DisplayObjectContainer::updateAllWorldTrans_()

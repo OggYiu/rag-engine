@@ -36,12 +36,12 @@ public:
 	void detachFromParent();
 	void release();	
 	bool needReleased() { return needReleased_; }
-	void setClipRect( const int x, const int y, const int width, const int height );
+	virtual void setClipRect( const int x, const int y, const int width, const int height );
 	
 	void addComponent( Component_Base* component );
 	void removeComponent( const std::string& name );
 
-	void getSize( int* width, int* height );
+	void getSize( int& width, int& height );
 	void setSize( const int width, const int height );
 	void setWidth( const int width );
 	int getWidth() const;

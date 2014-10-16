@@ -45,8 +45,8 @@ void GUI_Label::recreateTexture()
 {
 	releaseTexture();
 
-	texture_ = textureMgr.createTTFTexture( text_, fontName_, fontSize_, color_ );
-	setSize( texture_->getWidth(), texture_->getHeight() );
+	Texture* texture = textureMgr.createTTFTexture( text_, fontName_, fontSize_, color_ );
+	setTexture( texture );
 }
 
 void GUI_Label::update(const double dt)
