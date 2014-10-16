@@ -2,7 +2,10 @@
 
 #include <iostream>
 #include <memory>
+#ifdef _MSC_VER
+#else
 #include <libgen.h>
+#endif
 #include "Helper.h"
 #include "Settings.h"
 #include "Page.h"
@@ -106,6 +109,10 @@ bool Kernel::initSDL()
 	int imgFlags = IMG_INIT_PNG;
 	if (!(IMG_Init(imgFlags) & imgFlags))
 	{
+
+		printf("IMG_Init: Failed to init required jpg and png support!\n");
+		printf("IMG_Init: %s\n", IMG_GetError());
+		std::string error = IMG_GetError();
 		std::cout << "SDL_image could not initialize" << std::endl;
 		showSDLError();
 		return false;
@@ -114,9 +121,13 @@ bool Kernel::initSDL()
 	return true;
 }
 
-bool Kernel::exec(int argc __attribute__((unused)), char* argv[], const Settings& settings, Page* startPage)
+bool Kernel::exec(int argc ATTR_UNUSED, char* argv[], const Settings& settings, Page* startPage)
 {
+#ifdef _MSC_VER
+	baseDir_ = ".";
+#else
 	baseDir_ = dirname(argv[0]);
+#endif
 //	std::cout << "base dpir: " << baseDir_ << std::endl;
 	
 	settings_ = settings;

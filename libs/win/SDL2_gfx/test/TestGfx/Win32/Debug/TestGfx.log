@@ -1,0 +1,11 @@
+﻿Build started 10/10/2014 2:37:30 AM.
+     1>Project "C:\Users\ChunYiu\dev\rag-engine\libs\win\SDL2_gfx\test\TestGfx.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I..\..\sdl2gfx /I..\..\SDL2_gfx /I..\..\SDL\include /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _CRT_SECURE_NO_WARNINGS /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"TestGfx\Win32\Debug\\" /Fd"TestGfx\Win32\Debug\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt TestGfx.c
+         TestGfx.c
+     1>c:\users\chunyiu\dev\rag-engine\libs\win\sdl2_gfx\test\testgfx.c(20): fatal error C1083: Cannot open include file: 'SDL_test_common.h': No such file or directory
+     1>Done Building Project "C:\Users\ChunYiu\dev\rag-engine\libs\win\SDL2_gfx\test\TestGfx.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.12

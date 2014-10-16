@@ -1,5 +1,6 @@
 #include "Page_LuaTest.h"
 
+#include "boost/bind.hpp"
 #include <iostream>
 #include "Helper.h"
 #include "GUI_Button.h"
@@ -33,7 +34,7 @@ bool Page_LuaTest::resolved()
 	return true;
 }
 
-bool Page_LuaTest::eventHandler(const Event& event __attribute__((unused)) )
+bool Page_LuaTest::eventHandler(const Event& event ATTR_UNUSED )
 {
 //	reload();
 	{

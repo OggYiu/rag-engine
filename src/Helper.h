@@ -3,7 +3,10 @@
 
 #include <iostream>
 #include <stdio.h>
+#ifdef _MSC_VER
+#else
 #include <unistd.h>
+#endif
 #include <sstream>
 #include <functional>
 #include <vector>
@@ -17,6 +20,12 @@
 #include "Kernel.h"
 #include "Primitive.h"
 #include "DisplayObjectBase.h"
+
+#ifdef _MSC_VER
+#define ATTR_UNUSED
+#else
+#define ATTR_UNUSED __attribute__((unused))
+#endif
 
 #define PI 3.14285714286
 #define RAD2DEG_ 57.2727272727

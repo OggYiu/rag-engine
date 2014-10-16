@@ -4,8 +4,6 @@
 #include "GUI_VBox.h"
 #include "GUI_VScrollBar.h"
 #include "Logger.h"
-#include "ScrollBarEvent.h"
-#include "Helper.h"
 
 GUI_ScrollVBox::GUI_ScrollVBox( const int x, const int y, const int width, const int height )
 	: box_( nullptr )

@@ -1,0 +1,41 @@
+﻿Build started 10/10/2014 2:37:30 AM.
+     1>Project "C:\Users\ChunYiu\dev\rag-engine\libs\win\SDL2_gfx\SDL2_gfx.vcxproj" on node 2 (Build target(s)).
+     1>Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"Win32\Debug\SDL2_gfx.dll" /INCREMENTAL /NOLOGO /LIBPATH:..\SDL\VisualC\Win32\Debug SDL2.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"Win32\Debug\SDL2_gfx.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE:NO /IMPLIB:"Win32\Debug\SDL2_gfx.lib" /MACHINE:X86 /SAFESEH /DLL Win32\Debug\SDL2_framerate.obj
+         Win32\Debug\SDL2_gfxPrimitives.obj
+         Win32\Debug\SDL2_rotozoom.obj
+         Win32\Debug\SDL2_imageFilter.obj
+     1>SDL2_framerate.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+            Creating library Win32\Debug\SDL2_gfx.lib and object Win32\Debug\SDL2_gfx.exp
+     1>SDL2_framerate.obj : error LNK2019: unresolved external symbol _SDL_GetTicks referenced in function __getTicks
+     1>SDL2_framerate.obj : error LNK2019: unresolved external symbol _SDL_Delay referenced in function _SDL_framerateDelay
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_CreateRGBSurface referenced in function _characterRGBA
+     1>SDL2_rotozoom.obj : error LNK2001: unresolved external symbol _SDL_CreateRGBSurface
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_FreeSurface referenced in function _characterRGBA
+     1>SDL2_rotozoom.obj : error LNK2001: unresolved external symbol _SDL_FreeSurface
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_CreateTextureFromSurface referenced in function _characterRGBA
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_SetTextureColorMod referenced in function _characterRGBA
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_SetTextureAlphaMod referenced in function _characterRGBA
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_SetTextureBlendMode referenced in function _texturedPolygonMT
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_SetRenderDrawColor referenced in function _arcRGBA
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_SetRenderDrawBlendMode referenced in function _aaellipseRGBA
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_RenderDrawPoint referenced in function _pixel
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_RenderDrawLine referenced in function _hline
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_RenderDrawLines referenced in function _polygon
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_RenderDrawRect referenced in function _rectangleRGBA
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_RenderFillRect referenced in function _boxRGBA
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_RenderCopy referenced in function __HLineTextured
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_RenderPresent referenced in function _texturedPolygonMT
+     1>SDL2_gfxPrimitives.obj : error LNK2019: unresolved external symbol _SDL_DestroyTexture referenced in function _gfxPrimitivesSetFont
+     1>SDL2_rotozoom.obj : error LNK2019: unresolved external symbol _SDL_SetError referenced in function _rotateSurface90Degrees
+     1>SDL2_rotozoom.obj : error LNK2019: unresolved external symbol _SDL_LockSurface referenced in function _rotateSurface90Degrees
+     1>SDL2_rotozoom.obj : error LNK2019: unresolved external symbol _SDL_UnlockSurface referenced in function _rotateSurface90Degrees
+     1>SDL2_rotozoom.obj : error LNK2019: unresolved external symbol _SDL_GetColorKey referenced in function __colorkey
+     1>SDL2_rotozoom.obj : error LNK2019: unresolved external symbol _SDL_UpperBlit referenced in function _rotozoomSurfaceXY
+     1>SDL2_imageFilter.obj : error LNK2019: unresolved external symbol _SDL_HasMMX referenced in function _SDL_imageFilterMMXdetect
+     1>Win32\Debug\SDL2_gfx.dll : fatal error LNK1120: 24 unresolved externals
+     1>Done Building Project "C:\Users\ChunYiu\dev\rag-engine\libs\win\SDL2_gfx\SDL2_gfx.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.17

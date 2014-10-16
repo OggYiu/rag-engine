@@ -3,6 +3,7 @@
 #include <iostream>
 #include <functional>
 #include <memory>
+#include "boost/bind.hpp"
 
 #include "Texture.h"
 #include "Kernel.h"
@@ -37,7 +38,7 @@ GUI_Button::~GUI_Button()
 {
 }
 
-void GUI_Button::setText( const std::string& text __attribute__((unused)) )
+void GUI_Button::setText(const std::string& text ATTR_UNUSED )
 {
 	if ( label_ != nullptr ) {
 		this->removeChild( label_ );
