@@ -99,7 +99,7 @@ void DisplayObjectContainer::addChild( DisplayObjectBase* const entity )
 void DisplayObjectContainer::setClipRect( const int x, const int y, const int width, const int height )
 {
 	DisplayObjectBase::setClipRect( x, y, width, height );
-	resetAllChildrenClipRect();
+	// resetAllChildrenClipRect();
 }
 
 void DisplayObjectContainer::removeChild(DisplayObjectBase* entity)

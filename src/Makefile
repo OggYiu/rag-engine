@@ -4,11 +4,11 @@ IDIR = ../src
 ODIR = ../obj
 LIBDIR = ../libs
 
-SDLDIR = $(LIBDIR)/SDL2
+SDLDIR = $(LIBDIR)/linux/SDL2
 SDLIDIR = $(SDLDIR)/include
-SDLLIBDIR = ../libs/SDL2/lib
+SDLLIBDIR = ~/dev/rag-engine/libs/linux/SDL2/lib
 
-LUADIR = $(LIBDIR)/lua
+LUADIR = $(LIBDIR)/linux/lua
 LUAIDIR = $(LUADIR)/include
 LUALIBDIR = $(LUADIR)/lib
 
@@ -20,7 +20,7 @@ FREETYPE_DIR = $(LIBDIR)/claw
 FREETYPE_IDIR = $(FREETYPE_DIR)/include
 FREETYPE_LDIR = $(FREETYPE_DIR)/lib
 
-EIGEN_DIR = $(LIBDIR)/eigen
+EIGEN_DIR = $(LIBDIR)/all/eigen
 EIGEN_IDIR = $(EIGEN_DIR)
 
 CC = g++
