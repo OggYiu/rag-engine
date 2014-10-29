@@ -39,7 +39,7 @@ void DebugConsole::update(const double dt)
 
 void DebugConsole::addDebugMsg( const std::string& msg, const Uint32 color )
 {
-	GUI_Label* label = new GUI_Label( 4, 0, msg.c_str(), "pf_ronda_seven", 12, color );
+	GUI_Label* label = new GUI_Label( 4, 0, msg.c_str(), 12, "pf_ronda_seven", color );
 	vbox_->addItem( label );
 
 	// if ( vbox_->getHeight() > kernel.getScreenHeight() ) {
@@ -58,11 +58,11 @@ bool DebugConsole::resolved()
 {
 	DisplayObjectContainer::resolved();
 
-	fpsLabel_ = new GUI_Label( 0, 0, "AVG FPS: 9999", "pf_ronda_seven", 12, 0xFF000000 );
+	fpsLabel_ = new GUI_Label( 0, 0, "AVG FPS: 9999", 12, "pf_ronda_seven", 0xFF000000 );
 	fpsLabel_->transform().setX( kernel.getScreenWidth() - fpsLabel_->getWidth() - 32 );
 	this->addChild( fpsLabel_ );
 	
-	mousePosLabel_ = new GUI_Label( 0, fpsLabel_->getHeight(), "mouse, x: 000, y: 000", "pf_ronda_seven", 12, 0xAA0000FF );
+	mousePosLabel_ = new GUI_Label( 0, fpsLabel_->getHeight(), "mouse, x: 000, y: 000", 12, "pf_ronda_seven", 0xAA0000FF );
 	mousePosLabel_->transform().setX( kernel.getScreenWidth() - 160 );
 	this->addChild( mousePosLabel_ );
 	

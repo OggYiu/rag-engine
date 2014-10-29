@@ -9,8 +9,10 @@
 class DisplayObjectContainer : public DisplayObjectBase
 {
 public:
-	typedef std::unordered_map<int, DisplayObjectBase*> DisplayObjectMap;
+	// typedef std::unordered_map<int, DisplayObjectBase*> DisplayObjectMap;
+	// typedef DisplayObjectMap::iterator DisplayObjectMapIterator;
 	typedef std::vector<DisplayObjectBase*> DisplayObjectVec;
+	// typedef DisplayObjectVec::iterator DisplayObjectVecIterator;
 	
 public:
 	DisplayObjectContainer();
@@ -31,16 +33,15 @@ public:
 	DisplayObjectVec& getChildren();
 	virtual void updateBoundingBox();
 	void handleTransformEvent();
-	// void foo();
+	// void resetAllClipRect();
 	
 protected:
 	virtual void updateBoundingBox_();
-	void updateAllWorldTrans_();
 	// void resetAllChildrenClipRect();
 	// void resetAllChildrenClipRect_();
-	
-	DisplayObjectMap _entityMap;
-	DisplayObjectVec _entityVec;
+
+	// DisplayObjectMap entityMap_;
+	DisplayObjectVec entityVec_;
 	bool needResetAllChildrenClipRect_;
 };
 

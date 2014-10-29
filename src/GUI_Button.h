@@ -15,6 +15,7 @@
 class Texture;
 class MouseEvent;
 class GUI_Label;
+class GUI_Image;
 
 enum ButtonState
 {
@@ -33,6 +34,7 @@ public:
 	
 public:
 	GUI_Button( const int x, const int y, Texture* texture );
+	GUI_Button( const int x, const int y, const int width, const int height, const std::string& text );
 	~GUI_Button();
 	
 public:
@@ -43,11 +45,15 @@ private:
 	void createEventListener();
 	bool eventHandler( const Event& event );
 	void update( const double dt );
+	void onHover();
+	void onHoverLost();
+	void onClick();
 	
 private:
 	bool clicked_;
 	bool hovered_;
 	GUI_Label* label_;
+	std::map<ButtonState, GUI_Image*> images_;
 	ButtonState state_;
 	claw::tween::tweener_sequence tweenSeq_;
 };

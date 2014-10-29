@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Eigen/Dense"
+#include "Eigen/Geometry"
 #include "EventDispatcher.h"
 
 class DisplayObjectBase;
@@ -36,29 +37,30 @@ public:
 	void setScale( const float x, const float y, const float z = 1.0f );
 	void setScaleX( const float scale );
 	void setScaleY( const float scale );
+	void setScaleZ( const float scale );	
 	float getScaleX() const;
 	float getScaleY() const;
+	float getScaleZ() const;	
 	
-	Eigen::Matrix4f& getLocalMatrix();
-	Eigen::Matrix4f& getWorldMatrix();
+    // Eigen::Matrix4f& getLocalMatrix();
+    // Eigen::Matrix4f& getWorldMatrix();
+	
+    Eigen::Transform<float, 3, Eigen::Affine>& getLocalTransform();
+    Eigen::Transform<float, 3, Eigen::Affine>& getWorldTransform();
 
 	void worldToLocalPos( const float worldX, const float worldY, float& localX, float& localY );
 	void localToWorldPos( const float localX, const float localY, float& worldX, float& worldY );
-	void updateWorldTrans();
+	void updateLocalTransform();
+	void updateWorldTransform();
 	void print();
 	
 private:
-	void updateWorldTrans_();
-
-	// inline void refreshMatrix() { matrix_ = ( localTrans_.translation() * localTrans_.rotation() ).matrix(); }
-	
-private:
 	DisplayObjectBase* owner_;
+	Eigen::Translation3f localTranslate_;
 	Eigen::AngleAxisf localRotAngle_;
-	Eigen::Vector3f localScale_;
-	Eigen::Transform<float, 3, Eigen::Affine> localTrans_;
-	Eigen::Transform<float, 3, Eigen::Affine> worldTrans_;
-	bool worldTransDirty_;
+	Eigen::DiagonalMatrix<float, 3> localScale_;
+	Eigen::Transform<float, 3, Eigen::Affine> localTransform_;
+	Eigen::Transform<float, 3, Eigen::Affine> worldTransform_;
 };
 
 #endif

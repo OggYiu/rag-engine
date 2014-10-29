@@ -36,10 +36,10 @@
 
 #define SAFE_RELEASE(ptr)						\
 	{											\
-	 if ( ptr != nullptr )						\
+		if ( (ptr) != nullptr )					\
 	 {											\
-	  delete ptr;								\
-	  ptr = nullptr;							\
+		 delete (ptr);							\
+		 (ptr) = nullptr;						\
 	  }											\
 	 }
 

@@ -19,7 +19,7 @@ struct Primitive
 	virtual ~Primitive() {}
 	virtual void render( const float offsetX = 0, const float offsetY = 0 ) = 0;
 
-	virtual void getBoundingBox( BBox& box ) = 0;
+	virtual BBox getBoundingBox() = 0;
 	
 	int x;
 	int y;
@@ -38,39 +38,20 @@ struct Pixel : public Primitive
 			pixelColor(kernel.getRenderer(), offsetX + x, offsetY + y, color);
 		}
 
-	virtual void getBoundingBox( BBox& box )
+	virtual BBox getBoundingBox()
 		{
-			box.x = x;
-			box.y = y;
-			box.w = 1;
-			box.h = 1;
+			return BBox( x, y, 1, 1 );
 		}
 };
 
 struct Line : public Primitive
 {
-	Line( const int l_x1, const int l_y1, const int l_x2, const int l_y2, const Uint32 l_color )
-		: Primitive(l_x1, l_y1, l_color)
-		, x2(l_x2)
-		, y2(l_y2)
-		{
-		}
-		  
+	Line( const int l_x1, const int l_y1, const int l_x2, const int l_y2, const Uint32 l_color );
+	virtual void render( const float offsetX = 0, const float offsetY = 0 );
+	virtual BBox getBoundingBox();
+	
 	int x2;
 	int y2;
-	
-	virtual void render( const float offsetX = 0, const float offsetY = 0 )
-		{
-			lineColor(kernel.getRenderer(), offsetX + x, offsetY + y, offsetX + x2, offsetY + y2, color);
-		}
-
-	virtual void getBoundingBox( BBox& box )
-		{
-			box.x = x;
-			box.y = y;
-			box.w = x2 - x;
-			box.h = y2 - y;
-		}
 };
 
 struct AALine : public Line
@@ -101,12 +82,9 @@ struct SolidRect : public Primitive
 			boxColor(kernel.getRenderer(), offsetX + x, offsetY + y, offsetX + x + width, offsetY + y + height, color);		
 		}
 
-	virtual void getBoundingBox( BBox& box )
+	virtual BBox getBoundingBox()
 		{
-			box.x = x;
-			box.y = y;
-			box.w = width;
-			box.h = height;
+			return BBox( x, y, width, height );
 		}
 
 	int width;
@@ -153,6 +131,21 @@ struct RoundSolidRect : public RoundFrameRect
 		{
 			roundedBoxColor(kernel.getRenderer(), offsetX + x, offsetY + y, offsetX + x + width, offsetY + y + height, rad, color);		
 		}
+};
+
+struct FrameCircle : public Primitive
+{
+	FrameCircle( const int l_x, const int l_y, const Sint16 l_rad, const Uint32 l_color );
+	virtual void render( const float offsetX = 0, const float offsetY = 0 );
+	virtual BBox getBoundingBox();
+	
+	Sint16 rad;
+};
+
+struct SolidCircle : public FrameCircle
+{
+	SolidCircle( const int l_x, const int l_y, const Sint16 l_rad, const Uint32 l_color );
+	virtual void render( const float offsetX = 0, const float offsetY = 0 );
 };
 
 #endif

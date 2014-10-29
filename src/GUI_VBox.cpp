@@ -13,6 +13,8 @@ GUI_VBox::GUI_VBox( const int x, const int y, const int width, const int height 
 	, nextPosY_( 0 )
 	, marginY_( MARGIN_Y )
 {
+	itemsContainer_ = new GUI_BaseContainer();
+
 	setSize( width, height );
 	transform().setPos( x, y );
 
@@ -21,7 +23,6 @@ GUI_VBox::GUI_VBox( const int x, const int y, const int width, const int height 
 	// bg_ = new GUI_Image( 0, 0, primitives );
 	// addChild_( bg_ );
 	
-	itemsContainer_ = new GUI_BaseContainer();
 	addChild_( itemsContainer_ );
 	itemsContainer_->setSize( width, height );
 }

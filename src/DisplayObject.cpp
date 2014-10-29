@@ -77,8 +77,8 @@ void DisplayObject::render()
 	updateBoundingBox_();
 
 	float rotation = transform_.getRot();
-	texture_->render( clipRect_, &renderRect_, rotation, center_, flip_ );
-	// texture_->render( clipRect_, &boundingBox_, rotation, center_, flip_ );
+	// texture_->render( clipRect_, &renderRect_, rotation, center_, flip_ );
+	texture_->render( clipRect_, &boundingBox_, rotation, center_, flip_ );
 }
 	
 void DisplayObject::setTexture( Texture* texture )

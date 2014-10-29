@@ -57,7 +57,6 @@ void DisplayObjectBase::handleAddedToParent( DisplayObjectContainer* container )
 	}
 
 	parent_ = container;
-	transform_.updateWorldTrans();
 	updateBoundingBox();
 }
 
@@ -70,9 +69,9 @@ void DisplayObjectBase::handleRemovedFromParent( DisplayObjectContainer* contain
 	}
 
 	parent_ = nullptr;
-	transform_.updateWorldTrans();
 	updateBoundingBox();
 }
+
 
 void DisplayObjectBase::detachFromParent()
 {
@@ -149,6 +148,7 @@ void DisplayObjectBase::setSize( const int width, const int height )
 {
 	setWidth( width );
 	setHeight( height );
+	setClipRect( 0, 0, getWidth(), getHeight() );
 	updateBoundingBox();
 	
 	// std::cout << "setSize" << std::endl;
@@ -160,6 +160,7 @@ void DisplayObjectBase::setSize( const int width, const int height )
 void DisplayObjectBase::setWidth( const int width )
 {
 	size_[0] = width;
+	setClipRect( 0, 0, size_[0], size_[1] );
 	updateBoundingBox();
 }
 
@@ -177,6 +178,7 @@ float DisplayObjectBase::getScaledWidth() const
 void DisplayObjectBase::setHeight( const int height )
 {
 	size_[1] = height;
+	setClipRect( 0, 0, size_[0], size_[1] );
 	updateBoundingBox();
 }
 

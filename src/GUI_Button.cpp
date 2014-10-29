@@ -34,6 +34,45 @@ GUI_Button::GUI_Button( const int x, const int y, Texture* texture )
 	setSize( texture->getWidth(), texture->getHeight() );
 }
 
+GUI_Button::GUI_Button( const int x, const int y, const int width, const int height, const std::string& text )
+	: clicked_(false)
+	, hovered_(false)
+	, label_( nullptr )
+	, state_(ButtonState::UP)
+{
+	// std::cout << "button new" << std::endl;
+	setSize( width, height );
+	
+	{
+		Uint32 color = 0xFFFF0000;
+		SolidRect rect( 0, 0, width, height, color );
+		Texture* texture = textureMgr.getInstance().createPrimitiveTexture( rect );
+		images_[ButtonState::UP] = new GUI_Image( 0, 0, texture );
+		this->addChild( images_[ButtonState::UP] );
+	}
+		
+	{
+		Uint32 color = 0xFF00FF00;
+		SolidRect rect( 0, 0, width, height, color );
+		Texture* texture = textureMgr.getInstance().createPrimitiveTexture( rect );
+		images_[ButtonState::DOWN] = new GUI_Image( 0, 0, texture );
+		this->addChild( images_[ButtonState::DOWN] );
+		images_[ButtonState::DOWN]->setVisible( false );
+	}
+	
+	{
+		Uint32 color = 0xFF0000FF;
+		SolidRect rect( 0, 0, width, height, color );
+		Texture* texture = textureMgr.getInstance().createPrimitiveTexture( rect );
+		images_[ButtonState::HOVER] = new GUI_Image( 0, 0, texture );
+		this->addChild( images_[ButtonState::HOVER] );
+		images_[ButtonState::HOVER]->setVisible( false );
+	}
+	
+	setText( text );
+	this->transform().setPos( x, y );
+}
+
 GUI_Button::~GUI_Button()
 {
 }
@@ -45,20 +84,17 @@ void GUI_Button::setText(const std::string& text ATTR_UNUSED )
 		SAFE_RELEASE( label_ );
 	}
 
-//	int textSize = round( this->getWidth() / 10 );
-	const int margin = round( this->getWidth() / 5 );
-	label_ = new GUI_Label( 0, 0, text );
-//	std::cout << this->getWidth() << ", " << this->getHeight() << " vs " << label_->getWidth() << ", " << label_->getHeight() << std::endl;
-	float factorX = (float)( this->getWidth() - margin * 2 ) / (float)label_->getWidth();
-	float factorY = (float)( this->getHeight() - margin * 2 ) / (float)label_->getHeight();
-	float scaleFactor = factorX < factorY? factorX : factorY;
-//	std::cout << "factors: " << factorX << " and " << factorY << std::endl;
-	label_->setWidth( round( label_->getWidth() * scaleFactor ) );
-	label_->setHeight( round( label_->getHeight() * scaleFactor ) );	
+	// const int marginnn = round( this->getWidth() / 10 );
+	label_ = new GUI_Label( getWidth()/2, getHeight()/2, text );
+	label_->setAnchor( 0.5f, 0.5f );
+	// float factorX = (float)( this->getWidth() - margin * 2 ) / (float)label_->getWidth();
+	// float factorY = (float)( this->getHeight() - margin * 2 ) / (float)label_->getHeight();
+	// float scaleFactor = factorX < factorY? factorX : factorY;
+	// std::cout << "width: " << this->getWidth() << ", height: " << this->getHeight() << ", label width: " << label_->getWidth() << ", label height: " << label_->getHeight() << std::endl;
+	// std::cout << "margin: " << margin << ", factorX: " << factorX << ", factorY: " << factorY << std::endl;
+	// label_->setWidth( round( label_->getWidth() * scaleFactor ) );
+	// label_->setHeight( round( label_->getHeight() * scaleFactor ) );	
 	this->addChild( label_ );
-//	std::cout << "before: " << label_->getX() << ", " << label_->getY() << std::endl;
-//	label_->setX( margin );
-//	std::cout << "after: " << label_->getX() << ", " << label_->getY() << std::endl;	
 }
 
 bool GUI_Button::resolved()
@@ -97,14 +133,21 @@ bool GUI_Button::eventHandler( const Event& event )
 	MouseEvent* mouseEvent = (MouseEvent*)(&event);
 	int mouseX = mouseEvent->getMouseX();
 	int mouseY = mouseEvent->getMouseY();
+
+	DisplayObject* target = nullptr;
+	if ( images_[ButtonState::UP]->isVisible() ) {
+		target = images_[ButtonState::UP];
+	}
+	else if ( images_[ButtonState::DOWN]->isVisible() ) {
+		target = images_[ButtonState::DOWN];
+	}
+	else if ( images_[ButtonState::HOVER]->isVisible() ) {
+		target = images_[ButtonState::HOVER];
+	}
 	
-	// std::cout << mouseEvent->getMouseX() << std::endl;
-	// std::cout << "gui button event handler: " << event.getType() << std::endl;
 	if (event.getType().compare(MouseEvent::MOUSE_MOVE) == 0)
 	{
-		// std::cout << "mouse move " << mouseEvent->getMouseX() << ", " << mouseEvent->getMouseY() << std::endl;
-
-		if ( hitTest( mouseX, mouseY ) )
+		if ( target->hitTest( mouseX, mouseY ) )
 		{
 			if (state_ != ButtonState::DOWN)
 			{
@@ -118,19 +161,9 @@ bool GUI_Button::eventHandler( const Event& event )
 					{
 						hovered_ = true;
 
-						// clicked handler
-						claw::tween::tweener_group group;
-						group.insert(
-							claw::tween::single_tweener( 1.0f, TWEEN_HOVER_SCALE, TWEEN_HOVER_DURATION, boost::bind( &Transform::setScaleX, &transform(), _1 ), claw::tween::easing_linear::ease_in )
-							);
-						group.insert(
-							claw::tween::single_tweener( 1.0f, TWEEN_HOVER_SCALE, TWEEN_HOVER_DURATION, boost::bind( &Transform::setScaleY, &transform(), _1 ), claw::tween::easing_linear::ease_in )
-							);
-
-						tweenSeq_.insert(group);
-
+						onHover();
+						
 						MouseEvent mouseEvent( MouseEvent::MOUSE_HOVER, mouseX, mouseY );
-						// this->dispatchEvent( MouseEvent( MouseEvent::MOUSE_HOVER, mouseX, mouseY ) );
 						this->dispatchEvent( mouseEvent );
 					}
 					state_ = ButtonState::HOVER;
@@ -143,53 +176,24 @@ bool GUI_Button::eventHandler( const Event& event )
 
 			if (hovered_)
 			{
-				claw::tween::tweener_group group;
-				group.insert(
-					claw::tween::single_tweener( TWEEN_HOVER_SCALE, 1.0f, TWEEN_HOVER_DURATION, boost::bind( &Transform::setScaleX, &transform(), _1 ), claw::tween::easing_linear::ease_in )
-					);
-				group.insert(
-					claw::tween::single_tweener( TWEEN_HOVER_SCALE, 1.0f, TWEEN_HOVER_DURATION, boost::bind( &Transform::setScaleY, &transform(), _1 ), claw::tween::easing_linear::ease_in )
-					);
-
-				tweenSeq_.insert(group);
-
+				onHoverLost();
+				
 				MouseEvent mouseEvent( MouseEvent::MOUSE_LOSE_HOVER, mouseX, mouseY );
 				this->dispatchEvent( mouseEvent );
 			}
 			hovered_ = false;
 		}
-		// texture_ = textures_[state_];
 	}
 	else if ( event.getType().compare( MouseEvent::MOUSE_DOWN ) == 0 )
 	{
-		// std::cout << "mouse down " << mouseEvent->getMouseX() << ", " << mouseEvent->getMouseY() << std::endl;
-
-		if (hitTest(mouseX, mouseY))
+		if ( target->hitTest( mouseX, mouseY ) )
 		{
 			state_ = ButtonState::DOWN;
-			// texture_ = textures_[state_];
 
 			if (!clicked_)
 			{
-				// std::cout << "click tween" << std::endl;
-				claw::tween::tweener_group group1;
-				claw::tween::tweener_group group2;
-				group1.insert(
-					claw::tween::single_tweener( TWEEN_HOVER_SCALE, TWEEN_HIT_SCALE, TWEEN_HIT_DURATION, boost::bind( &Transform::setScaleX, &transform(), _1 ), claw::tween::easing_linear::ease_in )
-					);
-				group1.insert(
-					claw::tween::single_tweener( TWEEN_HOVER_SCALE, TWEEN_HIT_SCALE, TWEEN_HIT_DURATION, boost::bind( &Transform::setScaleY, &transform(), _1 ), claw::tween::easing_linear::ease_in )
-					);
-				group2.insert(
-					claw::tween::single_tweener( TWEEN_HIT_SCALE, TWEEN_HOVER_SCALE, TWEEN_HIT_DURATION, boost::bind( &Transform::setScaleX, &transform(), _1 ), claw::tween::easing_linear::ease_in )
-					);
-				group2.insert(
-					claw::tween::single_tweener( TWEEN_HIT_SCALE, TWEEN_HOVER_SCALE, TWEEN_HIT_DURATION, boost::bind( &Transform::setScaleY, &transform(), _1 ), claw::tween::easing_linear::ease_in )
-					);
-
-				tweenSeq_.insert(group1);
-				tweenSeq_.insert(group2);
-
+				onClick();
+				
 				MouseEvent mouseEvent( MouseEvent::MOUSE_DOWN, mouseX, mouseY );
 				this->dispatchEvent( mouseEvent );
 			}
@@ -199,24 +203,21 @@ bool GUI_Button::eventHandler( const Event& event )
 	}
 	else if ( event.getType().compare( MouseEvent::MOUSE_UP ) == 0 )
 	{
-		// std::cout << "mouse hover " << mouseEvent->getMouseX() << ", " << mouseEvent->getMouseY() << std::endl;
-
-		if (hitTest(mouseX, mouseY))
+		if ( target->hitTest( mouseX, mouseY ) )
 		{
 			state_ = ButtonState::HOVER;
+
+			onHover();
+			
 			MouseEvent mouseEvent( MouseEvent::MOUSE_UP, mouseX, mouseY );
 			this->dispatchEvent( mouseEvent );
-			// handler
 		}
 		else
 		{
 			state_ = ButtonState::UP;
 		}
 		clicked_ = false;
-		// texture_ = textures_[state_];
 	}
-	// SDL_MOUSEBUTTONDOWN
-	// SDL_MOUSEBUTTONUP
 
 	return true;
 }
@@ -229,4 +230,62 @@ void GUI_Button::update(const double dt)
 	{
 		tweenSeq_.update(dt);
 	}
+}
+
+void GUI_Button::onHover()
+{
+	images_[ButtonState::UP]->setVisible( false );
+	images_[ButtonState::HOVER]->setVisible( true );	
+	images_[ButtonState::DOWN]->setVisible( false );
+	
+	// claw::tween::tweener_group group;
+	// group.insert(
+	// 	claw::tween::single_tweener( 1.0f, TWEEN_HOVER_SCALE, TWEEN_HOVER_DURATION, boost::bind( &Transform::setScaleX, &transform(), _1 ), claw::tween::easing_linear::ease_in )
+	// );
+	// group.insert(
+	// 	claw::tween::single_tweener( 1.0f, TWEEN_HOVER_SCALE, TWEEN_HOVER_DURATION, boost::bind( &Transform::setScaleY, &transform(), _1 ), claw::tween::easing_linear::ease_in )
+	// );
+	// tweenSeq_.insert(group);
+}
+
+void GUI_Button::onHoverLost()
+{
+	images_[ButtonState::UP]->setVisible( true );
+	images_[ButtonState::HOVER]->setVisible( false );	
+	images_[ButtonState::DOWN]->setVisible( false );
+
+	// claw::tween::tweener_group group;
+	// group.insert(
+	// 	claw::tween::single_tweener( TWEEN_HOVER_SCALE, 1.0f, TWEEN_HOVER_DURATION, boost::bind( &Transform::setScaleX, &transform(), _1 ), claw::tween::easing_linear::ease_in )
+	// );
+	// group.insert(
+	// 	claw::tween::single_tweener( TWEEN_HOVER_SCALE, 1.0f, TWEEN_HOVER_DURATION, boost::bind( &Transform::setScaleY, &transform(), _1 ), claw::tween::easing_linear::ease_in )
+	// );
+
+	// tweenSeq_.insert(group);
+}
+
+void GUI_Button::onClick()
+{
+	images_[ButtonState::UP]->setVisible( false );
+	images_[ButtonState::HOVER]->setVisible( false );	
+	images_[ButtonState::DOWN]->setVisible( true );
+	
+	// claw::tween::tweener_group group1;
+	// claw::tween::tweener_group group2;
+	// group1.insert(
+	// 	claw::tween::single_tweener( TWEEN_HOVER_SCALE, TWEEN_HIT_SCALE, TWEEN_HIT_DURATION, boost::bind( &Transform::setScaleX, &transform(), _1 ), claw::tween::easing_linear::ease_in )
+	// );
+	// group1.insert(
+	// 	claw::tween::single_tweener( TWEEN_HOVER_SCALE, TWEEN_HIT_SCALE, TWEEN_HIT_DURATION, boost::bind( &Transform::setScaleY, &transform(), _1 ), claw::tween::easing_linear::ease_in )
+	// );
+	// group2.insert(
+	// 	claw::tween::single_tweener( TWEEN_HIT_SCALE, TWEEN_HOVER_SCALE, TWEEN_HIT_DURATION, boost::bind( &Transform::setScaleX, &transform(), _1 ), claw::tween::easing_linear::ease_in )
+	// );
+	// group2.insert(
+	// 	claw::tween::single_tweener( TWEEN_HIT_SCALE, TWEEN_HOVER_SCALE, TWEEN_HIT_DURATION, boost::bind( &Transform::setScaleY, &transform(), _1 ), claw::tween::easing_linear::ease_in )
+	// );
+
+	// tweenSeq_.insert(group1);
+	// tweenSeq_.insert(group2);
 }

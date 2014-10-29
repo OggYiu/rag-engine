@@ -10,7 +10,7 @@ class GUI_Label : public GUI_Base
 {	
 public:
 	GUI_Label();
-	GUI_Label( const float x, const float y, const std::string& text, const std::string& fontName = FontMgr::DEFAULT_FONT_NAME, const int fontSize = FontMgr::DEFAULT_FONT_SIZE, const Uint32 color = 0xFF000000 );
+	GUI_Label( const float x, const float y, const std::string& text, const int fontSize = FontMgr::DEFAULT_FONT_SIZE, const std::string& fontName = FontMgr::DEFAULT_FONT_NAME, const Uint32 color = 0xFF000000 );
 	virtual ~GUI_Label();
 
 public:	

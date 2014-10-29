@@ -1,6 +1,7 @@
 #include "TextureMgr.h"
 
 #include <sstream>
+#include <vector>
 #include "SDL_image.h"
 #include "Kernel.h"
 #include "Texture.h"
@@ -50,7 +51,7 @@ static inline SDL_Texture* createTextureFromPrimitives( const std::vector<Primit
 
 	BBox box;
 	while ( iter != endIter ) {
-		(*iter)->getBoundingBox( box );
+		box = (*iter)->getBoundingBox();
 		// std::cout << "primitive: " << box.x1() << ", " << box.y1() << ", " << box.x2() << ", " << box.y2() << std::endl;
 		minX = std::min( minX, box.x1() );
 		maxX = std::max( maxX, box.x2() );
@@ -118,6 +119,7 @@ Texture* TextureMgr::createEmptyTexture( const int width, const int height, cons
 
 Texture* TextureMgr::createTTFTexture( const std::string& text, const std::string& fontName, const int fontSize, const Uint32 color, int* width, int* height )
 {
+	// std::cout << "create ttf texture" << std::endl;
 	return new Texture( createTTFSDLTexture( text, fontName, fontSize, color, width, height ) );
 }
 
@@ -184,6 +186,11 @@ SDL_Texture* TextureMgr::createTTFSDLTexture( const std::string& text, const std
 		SDL_FreeSurface( textSurface );
 	}
 
+	// if ( texture != nullptr ) {
+	// 	std::cout << "ttf texture created!: " << textSurface->w << ", " << textSurface->h << std::endl;
+	// } else {
+	// 	std::cout << "ttf texture create failed" << std::endl;
+	// }
 	return texture;
 }
 
@@ -197,13 +204,19 @@ void TextureMgr::releaseSDLTexture( SDL_Texture* sdlTexture )
 	}
 }
 
+Texture* TextureMgr::createPrimitiveTexture( Primitive& primitive )
+{
+	std::vector<Primitive*> vec;
+	vec.push_back( &primitive );
+	return createPrimitivesTexture( vec );
+}
+
 Texture* TextureMgr::createPrimitivesTexture( const std::vector<Primitive*>& primitives )
 {
 	return new Texture( createPrimitivesSDLTexture( primitives ) );
 }
 
 SDL_Texture* TextureMgr::createPrimitivesSDLTexture( const std::vector<Primitive*>& primitives )
-	
 {
 	SDL_Texture* sdlTexture = nullptr;
 	SDL_Renderer* renderer = kernel.getRenderer();
@@ -212,12 +225,13 @@ SDL_Texture* TextureMgr::createPrimitivesSDLTexture( const std::vector<Primitive
 	int maxY = std::numeric_limits<int>::min();
 	int minY = std::numeric_limits<int>::max();
 
+	// std::vector<Primitive*>::const_iterator iter = primitives.begin();
+	// std::vector<Primitive*>::const_iterator endIter = primitives.end();
 	std::vector<Primitive*>::const_iterator iter = primitives.begin();
 	std::vector<Primitive*>::const_iterator endIter = primitives.end();
 
-	BBox box;
 	while ( iter != endIter ) {
-		(*iter)->getBoundingBox( box );
+		BBox box = (*iter)->getBoundingBox();
 		// std::cout << "primitive: " << box.x1() << ", " << box.y1() << ", " << box.x2() << ", " << box.y2() << std::endl;
 		minX = std::min( minX, box.x1() );
 		maxX = std::max( maxX, box.x2() );
@@ -235,7 +249,13 @@ SDL_Texture* TextureMgr::createPrimitivesSDLTexture( const std::vector<Primitive
 	// int width = maxX - minX;
 	// int height = maxY - minY;	
 	// sdlTexture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, width, height );
-	sdlTexture = SDL_CreateTexture( renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, maxX, maxY );
+	int texWidth = (int)( fabs(minX) + fabs(maxX) );
+	int texHeight = (int)( fabs(minY) + fabs(maxY) );
+	// std::cout << "tex size: " << texWidth << ", " << texHeight << std::endl;
+	sdlTexture = SDL_CreateTexture( renderer,
+									SDL_PIXELFORMAT_RGBA8888,
+									SDL_TEXTUREACCESS_TARGET,
+									texWidth, texHeight );
 
 	// std::cout << "create texture size: " << width << ", " << height << std::endl;
 	if ( sdlTexture == nullptr ) {

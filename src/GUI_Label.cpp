@@ -14,13 +14,14 @@ GUI_Label::GUI_Label()
 {
 }
 
-GUI_Label::GUI_Label( const float x, const float y, const std::string& text, const std::string& fontName, const int fontSize, const Uint32 color )
+GUI_Label::GUI_Label( const float x, const float y, const std::string& text, const int fontSize, const std::string& fontName, const Uint32 color )
 	: text_( text )
 	, fontName_( fontName )
 	, fontSize_( fontSize )
 	, color_( color )
 //	, isDirty_(true)
 {
+	// std::cout << "gui_label: " << x << ", " << y << ", text: " << text.c_str() << ", font name: " << fontName << ",font size; " << fontSize << std::endl;
 	if ( text_.length() > 0 ) {
 		recreateTexture();
 	}
@@ -45,6 +46,7 @@ void GUI_Label::recreateTexture()
 {
 	releaseTexture();
 
+	// std::cout << "1" << std::endl;
 	Texture* texture = textureMgr.createTTFTexture( text_, fontName_, fontSize_, color_ );
 	setTexture( texture );
 }

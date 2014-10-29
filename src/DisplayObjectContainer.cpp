@@ -15,23 +15,23 @@ DisplayObjectContainer::DisplayObjectContainer()
 
 DisplayObjectContainer::~DisplayObjectContainer()
 {
-	DisplayObjectVec::iterator iter = _entityVec.begin();
-	while (iter != _entityVec.end())
+	DisplayObjectVec::iterator iter = entityVec_.begin();
+	DisplayObjectVec::iterator endIter = entityVec_.end();
+	while ( iter != endIter )
 	{
-		delete (*iter);
-		(*iter) = nullptr;
+		SAFE_RELEASE(*iter);
 		++iter;
 	}
 
-	_entityVec.clear();
+	entityVec_.clear();
 }
 
 void DisplayObjectContainer::update(const double dt)
 {	
-	DisplayObjectVec::iterator iter = _entityVec.begin();
+	DisplayObjectVec::iterator iter = entityVec_.begin();
 
-//	std::cout << "size: " << _entityVec.size() << std::endl;
-	while (iter != _entityVec.end())
+//	std::cout << "size: " << entityVec_.size() << std::endl;
+	while (iter != entityVec_.end())
 	{
 		// check if needed to release
 		if( (*iter)->needReleased() )
@@ -58,8 +58,8 @@ void DisplayObjectContainer::render()
 	updateBoundingBox_();
 	// resetAllChildrenClipRect_();
 	
-	DisplayObjectVec::iterator iter = _entityVec.begin();
-	DisplayObjectVec::iterator endIter = _entityVec.end();	
+	DisplayObjectVec::iterator iter = entityVec_.begin();
+	DisplayObjectVec::iterator endIter = entityVec_.end();	
 	while (iter != endIter )
 	{
 		if ( (*iter)->isVisible() )
@@ -79,21 +79,25 @@ void DisplayObjectContainer::addChild( DisplayObjectBase* const entity )
 		return;
 	}
 
-	if (_entityMap[entity->getId()] != nullptr)
-	{
-		std::stringstream msg;
-		msg << "entity " << entity->getId() << " is already added!";
-		assert(false && msg);
-		return;
-	}
+	DisplayObjectVec::iterator iter = entityVec_.begin();
+	DisplayObjectVec::iterator endIter = entityVec_.end();
 
+#ifdef DEBUG
+	while ( iter != endIter ) {
+		if ( (*iter) == entity ) {
+			logger.e( "xxxx", "duplicated entity" );
+			return;
+		}
+		++iter;
+	}
+	iter = entityVec_.begin();
+#endif
+
+	// std::cout << "child added xxxx: " << entity->getId() << std::endl;
 	entity->handleAddedToParent( this );
-	_entityMap[entity->getId()] = entity;
-	_entityVec.push_back(entity);
-	// entity->transform().setPos( this->transform().getX() + entity->transform().getX(), this->transform().getY() + entity->transform().getY() );
+	entityVec_.push_back(entity);
 	entity->transform().setPos( entity->transform().getX(), entity->transform().getY() );
 	updateBoundingBox();
-	// resetAllChildrenClipRect();
 }
 
 void DisplayObjectContainer::setClipRect( const int x, const int y, const int width, const int height )
@@ -104,32 +108,33 @@ void DisplayObjectContainer::setClipRect( const int x, const int y, const int wi
 
 void DisplayObjectContainer::removeChild(DisplayObjectBase* entity)
 {
+	// std::cout << "entity remove child: " << entity->getId() << std::endl;
 	// check if it existed already
-	if (_entityMap[entity->getId()] == nullptr)
-	{
-		std::stringstream msg;
-		msg << "entity " << entity->getId() << " is not added!";
-		assert(false && msg);
-		return;
+	
+	DisplayObjectVec::iterator iter = entityVec_.begin();
+	DisplayObjectVec::iterator endIter = entityVec_.end();
+	while ( iter != endIter ) {
+		if ( (*iter) == entity ) {
+			entity->handleRemovedFromParent( this );
+			entityVec_.erase( iter );
+			std::cout << entity->getId() << " removed from container" << std::endl;
+			break;
+		}
+		std::cout << "child id found xxxxx: " << entity->getId() << std::endl;
+		++iter;
 	}
-
-	_entityMap[entity->getId()] = nullptr;
-	entity->handleRemovedFromParent( this );
-//	std::vector<int> v;
-	DisplayObjectVec::iterator iter = std::remove(_entityVec.begin(), _entityVec.end(), entity);
-	_entityVec.erase(iter);
 	
 	updateBoundingBox();
 }
 
 void DisplayObjectContainer::removeChildAt( const int index )
 {
-	if ( index < 0 || index >= (int)_entityVec.size() ) {
+	if ( index < 0 || index >= (int)entityVec_.size() ) {
 		assert( false && "invalid index" );
 		return;
 	}
 
-	DisplayObjectBase* obj = _entityVec[index];
+	DisplayObjectBase* obj = entityVec_[index];
 	removeChild( obj );
 }
 
@@ -147,39 +152,40 @@ void DisplayObjectContainer::releaseChild(DisplayObjectBase* entity)
 
 void DisplayObjectContainer::releaseChildAt( const int index )
 {
-	if ( index < 0 || index >= (int)_entityVec.size() ) {
+	if ( index < 0 || index >= (int)entityVec_.size() ) {
 		assert( false && "invalid index" );
 		return;
 	}
 
-	DisplayObjectBase* obj = _entityVec[index];
+	DisplayObjectBase* obj = entityVec_[index];
 	releaseChild( obj );
 }
 
 void DisplayObjectContainer::releaseAllChildren()
 {
-	DisplayObjectVec::iterator iter = _entityVec.begin();
-	DisplayObjectVec::iterator endIter = _entityVec.end();
+	DisplayObjectVec::iterator iter = entityVec_.begin();
+	DisplayObjectVec::iterator endIter = entityVec_.end();
 
 	while ( iter != endIter ) {
-		this->removeChild( *iter );
+		// std::cout << (*iter)->getId() << " released" << std::endl;
+		(*iter)->handleRemovedFromParent( this );
 		SAFE_RELEASE( *iter );
 		++iter;
 	}
-
-	_entityVec.clear();
+	
+	entityVec_.clear();
 	
 	updateBoundingBox();
 }
 
 int DisplayObjectContainer::getIndex(const DisplayObjectBase* entity) const
 {
-	return find(_entityVec.begin(), _entityVec.end(), entity) - _entityVec.begin();
+	return find(entityVec_.begin(), entityVec_.end(), entity) - entityVec_.begin();
 }
 
 DisplayObjectContainer::DisplayObjectVec& DisplayObjectContainer::getChildren()
 {
-	return _entityVec;
+	return entityVec_;
 }
 
 void DisplayObjectContainer::updateBoundingBox()
@@ -196,7 +202,7 @@ void DisplayObjectContainer::updateBoundingBox_()
 
 	// std::cout << "DisplayObjectContainer::updateBoundingBox_ began ------------------------------" << std::endl;
 	
-	if ( _entityVec.size() <= 0 ) {
+	if ( entityVec_.size() <= 0 ) {
 		boundingBox_.x = 0;
 		boundingBox_.y = 0;
 		boundingBox_.w = 0;
@@ -207,9 +213,9 @@ void DisplayObjectContainer::updateBoundingBox_()
 		int maxY = std::numeric_limits<int>::min();
 		int minY = std::numeric_limits<int>::max();
 
-		DisplayObjectVec::iterator iter = _entityVec.begin();
-		DisplayObjectVec::iterator endIter = _entityVec.end();
-		// std::cout << "children count: " << _entityVec.size() << std::endl;
+		DisplayObjectVec::iterator iter = entityVec_.begin();
+		DisplayObjectVec::iterator endIter = entityVec_.end();
+		// std::cout << "children count: " << entityVec_.size() << std::endl;
 		SDL_Rect* bbox = nullptr;
 		DisplayObjectBase* displayObj = nullptr;
 		while ( iter != endIter )
@@ -261,112 +267,11 @@ void DisplayObjectContainer::handleTransformEvent()
 {
 	DisplayObjectBase::handleTransformEvent();
 	
-	DisplayObjectVec::iterator iter = _entityVec.begin();
-	DisplayObjectVec::iterator endIter = _entityVec.end();
+	DisplayObjectVec::iterator iter = entityVec_.begin();
+	DisplayObjectVec::iterator endIter = entityVec_.end();
 	while ( iter != endIter )
 	{
 		(*iter)->handleTransformEvent();
-		(*iter)->transform().updateWorldTrans();
-		++iter;
-	}
-}
-
-// void DisplayObjectContainer::foo()
-// {
-// 	if ( clipRect_ == nullptr ) {
-// 		return;
-// 	}
-	
-// 	DisplayObjectVec::iterator iter = _entityVec.begin();
-// 	DisplayObjectVec::iterator endIter = _entityVec.end();
-// 	float localX, localY;
-// 	float stageX, stageY;
-// 	while ( iter != endIter )
-// 	{
-// 		SDL_Rect& bbox = (*iter)->getBBox();
-// 		(*iter)->transform().getPos( localX, localY );
-// 		(*iter)->transform().getStagePos( stageX, stageY );			
-
-// 		if ( localY < 0 ) {
-// 			if ( localY < ( localY + bbox.h ) ) {
-// 				(*iter)->setClipRect( 0, 0, 0, 0 );
-// 				(*iter)->setRenderRect( 0, 0, 0, 0 );
-// 			} else {
-// 				float part1 = fabs( localY );
-// 				float part2 = bbox.h - part1;
-// 				(*iter)->setClipRect( 0, part1, bbox.w, part2 );
-// 				(*iter)->setRenderRect( stageX, stageY + part1, bbox.w, part2 );
-// 			}
-// 		} else 	if ( clipRect_->h > ( localY + bbox.h ) ) {
-// 			(*iter)->setClipRect( 0, 0, bbox.w, bbox.h );
-// 			(*iter)->setRenderRect( stageX, stageY, bbox.w, bbox.h );						
-// 		} else {
-// 			if ( clipRect_->h > localY ) {
-// 				(*iter)->setClipRect( 0, 0, bbox.w, ( clipRect_->h - localY) );
-// 				(*iter)->setRenderRect( stageX, stageY, bbox.w, ( clipRect_->h - localY) );
-// 			} else {
-// 				(*iter)->setClipRect( 0, 0, 0, 0 );
-// 				(*iter)->setRenderRect( 0, 0, 0, 0 );
-// 			}
-// 		}
-// 		++iter;
-// 	}
-// }
-
-// void DisplayObjectContainer::resetAllChildrenClipRect()
-// {
-// 	needResetAllChildrenClipRect_ = true;
-// }
-
-// void DisplayObjectContainer::resetAllChildrenClipRect_()
-// {
-// 	if ( !needResetAllChildrenClipRect_ ) {
-// 		return;
-// 	}
-
-// 	float x, y;
-// 	int w, h;
-// 	float x1, x2, y1, y2;
-// 	float a1, a2, b1, b2;
-// 	a1 = clipRect_.x;
-// 	b1 = clipRect_.y;
-// 	a2 = clipRect_.x + clipRect_.w;
-// 	b2 = clipRect_.y + clipRect_.h;
-// 	std::cout << std::endl;
-// 	std::cout << "cliprect 1111: " << clipRect_.x << ", " << clipRect_.y << ", " << clipRect_.w << ", " << clipRect_.h << std::endl;	
-// 	DisplayObjectBase* obj;
-// 	DisplayObjectVec::iterator iter = _entityVec.begin();
-// 	DisplayObjectVec::iterator endIter = _entityVec.end();
-// 	while ( iter != endIter )
-// 	{
-// 		obj = (*iter);
-// 		obj->transform().getPos( x, y );
-// 		obj->getSize( w, h );
-
-// 		x1 = a1 > x? a1 : x;
-// 		y1 = b1 > y? b1 : y;
-// 		x2 = a2 < ( x + w )? a2 : ( x + w );
-// 		y2 = b2 < ( y + h )? b2 : ( y + h );
-// 		std::cout << "cliprect 2222: " << x1 << ", " << y1 << ", " << x2 << ", " << y2 << std::endl;	
-// 		obj->setClipRect( x1, y1, x2 - x1, y2 - y1 );
-		
-// 		++iter;
-// 	}
-// 	std::cout << std::endl;	
-// 	needResetAllChildrenClipRect_ = false;
-// }
-
-void DisplayObjectContainer::updateAllWorldTrans_()
-{
-	transform().updateWorldTrans();
-	
-	DisplayObjectVec::iterator iter = _entityVec.begin();
-	DisplayObjectVec::iterator endIter = _entityVec.end();	
-	DisplayObjectBase* obj = nullptr;
-	while ( iter != endIter )
-	{
-		obj = (*iter);
-		obj->transform().updateWorldTrans();
 		++iter;
 	}
 }

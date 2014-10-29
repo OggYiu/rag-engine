@@ -38,7 +38,7 @@ bool Page_TestFont::resolved()
 	}
 
 	{
-		GUI_Label* label = new GUI_Label(100.0f, 100.0f / 2.0f, "pf_seven text", "pf_ronda_seven", 16, 0xFFFFFF00 );
+		GUI_Label* label = new GUI_Label(100.0f, 100.0f / 2.0f, "pf_seven text", 16, "pf_ronda_seven", 0xFFFFFF00 );
 		this->addChild(label);
 	}
 	
