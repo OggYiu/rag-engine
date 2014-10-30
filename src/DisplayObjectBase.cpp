@@ -12,6 +12,7 @@ DisplayObjectBase::DisplayObjectBase()
 	: parent_( nullptr )
 	, needReleased_( false )
 	, clipRect_( nullptr )
+	, center_( nullptr )
 	, visible_( true )
 	, tweener_( Tweener( this ) )
 	, transform_( this )
@@ -40,6 +41,8 @@ DisplayObjectBase::~DisplayObjectBase()
 	transform_.removeEventListener( TransformEvent::TRANSFORM_POSITION_CHANGED, this );
 	transform_.removeEventListener( TransformEvent::TRANSFORM_ROTATION_CHANGED, this );	
 	transform_.removeEventListener( TransformEvent::TRANSFORM_SCALE_CHANGED, this );
+	SAFE_RELEASE( clipRect_ );
+	SAFE_RELEASE( center_ );
 }
 
 void DisplayObjectBase::update(const double dt)
@@ -109,6 +112,13 @@ void DisplayObjectBase::setRenderRect( const int x, const int y, const int w, co
 	renderRect_.y = y;
 	renderRect_.w = w;
 	renderRect_.h = h;
+}
+
+void DisplayObjectBase::setCenter( const int x, const int y )
+{
+	SAFE_RELEASE( center_ );
+	center_ = new SDL_Point();
+	center_->x = x; center_->y = y;
 }
 
 void DisplayObjectBase::clearClipRect()

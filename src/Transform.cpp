@@ -191,12 +191,17 @@ void Transform::localToWorldPos( const float localX, const float localY, float& 
 void Transform::updateLocalTransform()
 {
 	localTransform_ = localTranslate_ * localRotAngle_ * localScale_;
+	// std::cout << "1 xxxxx: " << std::endl;
+	// std::cout << ( localRotAngle_ * localTranslate_ * localScale_ ).matrix() << std::endl;
+	// std::cout << "2 xxxxx: " << std::endl;
+	// std::cout << ( localTranslate_ * localRotAngle_ * localScale_ ).matrix() << std::endl;
 }
 
 void Transform::updateWorldTransform()
 {
 	if ( owner_->getParent() != nullptr ) {
-		worldTransform_ = localTransform_ * owner_->getParent()->transform().getWorldTransform();
+		worldTransform_ = owner_->getParent()->transform().getWorldTransform() * localTransform_;
+		// worldTransform_ = localTransform_;
 	} else {
 		worldTransform_ = localTransform_;
 	}

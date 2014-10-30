@@ -36,7 +36,6 @@ private:
 	Texture* texture_;
 
 protected:
-	SDL_Point* center_;
 	SDL_RendererFlip flip_;
 	SDL_BlendMode blending_;
 	Uint8 alpha_;

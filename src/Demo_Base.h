@@ -19,6 +19,8 @@ public:
 	virtual void render();
 	void addDemo( DemoFunc func );
 	void drawFrame( DisplayObjectContainer* container );
+	int getFrameWidth() const;
+	int getFrameHeight() const;
 
 protected:
 	virtual bool resolved();

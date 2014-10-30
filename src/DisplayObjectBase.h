@@ -37,7 +37,8 @@ public:
 	void release();	
 	bool needReleased() { return needReleased_; }
 	virtual void setClipRect( const int x, const int y, const int w, const int h );
-	virtual void setRenderRect( const int x, const int y, const int w, const int h );	
+	virtual void setRenderRect( const int x, const int y, const int w, const int h );
+	void setCenter( const int x, const int y );
 	void clearClipRect();
 	
 	void addComponent( Component_Base* component );
@@ -89,7 +90,8 @@ protected:
 	Eigen::Vector2f anchor_;
 	Eigen::Vector2i size_;
 	SDL_Rect* clipRect_;
-	SDL_Rect renderRect_;	
+	SDL_Rect renderRect_;
+	SDL_Point* center_;
 	SDL_Rect boundingBox_;
 	bool visible_;
 	Tweener tweener_;

@@ -7,7 +7,6 @@
 
 DisplayObject::DisplayObject()
 	: texture_( nullptr )
-	, center_( nullptr )
 	, flip_( SDL_FLIP_NONE )
 	, blending_( SDL_BLENDMODE_NONE )
 	, alpha_( 255 )
@@ -20,7 +19,6 @@ DisplayObject::DisplayObject()
 DisplayObject:: ~DisplayObject()
 {
 	releaseTexture();
-	SAFE_RELEASE( center_ );
 }
 
 void DisplayObject::releaseTexture()

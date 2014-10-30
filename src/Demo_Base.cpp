@@ -15,8 +15,8 @@ Demo_Base::Demo_Base()
 	: demoIndex_( -1 )
 	, startIndex_( 0 )
 	, isFirstRun_( true )
-	, frameMarginX_( 0 )
-	, frameMarginY_( 0 )
+	, frameMarginX_( 50 )
+	, frameMarginY_( 50 )
 {
 }
 
@@ -41,14 +41,15 @@ void Demo_Base::addDemo( DemoFunc func )
 
 void Demo_Base::drawFrame( DisplayObjectContainer* container )
 {
-	int frameWidth = frameW_ = (int)( kernel.getScreenWidth() - frameMarginX_ * 2 );
-	int frameHeight = frameH_ = (int)( kernel.getScreenHeight() - frameMarginY_ * 2 );
+	frameW_ = ( (int)( kernel.getScreenWidth() - frameMarginX_ * 2 ) );
+	frameH_ = ( (int)( kernel.getScreenHeight() - frameMarginY_ * 2 ) );
+		
 	int x = frameMarginX_;
 	int y = frameMarginY_;
 	container->transform().setPos( x, y );
 
 	{
-		FrameRect rect( 0, 0, frameWidth, frameHeight, 0xFF00FF00 );
+		FrameRect rect( 0, 0, frameW_, frameH_, 0xFF00FF00 );
 		Texture* texture = textureMgr.createPrimitiveTexture( rect );
 		DisplayObject* obj = new DisplayObject();
 		obj->setTexture( texture );
@@ -56,7 +57,7 @@ void Demo_Base::drawFrame( DisplayObjectContainer* container )
 	}
 	
 	{
-		Line line( 0, frameHeight / 2, frameWidth, frameHeight / 2, 0xFF0000FF );
+		Line line( 0, frameH_ / 2, frameW_, frameH_ / 2, 0xFF0000FF );
 		Texture* texture = textureMgr.createPrimitiveTexture( line );
 		DisplayObject* obj = new DisplayObject();
 		obj->setTexture( texture );
@@ -65,12 +66,22 @@ void Demo_Base::drawFrame( DisplayObjectContainer* container )
 	
 	{
 		// Line line( 0, kernel.getScreenHeight(), kernel.getScreenWidth(), kernel.getScreenHeight(), 0xFF00FF00 );
-		Line line( frameWidth / 2, 0, frameWidth / 2, frameHeight, 0xFF0000FF );
+		Line line( frameW_ / 2, 0, frameW_ / 2, frameH_, 0xFF0000FF );
 		Texture* texture = textureMgr.createPrimitiveTexture( line );
 		DisplayObject* obj = new DisplayObject();
 		obj->setTexture( texture );
 		container->addChild( obj );
 	}
+}
+
+int Demo_Base::getFrameWidth() const
+{
+	return frameW_;
+}
+
+int Demo_Base::getFrameHeight() const
+{
+	return frameH_;
 }
 
 bool Demo_Base::resolved()
