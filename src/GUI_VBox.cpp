@@ -36,7 +36,7 @@ void GUI_VBox::render()
 	GUI_BaseContainer::render();
 }
 
-void GUI_VBox::addChild( DisplayObjectBase* const entity __attribute__((unused)) )
+void GUI_VBox::addChild(DisplayObjectBase* const entity ATTR_UNUSED )
 {
 	logger.w( "GUI_VBox", "use addChild_ instead" );
 }
@@ -78,7 +78,7 @@ bool GUI_VBox::resolved()
 	return true;
 }
 
-void GUI_VBox::addChild_( DisplayObjectBase* const entity __attribute__((unused)) )
+void GUI_VBox::addChild_(DisplayObjectBase* const entity ATTR_UNUSED )
 {
 	GUI_BaseContainer::addChild( entity );
 }
