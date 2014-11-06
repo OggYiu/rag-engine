@@ -109,7 +109,7 @@ void Page_Gameplay::update(const double dt)
 	}
 }
 
-bool Page_Gameplay::resolved()
+void Page_Gameplay::resolved()
 {
 	Page::resolved();
 
@@ -151,6 +151,4 @@ bool Page_Gameplay::resolved()
 		emitters_.push_back(emitter);
 		this->addChild(emitter);
 	}
-
-	return true;
 }

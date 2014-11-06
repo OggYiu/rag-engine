@@ -97,7 +97,7 @@ void DisplayObjectContainer::addChild( DisplayObjectBase* const entity )
 	entity->handleAddedToParent( this );
 	entityVec_.push_back(entity);
 	entity->transform().setPos( entity->transform().getX(), entity->transform().getY() );
-	updateBoundingBox();
+	updateBoundingBox_();
 }
 
 void DisplayObjectContainer::setClipRect( const int x, const int y, const int width, const int height )
@@ -124,7 +124,7 @@ void DisplayObjectContainer::removeChild(DisplayObjectBase* entity)
 		++iter;
 	}
 	
-	updateBoundingBox();
+	updateBoundingBox_();
 }
 
 void DisplayObjectContainer::removeChildAt( const int index )
@@ -146,7 +146,7 @@ void DisplayObjectContainer::releaseChild(DisplayObjectBase* entity)
 		delete entity;
 		entity = nullptr;
 
-		updateBoundingBox();
+		updateBoundingBox_();
  	}
 }
 
@@ -175,7 +175,7 @@ void DisplayObjectContainer::releaseAllChildren()
 	
 	entityVec_.clear();
 	
-	updateBoundingBox();
+	updateBoundingBox_();
 }
 
 int DisplayObjectContainer::getIndex(const DisplayObjectBase* entity) const
@@ -188,17 +188,17 @@ DisplayObjectContainer::DisplayObjectVec& DisplayObjectContainer::getChildren()
 	return entityVec_;
 }
 
-void DisplayObjectContainer::updateBoundingBox()
-{
-	DisplayObjectBase::updateBoundingBox();
-}
+// void DisplayObjectContainer::updateBoundingBox()
+// {
+// 	DisplayObjectBase::updateBoundingBox();
+// }
 
 void DisplayObjectContainer::updateBoundingBox_()
 {
-	if ( !needUpdateBoundingBox() ) {
-		return;
-	}
-	doneUpdateBoundingBox();
+	// if ( !needUpdateBoundingBox() ) {
+	// 	return;
+	// }
+	// doneUpdateBoundingBox();
 
 	// std::cout << "DisplayObjectContainer::updateBoundingBox_ began ------------------------------" << std::endl;
 	

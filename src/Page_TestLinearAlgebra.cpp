@@ -23,13 +23,11 @@ void Page_TestLinearAlgebra::render()
 	Page::render();
 }
 
-bool Page_TestLinearAlgebra::resolved()
+void Page_TestLinearAlgebra::resolved()
 {
 	Page::resolved();
 
 	// Eigen::Affine2f trans( Eigen::Translation2f( 150, 50 ) );
 	// Eigen::Matrix3f m = trans.matrix();
 	// std::cout << "matrix3f: " << m << std::endl;
-
-	return true;
 }

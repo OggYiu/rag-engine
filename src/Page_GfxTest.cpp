@@ -16,10 +16,10 @@ void Page_GfxTest::update(const double dt)
 	Page::update(dt);
 }
 
-bool Page_GfxTest::resolved()
+void Page_GfxTest::resolved()
 {
 	Page::resolved();
-	
+
 	// graphics = new Graphics();
 	// graphics->setColor(0xFF0000FF);
 	// graphics->drawSolidRect(100, 100, 200, 200);
@@ -45,7 +45,4 @@ bool Page_GfxTest::resolved()
 	// graphics.drawPixel(10, 10);
 	// graphics.drawPixel(100, 100);	
 //	this->addChild(graphics);
-
-	return true;
-//	std::cout <<"added" << std::endl;
 }

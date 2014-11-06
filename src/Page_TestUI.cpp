@@ -34,7 +34,7 @@ void Page_TestUI::render()
 	Page::render();
 }
 
-bool Page_TestUI::resolved()
+void Page_TestUI::resolved()
 {
 	Page::resolved();
 
@@ -87,7 +87,6 @@ bool Page_TestUI::resolved()
 			// std::cout << "label: " << label->transform().getX() << ", " << label->transform().getY() << ", " << label->getWidth() << ", " << label->getHeight() << std::endl;
 		}
 	}
-	return true;
 }
 
 void Page_TestUI::here()

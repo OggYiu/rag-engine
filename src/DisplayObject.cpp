@@ -76,7 +76,7 @@ void DisplayObject::render()
 
 	float rotation = transform_.getRot();
 	// texture_->render( clipRect_, &renderRect_, rotation, center_, flip_ );
-	texture_->render( clipRect_, &boundingBox_, rotation, center_, flip_ );
+	texture_->render( &clipRect_, &boundingBox_, rotation, &sdlCenter_, flip_ );
 }
 	
 void DisplayObject::setTexture( Texture* texture )
@@ -84,13 +84,14 @@ void DisplayObject::setTexture( Texture* texture )
 	releaseTexture();
 	texture_ = texture;
 	setSize( texture_->getWidth(), texture->getHeight() );
+	setCenter( centerPoint_.x(), centerPoint_.y() );
 }
 
 void DisplayObject::updateBoundingBox_()
 {
-	if ( !dirtyBoundingBox_ ) {
-		return;
-	}
+	// if ( !dirtyBoundingBox_ ) {
+	// 	return;
+	// }
 
 	DisplayObjectBase::updateBoundingBox_();
 	// setClipRect( 0, 0, getWidth(), getHeight() );

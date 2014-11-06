@@ -23,7 +23,7 @@ public:
 	int getFrameHeight() const;
 
 protected:
-	virtual bool resolved();
+	virtual void resolved();
 	void nextDemo();
 	bool onKeyboardEvent( const Event& event );
 

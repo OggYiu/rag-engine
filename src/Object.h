@@ -15,7 +15,7 @@ public:
 	int getId() { return id_; }
 	
 protected:
-	virtual bool resolved() { return true; }
+	virtual void resolved() {}
 	
 public:
 	int id_;

@@ -16,7 +16,7 @@ public:
 	virtual void render();
 
 protected:
-	virtual bool resolved();
+	virtual void resolved();
 	void here();
 };
 

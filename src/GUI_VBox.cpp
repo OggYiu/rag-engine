@@ -73,9 +73,8 @@ void GUI_VBox::addItem( DisplayObjectBase* const entity )
 	// std::cout << "-------------------- end update bounding box" << std::endl << std::endl;	
 }
 
-bool GUI_VBox::resolved()
+void GUI_VBox::resolved()
 {		
-	return true;
 }
 
 void GUI_VBox::addChild_(DisplayObjectBase* const entity ATTR_UNUSED )

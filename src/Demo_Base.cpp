@@ -15,8 +15,8 @@ Demo_Base::Demo_Base()
 	: demoIndex_( -1 )
 	, startIndex_( 0 )
 	, isFirstRun_( true )
-	, frameMarginX_( 50 )
-	, frameMarginY_( 50 )
+	, frameMarginX_( 0 )
+	, frameMarginY_( 0 )
 {
 }
 
@@ -84,15 +84,13 @@ int Demo_Base::getFrameHeight() const
 	return frameH_;
 }
 
-bool Demo_Base::resolved()
+void Demo_Base::resolved()
 {
 	Page::resolved();
 
 	nextDemo();
 	
 	kernel.getStage().addEventListener( KeyboardEvent::KEY_DOWN, bindEventHandler( &Demo_Base::onKeyboardEvent, this ), this );
-
-	return true;
 }
 
 void Demo_Base::nextDemo()

@@ -8,15 +8,17 @@
 #include "Component_Base.h"
 #include "Component_Dragging.h"
 
+const std::string DisplayObjectBase::LOG_TAG = "DisplayObjectBase";
+
 DisplayObjectBase::DisplayObjectBase()
 	: parent_( nullptr )
 	, needReleased_( false )
-	, clipRect_( nullptr )
-	, center_( nullptr )
+	// , clipRect_( nullptr )
+	// , center_( nullptr )
 	, visible_( true )
 	, tweener_( Tweener( this ) )
 	, transform_( this )
-	, dirtyBoundingBox_( false )	  
+	// , dirtyBoundingBox_( false )	  
 
 {
 	transform_.addEventListener( TransformEvent::TRANSFORM_POSITION_CHANGED, bindEventHandler( &DisplayObjectBase::transformEventHandler, this ), this );
@@ -27,13 +29,15 @@ DisplayObjectBase::DisplayObjectBase()
 
 	transform_.setPos( 0.0f, 0.0f );
 	
-	size_[0] = 0;
-	size_[1] = 0;
-	
-	anchor_[0] = 0.0f;
-	anchor_[1] = 0.0f;
+	// size_[0] = 0;
+	// size_[1] = 0;
 
-	// setClipRect( 0, 0, 0, 0 );
+	setCenter( 0.5f, 0.5f );
+	setAnchor( 0.0f, 0.0f );
+	// anchor_[0] = 0.0f;
+	// anchor_[1] = 0.0f;
+
+	setClipRect( 0, 0, 0, 0 );
 }
 
 DisplayObjectBase::~DisplayObjectBase()
@@ -41,8 +45,8 @@ DisplayObjectBase::~DisplayObjectBase()
 	transform_.removeEventListener( TransformEvent::TRANSFORM_POSITION_CHANGED, this );
 	transform_.removeEventListener( TransformEvent::TRANSFORM_ROTATION_CHANGED, this );	
 	transform_.removeEventListener( TransformEvent::TRANSFORM_SCALE_CHANGED, this );
-	SAFE_RELEASE( clipRect_ );
-	SAFE_RELEASE( center_ );
+	// SAFE_RELEASE( clipRect_ );
+	// SAFE_RELEASE( center_ );
 }
 
 void DisplayObjectBase::update(const double dt)
@@ -60,7 +64,7 @@ void DisplayObjectBase::handleAddedToParent( DisplayObjectContainer* container )
 	}
 
 	parent_ = container;
-	updateBoundingBox();
+	updateBoundingBox_();
 }
 
 void DisplayObjectBase::handleRemovedFromParent( DisplayObjectContainer* container )
@@ -72,7 +76,7 @@ void DisplayObjectBase::handleRemovedFromParent( DisplayObjectContainer* contain
 	}
 
 	parent_ = nullptr;
-	updateBoundingBox();
+	updateBoundingBox_();
 }
 
 
@@ -94,18 +98,6 @@ void DisplayObjectBase::release()
 	needReleased_ = true;
 }
 
-void DisplayObjectBase::setClipRect( const int x, const int y, const int w, const int h )
-{
-	clearClipRect();
-	// clipRect_ = new SDL_Rect( x, y, width, height );
-	clipRect_ = new SDL_Rect();
-	clipRect_->x = x;
-	clipRect_->y = y;
-	clipRect_->w = w;
-	clipRect_->h = h;
-	// std::cout << "DisplayObjectBase::setClipRect: " << x << ", " << y << ", " << width << ", " << height << std::endl;
-}
-
 void DisplayObjectBase::setRenderRect( const int x, const int y, const int w, const int h )
 {
 	renderRect_.x = x;
@@ -114,16 +106,14 @@ void DisplayObjectBase::setRenderRect( const int x, const int y, const int w, co
 	renderRect_.h = h;
 }
 
-void DisplayObjectBase::setCenter( const int x, const int y )
+void DisplayObjectBase::setCenter( const float x, const float y )
 {
-	SAFE_RELEASE( center_ );
-	center_ = new SDL_Point();
-	center_->x = x; center_->y = y;
-}
-
-void DisplayObjectBase::clearClipRect()
-{
-	SAFE_RELEASE( clipRect_ );
+	// SAFE_RELEASE( center_ );
+	// center_ = new SDL_Point();
+	centerPoint_.x() = x;
+	centerPoint_.y() = y;
+	sdlCenter_.x = round( getWidth() * getCenterPointX() );
+	sdlCenter_.y = round( getHeight() * getCenterPointY() );
 }
 
 void DisplayObjectBase::addComponent( Component_Base* component )
@@ -141,11 +131,6 @@ void DisplayObjectBase::removeComponent( const std::string& name )
 	if ( components_[name] != nullptr ) {
 		return;
 	}
-	
-	// std::stringstream ss;
-	// ss << "component does not existed: " << name;
-	// logger.e( "displayobjectbase", ss.str() );
-	// std::cout << "line: " << __LINE__ << ", file: " << __FILE__ << std::endl;
 }
 
 void DisplayObjectBase::getSize( int& width, int& height )
@@ -158,48 +143,54 @@ void DisplayObjectBase::setSize( const int width, const int height )
 {
 	setWidth( width );
 	setHeight( height );
-	setClipRect( 0, 0, getWidth(), getHeight() );
-	updateBoundingBox();
-	
-	// std::cout << "setSize" << std::endl;
-	// std::cout << width << ", " << height << std::endl << std::endl;
-	// std::cout << "updateBoundingBox" << std::endl;
-	// std::cout << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl << std::endl;
 }
 
-void DisplayObjectBase::setWidth( const int width )
+void DisplayObjectBase::setWidth( int width )
 {
-	size_[0] = width;
-	setClipRect( 0, 0, size_[0], size_[1] );
-	updateBoundingBox();
+	if ( width < 0 ) {
+		width = 0;
+		logger.e( DisplayObjectBase::LOG_TAG, "trying to set width to small than 0" );
+	}
+	setClipRect( 0, 0, width, getHeight() );
+	updateBoundingBox_();
 }
 
 int DisplayObjectBase::getWidth() const
 {
-	return size_[0];
+	return clipRect_.w * transform_.getScaleX();;
 }
 
-float DisplayObjectBase::getScaledWidth() const
-{
-	// std::cout << "get scaled width, size_[0]: " << size_[0] << ", getScaleX: " << transform_.getScaleX() << std::endl;
-	return size_[0] * transform_.getScaleX();
-}
+// float DisplayObjectBase::getScaledWidth() const
+// {
+// 	return getWidth() * transform_.getScaleX();
+// }
 
-void DisplayObjectBase::setHeight( const int height )
+void DisplayObjectBase::setHeight( int height )
 {
-	size_[1] = height;
-	setClipRect( 0, 0, size_[0], size_[1] );
-	updateBoundingBox();
+	if ( height < 0 ) {
+		height = 0;
+		logger.e( DisplayObjectBase::LOG_TAG, "trying to set height to small than 0" );
+	}
+	setClipRect( 0, 0, getWidth(), height );
+	updateBoundingBox_();
 }
 
 int DisplayObjectBase::getHeight() const
 {
-	return size_[1];
+	return clipRect_.h * transform_.getScaleY();
 }
 
-float DisplayObjectBase::getScaledHeight() const
+// float DisplayObjectBase::getScaledHeight() const
+// {
+// 	return getHeight() * transform_.getScaleY();
+// }
+
+void DisplayObjectBase::setClipRect( const int x, const int y, const int w, const int h )
 {
-	return size_[1] * transform_.getScaleY();
+	clipRect_.x = x;
+	clipRect_.y = y;
+	clipRect_.w = w;
+	clipRect_.h = h;
 }
 
 void DisplayObjectBase::setAnchor( const float x, const float y )
@@ -211,7 +202,8 @@ void DisplayObjectBase::setAnchor( const float x, const float y )
 void DisplayObjectBase::setAnchorX( const float x )
 {
 	anchor_[0] = x;
-	updateBoundingBox();
+	
+	updateBoundingBox_();
 }
 
 float DisplayObjectBase::getAnchorX() const
@@ -222,12 +214,28 @@ float DisplayObjectBase::getAnchorX() const
 void DisplayObjectBase::setAnchorY(const float y)
 {
 	anchor_[1] = y;
-	updateBoundingBox();
+	updateBoundingBox_();
 }
 
 float DisplayObjectBase::getAnchorY() const
 {
 	return anchor_[1];
+}
+
+float DisplayObjectBase::getCenterPointX()
+{
+	return centerPoint_.x();
+}
+
+float DisplayObjectBase::getCenterPointY()
+{
+	return centerPoint_.y();
+}
+
+void DisplayObjectBase::getCenterPoint( float& x, float& y )
+{
+	x = getCenterPointX();
+	y = getCenterPointY();
 }
 
 bool DisplayObjectBase::isVisible() const
@@ -262,10 +270,10 @@ SDL_Rect& DisplayObjectBase::getBBox()
 // 	return transform_.getMatrix();
 // }
 
-void DisplayObjectBase::updateBoundingBox()
-{
-	dirtyBoundingBox_ = true;
-}
+// void DisplayObjectBase::updateBoundingBox()
+// {
+// 	dirtyBoundingBox_ = true;
+// }
 
 void DisplayObjectBase::tryUpdateBoundingBox()
 {
@@ -281,53 +289,45 @@ bool DisplayObjectBase::dragEventHandler(const Event& event ATTR_UNUSED )
 	return true;
 }
 
-// void DisplayObjectBase::setDragEnable( const bool enable )
-// {
-// 	if ( components_[Component_Dragging::NAME] != nullptr && enable ) {
-// 		logger.e( "display object base", "dragging mode already enabled" );
-// 		return;
-// 	}
-
-// 	if ( enable ) {
-// 		addComponent( new Component_Dragging( this, 0, 0, getWidth(), getHeight() ) );
-// 	} else {
-// 		removeComponent( Component_Dragging::NAME );
-// 	}
-// }
-
 void DisplayObjectBase::updateBoundingBox_()
 {
-	if ( !dirtyBoundingBox_ ) {
-		return;
-	}
+	// if ( !dirtyBoundingBox_ ) {
+	// 	return;
+	// }
 	
-	dirtyBoundingBox_ = false;
-	int modWidth = round( getScaledWidth() );
-	int modHeight = round( getScaledHeight() );
-	int offsetX = floor( modWidth * anchor_[0] );
-	int offsetY = floor( modHeight * anchor_[1] );
+	// dirtyBoundingBox_ = false;
 	
-	boundingBox_.x = transform_.getStageX() - offsetX - ( offsetX % 2 );
-	boundingBox_.y = transform_.getStageY() - offsetY - ( offsetY % 2 );
+	int modWidth, modHeight, offsetX, offsetY;
+	modWidth = round( getWidth() );
+	modHeight = round( getHeight() );
+	offsetX = floor( modWidth * anchor_[0] );
+	offsetY = floor( modHeight * anchor_[1] );
+	
+	boundingBox_.x = transform_.getStageX() + offsetX + ( offsetX % 2 );
+	boundingBox_.y = transform_.getStageY() + offsetY + ( offsetY % 2 );
 	boundingBox_.w = modWidth;
 	boundingBox_.h = modHeight;
 
 	setRenderRect( boundingBox_.x, boundingBox_.y, boundingBox_.w, boundingBox_.h );
-	
-	// std::cout << "updateBoundingBox" << std::endl;
-	// std::cout << "DisplayObjectBase::updateBoundingBox_: " << boundingBox_.x << ", " << boundingBox_.y << ", " << boundingBox_.w << ", " << boundingBox_.h << std::endl << std::endl;
+}
+
+void DisplayObjectBase::handleScaleChanged_()
+{
+	// std::cout << "handle scale changed" << std::endl;
+	setCenter( getCenterPointX(), getCenterPointY() );
 }
 
 bool DisplayObjectBase::transformEventHandler(const Event& event ATTR_UNUSED )
 {
-	// std::string type = event.getType();
-	// if ( type.compare( TransformEvent::TRANSFORM_POSITION_CHANGED ) == 0 ) {
-	// 	handleTransformPositionChanged_();
-	// } else if ( type.compare( TransformEvent::TRANSFORM_ROTATION_CHANGED ) == 0 ) {
-	// 	handleTransformRotationChanged_();
-	// } else if ( type.compare( TransformEvent::TRANSFORM_SCALE_CHANGED ) == 0 ) {
-	// 	handleTransformScaleChanged_();
-	// }
+	std::string type = event.getType();
+	if ( type.compare( TransformEvent::TRANSFORM_POSITION_CHANGED ) == 0 ) {
+		// handleTransformPositionChanged_();
+	} else if ( type.compare( TransformEvent::TRANSFORM_ROTATION_CHANGED ) == 0 ) {
+		// handleTransformRotationChanged_();
+	} else if ( type.compare( TransformEvent::TRANSFORM_SCALE_CHANGED ) == 0 ) {
+		// handleTransformScaleChanged_();
+		handleScaleChanged_();
+	}
 	
 	handleTransformEvent();
 	
@@ -336,5 +336,5 @@ bool DisplayObjectBase::transformEventHandler(const Event& event ATTR_UNUSED )
 
 void DisplayObjectBase::handleTransformEvent()
 {
-	updateBoundingBox();
+	updateBoundingBox_();
 }

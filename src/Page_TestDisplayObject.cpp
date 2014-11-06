@@ -32,7 +32,7 @@ void Page_TestDisplayObject::render()
 	Page::render();
 }
 
-bool Page_TestDisplayObject::resolved()
+void Page_TestDisplayObject::resolved()
 {
 	Page::resolved();
 
@@ -74,8 +74,6 @@ bool Page_TestDisplayObject::resolved()
 		// 	image->transform().setPos( 0.0f, 0.0f );
 		// }
 	}
-
-	return true;
 }
 
 void Page_TestDisplayObject::startDemo( const int num )

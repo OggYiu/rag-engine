@@ -23,7 +23,7 @@ public:
 	virtual void update(const double dt);
 
 protected:
-	virtual bool resolved();
+	virtual void resolved();
 	void reload();
 	bool eventHandler(const Event& event);
 	void here();

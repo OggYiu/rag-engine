@@ -39,7 +39,7 @@ public:
 	
 public:
 	void setText( const std::string& text );
-	virtual bool resolved();
+	virtual void resolved();
 	
 private:
 	void createEventListener();

@@ -21,11 +21,7 @@ void Object::update(const double dt ATTR_UNUSED )
 {
 	if (!updated_)
 	{
-		// std::cout << "crate" << std::endl;
-		if (!resolved())
-		{
-			assert(false && "creation failed");
-		}
+		resolved();
 		updated_ = true;
 	}
 }

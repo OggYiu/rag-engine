@@ -93,10 +93,10 @@ Demo_DisplayContainer::~Demo_DisplayContainer()
 {
 }
 
-bool Demo_DisplayContainer::resolved()
+void Demo_DisplayContainer::resolved()
 {
 	addDemo( demo1 );
 	addDemo( demo2 );
 	
-	return Demo_Base::resolved();
+	Demo_Base::resolved();
 }

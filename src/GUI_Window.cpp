@@ -42,27 +42,13 @@ void GUI_Window::render()
 	GUI_BaseContainer::render();
 }
 
-bool GUI_Window::resolved()
+void GUI_Window::resolved()
 {
 	GUI_BaseContainer::resolved();
 
 	kernel.getStage().addEventListener(MouseEvent::MOUSE_MOVE, bindEventHandler(&GUI_Window::eventHandler, this), this);
 	kernel.getStage().addEventListener(MouseEvent::MOUSE_DOWN, bindEventHandler(&GUI_Window::eventHandler, this), this);
 	kernel.getStage().addEventListener(MouseEvent::MOUSE_UP, bindEventHandler(&GUI_Window::eventHandler, this), this);
-
-	// bgContainer_ = new DisplayObjectContainer();
-	// this->addChild( bgContainer_ );
-	
-	// itemsContainer_ = new DisplayObjectContainer();
-	// this->addChild( itemsContainer_ );
-	
-	// overlayContainer_ = new DisplayObjectContainer();
-	// this->addChild( overlayContainer_ );
-	
-	// frame_ = new Graphics();
-	// frame_->clear();
-	// frame_->drawSolidRect(0, 0, getWidth(), getHeight());
-	// bgContainer_->addChild( frame_ );
 
 	Graphics* graphics = new Graphics();
 
@@ -90,8 +76,6 @@ bool GUI_Window::resolved()
 		GUI_Button* button = GUI_Button::createSimpleButton( "", getWidth() - marginX - uiWidth / 2, marginY + uiHeight / 2, uiWidth, uiHeight, 100, 100, 255, 100 );
 		this->addChild( button );
 	}
-	
-	return true;
 }
 
 bool GUI_Window::eventHandler(const Event& event)

@@ -20,7 +20,10 @@ class DisplayObjectBase : public EventDispatcher
 {
 public:
 	typedef std::map< std::string, Component_Base* > ComponentMap;
-	typedef ComponentMap::iterator ComponentIter; 
+	typedef ComponentMap::iterator ComponentIter;
+
+public:
+	static const std::string LOG_TAG;
 	
 public:
 	DisplayObjectBase();
@@ -36,23 +39,23 @@ public:
 	void detachFromParent();
 	void release();	
 	bool needReleased() { return needReleased_; }
-	virtual void setClipRect( const int x, const int y, const int w, const int h );
 	virtual void setRenderRect( const int x, const int y, const int w, const int h );
-	void setCenter( const int x, const int y );
-	void clearClipRect();
+	void setCenter( const float x, const float y );
 	
 	void addComponent( Component_Base* component );
 	void removeComponent( const std::string& name );
 
 	void getSize( int& width, int& height );
 	void setSize( const int width, const int height );
-	void setWidth( const int width );
+	void setWidth( int width );
 	int getWidth() const;
-	float getScaledWidth() const;
+	// float getScaledWidth() const;
 	
-	void setHeight( const int height );
+	void setHeight( int height );
 	int getHeight() const;
-	float getScaledHeight() const;	
+	// float getScaledHeight() const;	
+
+	virtual void setClipRect( const int x, const int y, const int w, const int h );
 
 	void setAnchor( const float x, const float y );
 	void setAnchorX( const float x );
@@ -60,6 +63,10 @@ public:
 	
 	float getAnchorX() const;
 	float getAnchorY() const;
+
+	float getCenterPointX();
+	float getCenterPointY();
+	void getCenterPoint( float& x, float& y );		
 
 	void setRotation( const float rotation );
 	float getRotation() const;
@@ -73,7 +80,7 @@ public:
 	Tweener& tweener() { return tweener_; }
 	Transform& transform() { return transform_; }
 	
-	void updateBoundingBox();
+	// void updateBoundingBox();
 	void tryUpdateBoundingBox();
 	virtual bool dragEventHandler( const Event& event );
 	virtual void handleTransformEvent();
@@ -81,17 +88,19 @@ public:
 protected:
 	bool transformEventHandler( const Event& event );
 	virtual void updateBoundingBox_();
-	bool needUpdateBoundingBox() { return dirtyBoundingBox_; }
-	void doneUpdateBoundingBox() { dirtyBoundingBox_ = false; }
+	// bool needUpdateBoundingBox() { return dirtyBoundingBox_; }
+	// void doneUpdateBoundingBox() { dirtyBoundingBox_ = false; }
+	void handleScaleChanged_();
 
 protected:
 	DisplayObjectContainer* parent_;
 	bool needReleased_;
 	Eigen::Vector2f anchor_;
-	Eigen::Vector2i size_;
-	SDL_Rect* clipRect_;
+	// Eigen::Vector2i size_;
+	Eigen::Vector2f centerPoint_;
+	SDL_Rect clipRect_;
 	SDL_Rect renderRect_;
-	SDL_Point* center_;
+	SDL_Point sdlCenter_;
 	SDL_Rect boundingBox_;
 	bool visible_;
 	Tweener tweener_;
@@ -102,7 +111,7 @@ protected:
 	Graphics* debugBBox_;
 #endif
 
-	bool dirtyBoundingBox_;
+	// bool dirtyBoundingBox_;
 };
 
 #endif

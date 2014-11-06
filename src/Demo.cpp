@@ -14,6 +14,7 @@
 #include "Page_TestCO.h"
 #include "Demo_DisplayContainer.h"
 #include "Demo_DisplayObject.h"
+#include "Demo_Tween.h"
 
 int main( int argc, char* argv[] )
 {
@@ -35,7 +36,8 @@ int main( int argc, char* argv[] )
 	// Page_TestUI* startPage = new Page_TestUI();
 //	Page_TestBtn* startPage = new Page_TestBtn();
 	// Demo_DisplayContainer* startPage = new Demo_DisplayContainer();
-	Demo_DisplayObject* startPage = new Demo_DisplayObject();
+	// Demo_DisplayObject* startPage = new Demo_DisplayObject();
+	Demo_Tween* startPage = new Demo_Tween();	
 	// Page_TestCO* startPage = new Page_TestCO();	
 	// Page_TestLinearAlgebra* startPage = new Page_TestLinearAlgebra();
 	// Page_TestDisplayObject* startPage = new Page_TestDisplayObject();

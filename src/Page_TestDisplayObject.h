@@ -17,7 +17,7 @@ public:
 	void startDemo( const int num );
 	
 protected:
-	virtual bool resolved();
+	virtual void resolved();
 	bool eventHandler( const Event& event );
 };
 

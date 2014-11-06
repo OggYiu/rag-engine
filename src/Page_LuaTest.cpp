@@ -25,13 +25,9 @@ void Page_LuaTest::update(const double dt)
 	Page::update(dt);
 }
 
-bool Page_LuaTest::resolved()
+void Page_LuaTest::resolved()
 {
 	Page::resolved();
-
-//	foo object;
-//    somefunction(&forwarder, &object);
-	return true;
 }
 
 bool Page_LuaTest::eventHandler(const Event& event ATTR_UNUSED )

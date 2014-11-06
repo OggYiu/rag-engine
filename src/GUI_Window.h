@@ -18,7 +18,7 @@ public:
 	virtual void render();
 	
 protected:
-	virtual bool resolved();
+	virtual void resolved();
 	bool eventHandler(const Event& event);
 
 private:

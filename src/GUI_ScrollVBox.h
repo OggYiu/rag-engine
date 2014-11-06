@@ -20,7 +20,7 @@ public:
 	void addItem( DisplayObjectBase* obj );
 		
 protected:
-	virtual bool resolved();
+	virtual void resolved();
 	void addChild_( DisplayObjectBase* const entity );
 	bool eventHandler( const Event& event );
 

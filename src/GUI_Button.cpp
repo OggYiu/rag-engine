@@ -97,13 +97,11 @@ void GUI_Button::setText(const std::string& text ATTR_UNUSED )
 	this->addChild( label_ );
 }
 
-bool GUI_Button::resolved()
+void GUI_Button::resolved()
 {
 	GUI_BaseContainer::resolved();
 	
 	createEventListener();
-
-	return true;
 }
 
 GUI_Button* GUI_Button::createSimpleButton( const char* title, const int x, const int y, const int w, const int h, const Uint8 red, const Uint8 green, const Uint8 blue, const Uint8 alpha )

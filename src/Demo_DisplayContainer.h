@@ -13,7 +13,7 @@ public:
 	virtual ~Demo_DisplayContainer();
 
 protected:
-	virtual bool resolved();
+	virtual void resolved();
 };
 
 #endif

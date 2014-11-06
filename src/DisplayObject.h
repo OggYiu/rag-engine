@@ -42,7 +42,6 @@ protected:
 	Uint8 red_;
 	Uint8 green_;
 	Uint8 blue_;
-
 };
 
 #endif

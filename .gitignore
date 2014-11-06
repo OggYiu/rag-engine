@@ -3,3 +3,4 @@ description-pak
 src/a.out
 src/core
 obj/
+build/

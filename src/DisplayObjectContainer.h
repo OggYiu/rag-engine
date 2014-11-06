@@ -31,7 +31,7 @@ public:
 	void releaseAllChildren();
 	int getIndex( const DisplayObjectBase* entity ) const;
 	DisplayObjectVec& getChildren();
-	virtual void updateBoundingBox();
+	// virtual void updateBoundingBox();
 	void handleTransformEvent();
 	// void resetAllClipRect();
 	

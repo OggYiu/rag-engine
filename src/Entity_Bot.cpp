@@ -13,9 +13,7 @@ void Entity_Bot::update(const double dt)
 	DisplayObjectContainer::update( dt );
 }
 
-bool Entity_Bot::resolved()
+void Entity_Bot::resolved()
 {
 	DisplayObjectContainer::resolved();
-
-	return true;
 }

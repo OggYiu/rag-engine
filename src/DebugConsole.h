@@ -20,7 +20,7 @@ public:
 	void addDebugMsg( const std::string& msg, const Uint32 color = 0xFF000000 );
 	
 protected:
-	virtual bool resolved();
+	virtual void resolved();
 	bool eventHandler( const Event& event );
 		
 private:

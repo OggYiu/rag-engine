@@ -54,7 +54,7 @@ void DebugConsole::addDebugMsg( const std::string& msg, const Uint32 color )
 	// logger.d( "debug console", str );
 }
 
-bool DebugConsole::resolved()
+void DebugConsole::resolved()
 {
 	DisplayObjectContainer::resolved();
 
@@ -72,8 +72,6 @@ bool DebugConsole::resolved()
 
 	vbox_ = new GUI_VBox( 0.0f, 0.0f, kernel.getScreenWidth(), kernel.getScreenHeight() );
 	this->addChild( vbox_ );
-	
-	return true;
 }
 
 DebugConsole& DebugConsole::getInstance()

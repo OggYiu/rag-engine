@@ -22,7 +22,7 @@ void Page_TestCO::update(const double dt)
 	Page::update( dt );
 }
 
-bool Page_TestCO::resolved()
+void Page_TestCO::resolved()
 {
 	Page::resolved();
 	
@@ -30,6 +30,4 @@ bool Page_TestCO::resolved()
 		Entity_Bot* bot = new Entity_Bot();
 		bots_.push_back( bot );
 	}
-	
-	return true;
 }

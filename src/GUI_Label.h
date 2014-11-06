@@ -25,7 +25,7 @@ public:
 	
 protected:
 	void recreateTexture();
-	virtual bool resolved();
+	virtual void resolved();
 
 protected:
 	std::string text_;

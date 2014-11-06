@@ -24,7 +24,6 @@ EIGEN_DIR = $(LIBDIR)/all/eigen
 EIGEN_IDIR = $(EIGEN_DIR)
 
 CC = g++
-#CFLAGS = -I$(IDIR) -I$(SDLIDIR) -I$(LUAIDIR) -I$(CLAWIDIR) -I$(FREETYPE_IDIR) -L$(LUALIBDIR) -L$(SDLLIBDIR) -L$(CLAWLIBDIR) -L$(FREETYPE_LDIR) -I$(EIGEN_IDIR) -std=c++11 -W -Wall -Werror -g3 -llua5.2 -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -lclaw_tween -ldl -lfreetype -MD -MP
 CFLAGS = -I$(IDIR) -I$(SDLIDIR) -I$(LUAIDIR) -I$(CLAWIDIR) -I$(FREETYPE_IDIR) -L$(LUALIBDIR) -L$(SDLLIBDIR) -L$(CLAWLIBDIR) -L$(FREETYPE_LDIR) -I$(EIGEN_IDIR) -std=c++11 -W -Wall -g3 -llua5.2 -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_gfx -lclaw_tween -ldl -lfreetype -MD -MP
 
 _OBJ = 	Demo.o \
@@ -34,7 +33,7 @@ _OBJ = 	Demo.o \
 		Page_Gameplay.o	Page_GfxTest.o Page_LuaTest.o Page_Default.o Kernel.o Page.o Page_TestFont.o Page_TestUI.o Page_TestLinearAlgebra.o Page_TestDisplayObject.o Page_TestCO.o Page_TestBtn.o \
 		Tweener.o DebugConsole.o GameGlobal.o Profiler.o FontMgr.o Timer.o Texture.o TextureMgr.o Transform.o Logger.o GradientRect.o Primitive.o \
 		Entity.o Entity_Emitter.o Entity_Bot.o \
-		Component_Base.o Component_Dragging.o Component_ClipContainer.o \
+		Component_Base.o Component_Dragging.o Component_ClipContainer.o Component_DebugFrame.o \
 		Demo_Base.o Demo_DisplayObject.o Demo_DisplayContainer.o \
 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))

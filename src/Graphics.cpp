@@ -131,7 +131,6 @@ void Graphics::tryUpdateTexture_()
 		
 		Texture* texture = textureMgr.getInstance().createPrimitivesTexture( primitives_ );
 		setTexture( texture );
-		updateBoundingBox();
 		updateBoundingBox_();
 	}
 }

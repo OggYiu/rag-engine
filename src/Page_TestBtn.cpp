@@ -21,7 +21,7 @@ void Page_TestBtn::render()
 	Page::render();
 }
 
-bool Page_TestBtn::resolved()
+void Page_TestBtn::resolved()
 {
 	Page::resolved();
 
@@ -30,12 +30,5 @@ bool Page_TestBtn::resolved()
 		GUI_Button* btn = new GUI_Button( 50, 50, 128, 48, "test" );		
 		this->addChild( btn );
 	}
-	
-	// {
-	// 	GUI_Label* label = new GUI_Label( 0, 0, "test2" );
-	// 	this->addChild( label );
-	// }
-
-	return true;
 }
 

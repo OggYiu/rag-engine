@@ -27,7 +27,7 @@ public:
 	void addItem( DisplayObjectBase* const entity );
 	
 protected:
-	virtual bool resolved();
+	virtual void resolved();
 	void rearrangeChildren();
 	
 protected:

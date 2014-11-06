@@ -56,13 +56,11 @@ void GUI_ScrollVBox::addItem( DisplayObjectBase* obj )
 	// logger.getInstance().d( "xxxx", ss.str() );
 }
 		
-bool GUI_ScrollVBox::resolved()
+void GUI_ScrollVBox::resolved()
 {
 	GUI_BaseContainer::resolved();
 	
 	// GUI_VScrollBar( const int width, const int height, const float curValue = 0.0f, const float maxValue = 100.0f );
-
-	return true;
 }
 
 void GUI_ScrollVBox::addChild_( DisplayObjectBase* const entity )

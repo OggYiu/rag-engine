@@ -17,7 +17,7 @@ public:
 	virtual void update(const double dt);
 	
 protected:
-	virtual bool resolved();
+	virtual void resolved();
 
 protected:
 	std::vector<Entity_Bot*> bots_;

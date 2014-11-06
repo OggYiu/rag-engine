@@ -68,9 +68,7 @@ void GUI_Label::render()
 	GUI_Base::render();
 }
 
-bool GUI_Label::resolved()
+void GUI_Label::resolved()
 {
 	GUI_Base::resolved();
-
-	return true;
 }
