@@ -13,6 +13,7 @@ public:
 
 public:
 	virtual void update(const double dt);
+	void onTweenFinished();
 	
 protected:
 	virtual void resolved();
