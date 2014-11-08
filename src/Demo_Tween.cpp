@@ -19,7 +19,7 @@ static void demo1( Demo_Base* container )
 
 	DisplayObjectContainer* parent = new DisplayObjectContainer();
 	container->addChild( parent );
-	container->drawFrame( parent );
+	// container->drawFrame( parent );
 	
 	{
 		// draw shape to display object
@@ -46,6 +46,32 @@ static void demo1( Demo_Base* container )
 	}
 }
 
+static void demo2( Demo_Base* container )
+{
+	container->releaseAllChildren();
+	// target_ = nullptr;
+
+	DisplayObjectContainer* parent = new DisplayObjectContainer();
+	container->addChild( parent );
+	// container->drawFrame( parent );
+
+	{
+		// draw shape to display object
+		DisplayObject* obj = new DisplayObject();
+		Texture* texture = textureMgr.createImageTexture( "assets/boy.png" );
+		obj->setTexture( texture );
+		obj->transform().setPos( ( kernel.getScreenWidth() - obj->getWidth() ) / 2.0f, ( kernel.getScreenHeight() - obj->getHeight() ) / 2.0f );
+		obj->tweener().rotateTo( 3.0f, 360, claw::tween::easing_bounce::ease_in, boost::bind( &Demo_Tween::onTweenFinished, s_instance ) );		
+		parent->addChild( obj );
+	}
+
+	{
+		GUI_Label* label = new GUI_Label( 0, 0, "rotation", 16 );
+		label->transform().setPos( 30, 30 );
+		container->addChild( label );
+	}
+}
+
 Demo_Tween::Demo_Tween()
 {
 }
@@ -64,6 +90,7 @@ void Demo_Tween::resolved()
 	s_instance = this;
 	
 	addDemo( demo1 );
+	addDemo( demo2 );	
 	
 	Demo_Base::resolved();
 }

@@ -60,6 +60,21 @@ void Tweener::scaleTo(const float duration, const float x, const float y, finish
 	}
 }
 
+void Tweener::rotateTo( const float duration, const float angle, easing_function easingFunc, finish_callback finishCallback )
+{
+	clear();
+
+	claw::tween::single_tweener t1 = claw::tween::single_tweener( owner_->transform().getRot(), angle, duration, boost::bind( &Transform::setRot, &owner_->transform(), _1 ), easingFunc );
+
+	tweenGroup_ = new claw::tween::tweener_group();
+	tweenGroup_->insert(t1);
+
+	if ( finishCallback != nullptr )
+	{
+		tweenGroup_->on_finished(finishCallback);
+	}
+}
+
 // void forwarder(void* context, int i0, int i1) {
 
 //     static_cast<foo*>(context)->member(i0, i1);

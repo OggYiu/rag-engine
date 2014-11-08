@@ -5,12 +5,14 @@
 #include "claw/tween/tweener_group.hpp"
 #include "claw/tween/tweener_sequence.hpp"
 #include "claw/tween/easing/easing_linear.hpp"
+#include "claw/tween/easing/easing_bounce.hpp"
 //#include "boost/bind.hpp"
 
 class DisplayObjectBase;
 class Tweener
 {
 	typedef claw::tween::single_tweener::finish_callback finish_callback;
+	typedef claw::tween::single_tweener::easing_function easing_function;	
 	typedef claw::tween::single_tweener::update_function update_function;	
 
 //		typedef single_tweener::update_function update_functionboost::function<void (double)> update_function;
@@ -21,8 +23,9 @@ public:
 
 public:
 	void clear();
-	void moveTo(const float duration, const float x, const float y, finish_callback finishCallback = nullptr);
-	void scaleTo(const float duration, const float x, const float y, finish_callback finishCallback = nullptr);	
+	void moveTo( const float duration, const float x, const float y, finish_callback finishCallback = nullptr );
+	void scaleTo( const float duration, const float x, const float y, finish_callback finishCallback = nullptr );
+	void rotateTo( const float duration, const float angle, easing_function easingFunc, finish_callback finishCallback = nullptr );	
 	//	void moveTo(const float duration, const float x, const float y, void* func);
 	void update(const float dt);
 
